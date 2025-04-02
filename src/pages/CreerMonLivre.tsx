@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Scroll, Sparkles, Rocket, BookOpen, Laugh } from 'lucide-react';
+import CartoonCharacter from '@/components/CartoonCharacter';
 
 const CreerMonLivre = () => {
   const [step, setStep] = React.useState(1);
@@ -94,6 +95,28 @@ const CreerMonLivre = () => {
               <Button className="w-full bg-[#e05f77] hover:bg-[#d94b65]">
                 Continuer vers l'étape {step + 1}
               </Button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="max-w-5xl mx-auto mb-16">
+          <div className="bg-white rounded-xl border-2 border-purple-200 p-6 shadow-md">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+              <div className="md:col-span-1">
+                <div className="rounded-xl overflow-hidden bg-[#f0f3ff] p-4 shadow-inner">
+                  <CartoonCharacter />
+                </div>
+              </div>
+              <div className="md:col-span-2">
+                <h2 className="text-2xl font-bold mb-4">Créez un personnage unique</h2>
+                <p className="text-gray-600 mb-4">
+                  Votre enfant peut devenir le héros de sa propre histoire ! Personnalisez 
+                  l'apparence du personnage principal pour qu'il ressemble à votre enfant.
+                </p>
+                <Button className="bg-purple-600 hover:bg-purple-700">
+                  Personnaliser votre personnage
+                </Button>
+              </div>
             </div>
           </div>
         </div>
