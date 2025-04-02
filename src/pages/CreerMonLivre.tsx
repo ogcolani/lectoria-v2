@@ -15,8 +15,8 @@ import { Progress } from '@/components/ui/progress';
 import { Scroll, Sparkles, Rocket, BookOpen, Laugh } from 'lucide-react';
 
 const CreerMonLivre = () => {
-  const [step, React.useState(1)];
-  const [progress, React.useState(1)];
+  const [step, setStep] = React.useState(1);
+  const [progress, setProgress] = React.useState(25);
   
   return (
     <div className="min-h-screen">
@@ -90,9 +90,9 @@ const CreerMonLivre = () => {
                 </Card>
               </div>
               
-              <Progress value={25} className="h-2" />
+              <Progress value={progress} className="h-2" />
               <Button className="w-full bg-[#e05f77] hover:bg-[#d94b65]">
-                Continuer vers l'étape 2
+                Continuer vers l'étape {step + 1}
               </Button>
             </div>
           </div>
