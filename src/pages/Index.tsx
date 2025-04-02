@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
 import WhyChooseLectoria from '@/components/WhyChooseLectoria';
@@ -13,6 +14,7 @@ import BookCreator from '@/components/BookCreator';
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <Header />
       <main>
         <Hero />
         <BookCreator />
