@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CreerMonLivre from "./pages/CreerMonLivre";
 import CreationLivre from "./pages/CreationLivre";
+import PersonnalisationHero from "./pages/PersonnalisationHero";
 import NotreHistoire from "./pages/NotreHistoire";
 import OffresCadeaux from "./pages/OffresCadeaux";
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/creer-mon-livre" element={<CreerMonLivre />} />
           <Route path="/creation-livre" element={<CreationLivre />} />
+          <Route path="/personnalisation-hero" element={<PersonnalisationHero />} />
           <Route path="/notre-histoire" element={<NotreHistoire />} />
           <Route path="/offres-cadeaux" element={<OffresCadeaux />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

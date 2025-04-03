@@ -93,7 +93,7 @@ const CreerMonLivre = () => {
               </div>
               
               <Progress value={progress} className="h-2" />
-              <Link to="/creation-livre">
+              <Link to="/personnalisation-hero">
                 <Button className="w-full bg-[#e05f77] hover:bg-[#d94b65]">
                   Commencer la création de votre livre
                 </Button>
@@ -116,7 +116,7 @@ const CreerMonLivre = () => {
                   Votre enfant peut devenir le héros de sa propre histoire ! Personnalisez 
                   l'apparence du personnage principal pour qu'il ressemble à votre enfant.
                 </p>
-                <Link to="/creation-livre">
+                <Link to="/personnalisation-hero">
                   <Button className="bg-purple-600 hover:bg-purple-700">
                     Personnaliser votre personnage
                   </Button>

@@ -20,6 +20,7 @@ import {
   Scroll, 
   ChevronRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const CreationLivre = () => {
   const [step, setStep] = useState(1);
@@ -136,13 +137,23 @@ const CreationLivre = () => {
             
             <div className="flex justify-between items-center pt-4 border-t">
               <p className="text-sm text-gray-500">À l'étape suivante, tu pourras personnaliser ton héros.</p>
-              <Button 
-                onClick={handleNextStep}
-                disabled={!storyType}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-              >
-                Continuer <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
+              {storyType ? (
+                <Link to="/personnalisation-hero">
+                  <Button 
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  >
+                    Continuer <ChevronRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </Link>
+              ) : (
+                <Button 
+                  onClick={handleNextStep}
+                  disabled={!storyType}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                >
+                  Continuer <ChevronRight className="ml-1 h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
