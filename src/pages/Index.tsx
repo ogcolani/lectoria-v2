@@ -20,7 +20,6 @@ const Index = () => {
       <Header />
       <main>
         <HeroNew />
-        <Pricing />
         <HowItWorks />
         <BookCreator />
         <Benefits />
@@ -28,6 +27,7 @@ const Index = () => {
         <JoinAdventure />
         <ValuesSection />
         <Testimonials />
+        <Pricing />
         <FAQ />
       </main>
       <Footer />
