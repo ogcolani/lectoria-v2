@@ -2,6 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Link } from 'react-router-dom';
 import { 
   Card, 
   CardContent, 
@@ -92,9 +93,11 @@ const CreerMonLivre = () => {
               </div>
               
               <Progress value={progress} className="h-2" />
-              <Button className="w-full bg-[#e05f77] hover:bg-[#d94b65]">
-                Continuer vers l'étape {step + 1}
-              </Button>
+              <Link to="/creation-livre">
+                <Button className="w-full bg-[#e05f77] hover:bg-[#d94b65]">
+                  Commencer la création de votre livre
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -113,9 +116,11 @@ const CreerMonLivre = () => {
                   Votre enfant peut devenir le héros de sa propre histoire ! Personnalisez 
                   l'apparence du personnage principal pour qu'il ressemble à votre enfant.
                 </p>
-                <Button className="bg-purple-600 hover:bg-purple-700">
-                  Personnaliser votre personnage
-                </Button>
+                <Link to="/creation-livre">
+                  <Button className="bg-purple-600 hover:bg-purple-700">
+                    Personnaliser votre personnage
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
