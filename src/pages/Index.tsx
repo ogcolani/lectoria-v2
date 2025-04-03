@@ -13,6 +13,7 @@ import Benefits from '@/components/Benefits';
 import SocialProof from '@/components/SocialProof';
 import JoinAdventure from '@/components/JoinAdventure';
 import ValuesSection from '@/components/ValuesSection';
+import LectoriaExplanation from '@/components/LectoriaExplanation';
 
 const Index = () => {
   return (
@@ -20,6 +21,7 @@ const Index = () => {
       <Header />
       <main>
         <HeroNew />
+        <LectoriaExplanation />
         <HowItWorks />
         <BookCreator />
         <Benefits />
