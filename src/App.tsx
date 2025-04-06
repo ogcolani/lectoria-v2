@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import CreerMonLivre from "./pages/CreerMonLivre";
 import CreationLivre from "./pages/CreationLivre";
 import PersonnalisationHero from "./pages/PersonnalisationHero";
+import StoryElements from "./pages/StoryElements";
 import NotreHistoire from "./pages/NotreHistoire";
 import OffresCadeaux from "./pages/OffresCadeaux";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/creer-mon-livre" element={<CreerMonLivre />} />
           <Route path="/creation-livre" element={<CreationLivre />} />
           <Route path="/personnalisation-hero" element={<PersonnalisationHero />} />
+          <Route path="/story-elements" element={<StoryElements />} />
           <Route path="/notre-histoire" element={<NotreHistoire />} />
           <Route path="/offres-cadeaux" element={<OffresCadeaux />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
