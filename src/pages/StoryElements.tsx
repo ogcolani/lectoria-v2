@@ -4,18 +4,22 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft, Heart, Star, Wand2, Sparkles, Zap, Lightbulb } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Heart, Star, Wand2, Sparkles, Zap, Lightbulb, Plus } from 'lucide-react';
 import CartoonCharacter from '@/components/CartoonCharacter';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
+import CharacterTraitBadge from '@/components/ui/character-trait-badge';
 
 const StoryElements = () => {
   const [progress, setProgress] = useState(60);
   const [values, setValues] = useState<string[]>([]);
   const [elements, setElements] = useState<string[]>([]);
+  const [customValue, setCustomValue] = useState('');
+  const [customElement, setCustomElement] = useState('');
   const { toast } = useToast();
   
   const availableValues = [
@@ -74,6 +78,58 @@ const StoryElements = () => {
     });
   };
 
+  const addCustomValue = () => {
+    if (!customValue.trim()) return;
+    
+    // Create a custom ID
+    const customId = `custom-${customValue.trim().toLowerCase().replace(/\s+/g, '-')}`;
+    
+    if (values.length >= 3) {
+      toast({
+        title: "Maximum 3 valeurs",
+        description: "Tu ne peux choisir que 3 valeurs pour ton histoire.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!values.includes(customId)) {
+      setValues(prev => [...prev, customId]);
+      setCustomValue('');
+    }
+  };
+  
+  const addCustomElement = () => {
+    if (!customElement.trim()) return;
+    
+    // Create a custom ID
+    const customId = `custom-${customElement.trim().toLowerCase().replace(/\s+/g, '-')}`;
+    
+    if (elements.length >= 3) {
+      toast({
+        title: "Maximum 3 éléments",
+        description: "Tu ne peux choisir que 3 éléments pour ton histoire.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!elements.includes(customId)) {
+      setElements(prev => [...prev, customId]);
+      setCustomElement('');
+    }
+  };
+  
+  // Get custom value label from ID
+  const getCustomLabel = (id: string) => {
+    if (id.startsWith('custom-')) {
+      return id.substring(7).split('-').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
+    }
+    return '';
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
       <Header />
@@ -110,6 +166,12 @@ const StoryElements = () => {
                   <p className="text-sm font-medium text-gray-700 mb-2">Valeurs choisies :</p>
                   <div className="flex flex-wrap gap-2">
                     {values.map(id => {
+                      if (id.startsWith('custom-')) {
+                        return (
+                          <CharacterTraitBadge key={id} trait={getCustomLabel(id)} />
+                        );
+                      }
+                      
                       const value = availableValues.find(v => v.id === id);
                       return value ? (
                         <div key={id} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium flex items-center gap-1">
@@ -129,6 +191,15 @@ const StoryElements = () => {
                   <p className="text-sm font-medium text-gray-700 mb-2">Éléments d'histoire :</p>
                   <div className="flex flex-wrap gap-2">
                     {elements.map(id => {
+                      if (id.startsWith('custom-')) {
+                        return (
+                          <div key={id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
+                            <Sparkles className="h-3 w-3" />
+                            {getCustomLabel(id)}
+                          </div>
+                        );
+                      }
+                      
                       const element = storyElements.find(e => e.id === id);
                       return element ? (
                         <div key={id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
@@ -178,6 +249,29 @@ const StoryElements = () => {
                     </Card>
                   ))}
                 </div>
+                
+                <div className="mt-4">
+                  <Label htmlFor="custom-value" className="mb-2 block text-sm font-medium">
+                    Ou ajoute ta propre valeur personnalisée :
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input 
+                      id="custom-value"
+                      placeholder="Ex: Honnêteté, Générosité..."
+                      value={customValue}
+                      onChange={(e) => setCustomValue(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button 
+                      onClick={addCustomValue}
+                      variant="outline"
+                      className="gap-1"
+                    >
+                      <Plus className="h-4 w-4" /> Ajouter
+                    </Button>
+                  </div>
+                </div>
+                
                 <p className="text-sm text-gray-500 mt-2">Ces valeurs seront mises en avant dans l'histoire.</p>
               </div>
               
@@ -208,6 +302,29 @@ const StoryElements = () => {
                     </Card>
                   ))}
                 </div>
+                
+                <div className="mt-4">
+                  <Label htmlFor="custom-element" className="mb-2 block text-sm font-medium">
+                    Ou ajoute ton propre élément d'histoire :
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input 
+                      id="custom-element"
+                      placeholder="Ex: Un trésor caché, Une porte secrète..."
+                      value={customElement}
+                      onChange={(e) => setCustomElement(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button 
+                      onClick={addCustomElement}
+                      variant="outline"
+                      className="gap-1"
+                    >
+                      <Plus className="h-4 w-4" /> Ajouter
+                    </Button>
+                  </div>
+                </div>
+                
                 <p className="text-sm text-gray-500 mt-2">Ces éléments rendront ton histoire plus intéressante.</p>
               </div>
             </div>
@@ -233,10 +350,10 @@ const StoryElements = () => {
           <h3 className="text-xl font-bold mb-4 text-center">Comment personnaliser ton histoire ?</h3>
           <ol className="list-decimal list-inside space-y-3 ml-4">
             <li className="text-gray-700">
-              <span className="font-medium">Choisis des valeurs</span> : Sélectionne jusqu'à 3 valeurs que tu souhaites mettre en avant dans ton histoire.
+              <span className="font-medium">Choisis des valeurs</span> : Sélectionne jusqu'à 3 valeurs que tu souhaites mettre en avant dans ton histoire, ou ajoute les tiennes.
             </li>
             <li className="text-gray-700">
-              <span className="font-medium">Ajoute des éléments d'histoire</span> : Sélectionne jusqu'à 3 éléments qui rendront ton histoire plus intéressante.
+              <span className="font-medium">Ajoute des éléments d'histoire</span> : Sélectionne jusqu'à 3 éléments qui rendront ton histoire plus intéressante, ou crée tes propres éléments.
             </li>
             <li className="text-gray-700">
               <span className="font-medium">Prévisualisation</span> : Tu peux voir un aperçu des éléments que tu as choisis sur le côté gauche.
