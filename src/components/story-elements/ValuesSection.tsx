@@ -1,129 +1,115 @@
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Heart, Zap, Star, Wand2, Lightbulb, Plus } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-
-export interface ValueItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-}
+import { Plus } from 'lucide-react';
 
 interface ValuesSectionProps {
-  values: string[];
-  onValuesChange: (values: string[]) => void;
+  selectedValues: string[];
+  setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const ValuesSection: React.FC<ValuesSectionProps> = ({ values, onValuesChange }) => {
+const ValuesSection: React.FC<ValuesSectionProps> = ({ 
+  selectedValues, 
+  setSelectedValues 
+}) => {
   const [customValue, setCustomValue] = useState('');
-  const { toast } = useToast();
-
-  const availableValues: ValueItem[] = [
-    { id: 'courage', label: 'Courage', icon: <Heart className="h-5 w-5 text-purple-600" /> },
-    { id: 'perseverance', label: 'Persévérance', icon: <Zap className="h-5 w-5 text-purple-600" /> },
-    { id: 'amitie', label: 'Amitié', icon: <Heart className="h-5 w-5 text-purple-600" /> },
-    { id: 'curiosite', label: 'Curiosité', icon: <Lightbulb className="h-5 w-5 text-purple-600" /> },
-    { id: 'respect', label: 'Respect', icon: <Star className="h-5 w-5 text-purple-600" /> },
-    { id: 'creativite', label: 'Créativité', icon: <Wand2 className="h-5 w-5 text-purple-600" /> }
-  ];
-
-  const handleValueToggle = (id: string) => {
-    onValuesChange(current => {
-      // Limit to 3 selections
-      if (current.includes(id)) {
-        return current.filter(value => value !== id);
-      } else {
-        if (current.length >= 3) {
-          toast({
-            title: "Maximum 3 valeurs",
-            description: "Tu ne peux choisir que 3 valeurs pour ton histoire.",
-            variant: "destructive"
-          });
-          return current;
-        }
-        return [...current, id];
-      }
-    });
-  };
+  const [valueOptions, setValueOptions] = useState([
+    "Courage", "Amitié", "Persévérance", "Honnêteté", 
+    "Respect", "Créativité", "Compassion", "Responsabilité"
+  ]);
 
   const addCustomValue = () => {
-    if (!customValue.trim()) return;
-    
-    // Create a custom ID
-    const customId = `custom-${customValue.trim().toLowerCase().replace(/\s+/g, '-')}`;
-    
-    if (values.length >= 3) {
-      toast({
-        title: "Maximum 3 valeurs",
-        description: "Tu ne peux choisir que 3 valeurs pour ton histoire.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!values.includes(customId)) {
-      onValuesChange([...values, customId]);
+    if (customValue && !valueOptions.includes(customValue)) {
+      // Update the options array
+      setValueOptions([...valueOptions, customValue]);
+      
+      // Select the new value
+      setSelectedValues([...selectedValues, customValue]);
+      
+      // Reset the input
       setCustomValue('');
     }
   };
 
+  const handleValueChange = (value: string) => {
+    if (selectedValues.includes(value)) {
+      // Remove if already selected
+      setSelectedValues(selectedValues.filter(v => v !== value));
+    } else {
+      // Add if not already selected (max 3)
+      if (selectedValues.length < 3) {
+        setSelectedValues([...selectedValues, value]);
+      }
+    }
+  };
+
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-4">Choisis jusqu'à 3 valeurs pour ton histoire</h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {availableValues.map((value) => (
-          <Card 
-            key={value.id}
-            className={`cursor-pointer hover:shadow-md transition-all p-4 ${values.includes(value.id) ? 'ring-2 ring-purple-500 bg-purple-50' : ''}`}
-            onClick={() => handleValueToggle(value.id)}
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0">
-                <Checkbox 
-                  id={`value-${value.id}`} 
-                  checked={values.includes(value.id)}
-                  onCheckedChange={() => handleValueToggle(value.id)}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                {value.icon}
-                <Label htmlFor={`value-${value.id}`} className="cursor-pointer">
-                  {value.label}
-                </Label>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+    <div className="space-y-6">
+      <h3 className="text-xl font-bold mb-4">Valeurs à mettre en avant</h3>
+      <p className="text-sm text-gray-600 mb-4">
+        Choisis jusqu'à 3 valeurs que tu souhaites transmettre à travers l'histoire
+      </p>
       
-      <div className="mt-4">
-        <Label htmlFor="custom-value" className="mb-2 block text-sm font-medium">
-          Ou ajoute ta propre valeur personnalisée :
-        </Label>
+      <RadioGroup className="grid grid-cols-2 gap-4">
+        {valueOptions.map((value) => (
+          <div 
+            key={value} 
+            className={`flex items-center px-4 py-2 rounded-lg border cursor-pointer transition-colors ${
+              selectedValues.includes(value) 
+                ? 'bg-purple-100 border-purple-500' 
+                : 'bg-white border-gray-200 hover:bg-gray-50'
+            }`}
+            onClick={() => handleValueChange(value)}
+          >
+            <RadioGroupItem 
+              value={value} 
+              id={`value-${value}`} 
+              className="mr-2"
+              checked={selectedValues.includes(value)}
+            />
+            <FormLabel 
+              htmlFor={`value-${value}`} 
+              className={`cursor-pointer font-medium ${
+                selectedValues.includes(value) ? 'text-purple-800' : 'text-gray-700'
+              }`}
+            >
+              {value}
+            </FormLabel>
+          </div>
+        ))}
+      </RadioGroup>
+      
+      <div className="pt-4 border-t">
+        <p className="text-sm font-medium mb-2">Ajouter une valeur personnalisée:</p>
         <div className="flex gap-2">
           <Input 
-            id="custom-value"
-            placeholder="Ex: Honnêteté, Générosité..."
+            placeholder="Ex: Patience, Équité..." 
             value={customValue}
             onChange={(e) => setCustomValue(e.target.value)}
             className="flex-1"
+            maxLength={20}
           />
           <Button 
             onClick={addCustomValue}
             variant="outline"
-            className="gap-1"
+            type="button"
+            disabled={!customValue || valueOptions.includes(customValue)}
           >
-            <Plus className="h-4 w-4" /> Ajouter
+            <Plus className="h-4 w-4 mr-1" /> Ajouter
           </Button>
         </div>
       </div>
       
-      <p className="text-sm text-gray-500 mt-2">Ces valeurs seront mises en avant dans l'histoire.</p>
+      <div className="text-sm text-gray-500 pt-2">
+        {selectedValues.length > 0 ? (
+          <p>Valeurs sélectionnées: {selectedValues.join(', ')}</p>
+        ) : (
+          <p>Aucune valeur sélectionnée. Choisis jusqu'à 3 valeurs.</p>
+        )}
+      </div>
     </div>
   );
 };

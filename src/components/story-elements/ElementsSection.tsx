@@ -1,129 +1,115 @@
 
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Wand2, Heart, Zap, Star, Sparkles, Lightbulb, Plus } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-
-export interface StoryElement {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-}
+import { Plus } from 'lucide-react';
 
 interface ElementsSectionProps {
-  elements: string[];
-  onElementsChange: (elements: string[]) => void;
+  selectedElements: string[];
+  setSelectedElements: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const ElementsSection: React.FC<ElementsSectionProps> = ({ elements, onElementsChange }) => {
+const ElementsSection: React.FC<ElementsSectionProps> = ({ 
+  selectedElements, 
+  setSelectedElements 
+}) => {
   const [customElement, setCustomElement] = useState('');
-  const { toast } = useToast();
-
-  const storyElements: StoryElement[] = [
-    { id: 'magicObject', label: 'Un objet magique', icon: <Wand2 className="h-5 w-5 text-purple-600" /> },
-    { id: 'friend', label: 'Un ami fidèle', icon: <Heart className="h-5 w-5 text-purple-600" /> },
-    { id: 'villain', label: 'Un méchant à affronter', icon: <Zap className="h-5 w-5 text-purple-600" /> },
-    { id: 'challenge', label: 'Une épreuve difficile', icon: <Star className="h-5 w-5 text-purple-600" /> },
-    { id: 'surprise', label: 'Un rebondissement surprise', icon: <Sparkles className="h-5 w-5 text-purple-600" /> },
-    { id: 'lesson', label: 'Une leçon à apprendre', icon: <Lightbulb className="h-5 w-5 text-purple-600" /> }
-  ];
-
-  const handleElementToggle = (id: string) => {
-    onElementsChange(current => {
-      // Limit to 3 selections
-      if (current.includes(id)) {
-        return current.filter(element => element !== id);
-      } else {
-        if (current.length >= 3) {
-          toast({
-            title: "Maximum 3 éléments",
-            description: "Tu ne peux choisir que 3 éléments pour ton histoire.",
-            variant: "destructive"
-          });
-          return current;
-        }
-        return [...current, id];
-      }
-    });
-  };
+  const [elementOptions, setElementOptions] = useState([
+    "Forêt enchantée", "Château magique", "Océan mystérieux", "Montagne sacrée", 
+    "Vaisseau spatial", "Potion magique", "Carte au trésor", "Animal qui parle"
+  ]);
 
   const addCustomElement = () => {
-    if (!customElement.trim()) return;
-    
-    // Create a custom ID
-    const customId = `custom-${customElement.trim().toLowerCase().replace(/\s+/g, '-')}`;
-    
-    if (elements.length >= 3) {
-      toast({
-        title: "Maximum 3 éléments",
-        description: "Tu ne peux choisir que 3 éléments pour ton histoire.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!elements.includes(customId)) {
-      onElementsChange([...elements, customId]);
+    if (customElement && !elementOptions.includes(customElement)) {
+      // Update the options array
+      setElementOptions([...elementOptions, customElement]);
+      
+      // Select the new element
+      setSelectedElements([...selectedElements, customElement]);
+      
+      // Reset the input
       setCustomElement('');
     }
   };
 
+  const handleElementChange = (element: string) => {
+    if (selectedElements.includes(element)) {
+      // Remove if already selected
+      setSelectedElements(selectedElements.filter(e => e !== element));
+    } else {
+      // Add if not already selected (max 3)
+      if (selectedElements.length < 3) {
+        setSelectedElements([...selectedElements, element]);
+      }
+    }
+  };
+
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-4">Choisis jusqu'à 3 éléments d'histoire</h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {storyElements.map((element) => (
-          <Card 
-            key={element.id}
-            className={`cursor-pointer hover:shadow-md transition-all p-4 ${elements.includes(element.id) ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
-            onClick={() => handleElementToggle(element.id)}
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0">
-                <Checkbox 
-                  id={`element-${element.id}`} 
-                  checked={elements.includes(element.id)}
-                  onCheckedChange={() => handleElementToggle(element.id)}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                {element.icon}
-                <Label htmlFor={`element-${element.id}`} className="cursor-pointer">
-                  {element.label}
-                </Label>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+    <div className="space-y-6">
+      <h3 className="text-xl font-bold mb-4">Éléments de l'histoire</h3>
+      <p className="text-sm text-gray-600 mb-4">
+        Choisis jusqu'à 3 éléments que tu souhaites inclure dans ton histoire
+      </p>
       
-      <div className="mt-4">
-        <Label htmlFor="custom-element" className="mb-2 block text-sm font-medium">
-          Ou ajoute ton propre élément d'histoire :
-        </Label>
+      <RadioGroup className="grid grid-cols-2 gap-4">
+        {elementOptions.map((element) => (
+          <div 
+            key={element} 
+            className={`flex items-center px-4 py-2 rounded-lg border cursor-pointer transition-colors ${
+              selectedElements.includes(element) 
+                ? 'bg-purple-100 border-purple-500' 
+                : 'bg-white border-gray-200 hover:bg-gray-50'
+            }`}
+            onClick={() => handleElementChange(element)}
+          >
+            <RadioGroupItem 
+              value={element} 
+              id={`element-${element}`} 
+              className="mr-2"
+              checked={selectedElements.includes(element)}
+            />
+            <FormLabel 
+              htmlFor={`element-${element}`} 
+              className={`cursor-pointer font-medium ${
+                selectedElements.includes(element) ? 'text-purple-800' : 'text-gray-700'
+              }`}
+            >
+              {element}
+            </FormLabel>
+          </div>
+        ))}
+      </RadioGroup>
+      
+      <div className="pt-4 border-t">
+        <p className="text-sm font-medium mb-2">Ajouter un élément personnalisé:</p>
         <div className="flex gap-2">
           <Input 
-            id="custom-element"
-            placeholder="Ex: Un trésor caché, Une porte secrète..."
+            placeholder="Ex: Dragon gentil, Maison volante..." 
             value={customElement}
             onChange={(e) => setCustomElement(e.target.value)}
             className="flex-1"
+            maxLength={30}
           />
           <Button 
             onClick={addCustomElement}
             variant="outline"
-            className="gap-1"
+            type="button"
+            disabled={!customElement || elementOptions.includes(customElement)}
           >
-            <Plus className="h-4 w-4" /> Ajouter
+            <Plus className="h-4 w-4 mr-1" /> Ajouter
           </Button>
         </div>
       </div>
       
-      <p className="text-sm text-gray-500 mt-2">Ces éléments rendront ton histoire plus intéressante.</p>
+      <div className="text-sm text-gray-500 pt-2">
+        {selectedElements.length > 0 ? (
+          <p>Éléments sélectionnés: {selectedElements.join(', ')}</p>
+        ) : (
+          <p>Aucun élément sélectionné. Choisis jusqu'à 3 éléments.</p>
+        )}
+      </div>
     </div>
   );
 };

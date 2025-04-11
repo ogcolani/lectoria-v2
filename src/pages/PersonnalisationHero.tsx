@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -6,7 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronRight, ChevronLeft, User, Heart, Wand2, Palette, Male, Female } from 'lucide-react';
+import { ChevronRight, ChevronLeft, User, Heart, Wand2, Palette, Mars, Venus } from 'lucide-react';
 import CartoonCharacter from '@/components/CartoonCharacter';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -183,14 +182,14 @@ const PersonnalisationHero = () => {
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="garçon" id="garçon" />
                             <label htmlFor="garçon" className="flex items-center gap-1 cursor-pointer text-sm font-medium">
-                              <Male className="h-5 w-5 text-blue-500" />
+                              <Mars className="h-5 w-5 text-blue-500" />
                               Garçon
                             </label>
                           </div>
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="fille" id="fille" />
                             <label htmlFor="fille" className="flex items-center gap-1 cursor-pointer text-sm font-medium">
-                              <Female className="h-5 w-5 text-pink-500" />
+                              <Venus className="h-5 w-5 text-pink-500" />
                               Fille
                             </label>
                           </div>
