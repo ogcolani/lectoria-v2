@@ -73,9 +73,36 @@ ${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour
 
 Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`;
 
-  // Générer l'illustration pour l'histoire (dans une vraie implémentation, on générerait plusieurs illustrations)
-  const illustrationPrompt = "Une illustration magique d'un jeune héros trouvant un livre mystérieux dans une forêt enchantée avec une lumière brillante";
-  const illustrationUrl = await generateIllustration(illustrationPrompt);
+  // Créer des prompts spécifiques pour chaque partie de l'histoire
+  const storySegments = [
+    {
+      text: "Un jeune héros trouvant un livre mystérieux dans une forêt enchantée avec une lumière brillante",
+      prompt: "Une illustration magique d'un jeune héros trouvant un livre mystérieux dans une forêt enchantée avec une lumière brillante"
+    },
+    {
+      text: "Un voyage à travers des montagnes escarpées",
+      prompt: "Un jeune aventurier gravissant des montagnes majestueuses et escarpées dans un monde fantastique"
+    },
+    {
+      text: "Un dragon sage gardien d'un cristal bleu",
+      prompt: "Un dragon aux écailles d'argent, sage gardien, et un cristal bleu brillant flottant dans l'air"
+    },
+    {
+      text: "Un désert brûlant et une voyageuse mystérieuse",
+      prompt: "Un jeune héros traversant un désert brûlant, rencontrant une voyageuse mystérieuse près d'une oasis"
+    },
+    {
+      text: "Un cristal lumineux et des alliés improbables",
+      prompt: "Un cristal magique émettant une lumière vive, entouré de créatures fantastiques alliées"
+    }
+  ];
+  
+  // Sélectionner un segment aléatoire pour l'illustration principale
+  const randomIndex = Math.floor(Math.random() * storySegments.length);
+  const selectedSegment = storySegments[randomIndex];
+  
+  // Générer l'illustration correspondant au segment choisi
+  const illustrationUrl = await generateIllustration(selectedSegment.prompt);
   
   return {
     fullStory: generatedFullStory,

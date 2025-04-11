@@ -14,7 +14,7 @@ const StoryIllustration: React.FC<StoryIllustrationProps> = ({
   altText
 }) => {
   return (
-    <div className="relative w-full h-full bg-purple-50 overflow-hidden">
+    <div className="relative w-full h-full bg-purple-50 overflow-hidden rounded-lg shadow-inner">
       {isGenerating ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-purple-50">
           <Sparkles className="h-10 w-10 text-purple-400 animate-pulse mb-2" />
@@ -24,7 +24,7 @@ const StoryIllustration: React.FC<StoryIllustrationProps> = ({
         <img 
           src={imageUrl} 
           alt={altText} 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-opacity duration-300"
         />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-purple-50">
