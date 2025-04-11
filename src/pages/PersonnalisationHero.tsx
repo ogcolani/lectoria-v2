@@ -25,8 +25,12 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+type CategoryTab = 'personnage' | 'apparence' | 'pouvoirs';
+
 const PersonnalisationHero = () => {
   const [progress, setProgress] = useState(40);
+  const [activeTab, setActiveTab] = useState<CategoryTab>('personnage');
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,6 +61,11 @@ const PersonnalisationHero = () => {
 
   // Get the traits array
   const traits = getTraits();
+  
+  // Handle tab selection
+  const handleTabChange = (tab: CategoryTab) => {
+    setActiveTab(tab);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
@@ -182,23 +191,38 @@ const PersonnalisationHero = () => {
                 />
 
                 <div className="grid grid-cols-3 gap-4 mt-6">
-                  <Card className="p-4 cursor-pointer hover:bg-purple-50 transition-colors border-2 border-transparent hover:border-purple-200">
+                  <Card 
+                    className={`p-4 cursor-pointer hover:bg-purple-50 transition-colors border-2 ${
+                      activeTab === 'personnage' ? 'border-purple-500 bg-purple-50' : 'border-transparent hover:border-purple-200'
+                    }`}
+                    onClick={() => handleTabChange('personnage')}
+                  >
                     <div className="flex flex-col items-center text-center">
-                      <User className="h-8 w-8 text-purple-600 mb-2" />
+                      <User className={`h-8 w-8 ${activeTab === 'personnage' ? 'text-purple-700' : 'text-purple-600'} mb-2`} />
                       <span className="text-sm font-medium">Personnage</span>
                     </div>
                   </Card>
                   
-                  <Card className="p-4 cursor-pointer hover:bg-purple-50 transition-colors border-2 border-transparent hover:border-purple-200">
+                  <Card 
+                    className={`p-4 cursor-pointer hover:bg-purple-50 transition-colors border-2 ${
+                      activeTab === 'apparence' ? 'border-purple-500 bg-purple-50' : 'border-transparent hover:border-purple-200'
+                    }`}
+                    onClick={() => handleTabChange('apparence')}
+                  >
                     <div className="flex flex-col items-center text-center">
-                      <Palette className="h-8 w-8 text-purple-600 mb-2" />
+                      <Palette className={`h-8 w-8 ${activeTab === 'apparence' ? 'text-purple-700' : 'text-purple-600'} mb-2`} />
                       <span className="text-sm font-medium">Apparence</span>
                     </div>
                   </Card>
                   
-                  <Card className="p-4 cursor-pointer hover:bg-purple-50 transition-colors border-2 border-transparent hover:border-purple-200">
+                  <Card 
+                    className={`p-4 cursor-pointer hover:bg-purple-50 transition-colors border-2 ${
+                      activeTab === 'pouvoirs' ? 'border-purple-500 bg-purple-50' : 'border-transparent hover:border-purple-200'
+                    }`}
+                    onClick={() => handleTabChange('pouvoirs')}
+                  >
                     <div className="flex flex-col items-center text-center">
-                      <Wand2 className="h-8 w-8 text-purple-600 mb-2" />
+                      <Wand2 className={`h-8 w-8 ${activeTab === 'pouvoirs' ? 'text-purple-700' : 'text-purple-600'} mb-2`} />
                       <span className="text-sm font-medium">Pouvoirs</span>
                     </div>
                   </Card>
