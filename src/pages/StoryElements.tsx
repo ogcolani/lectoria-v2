@@ -2,27 +2,23 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Progress } from '@/components/ui/progress';
-import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft, Heart, Star, Wand2, Sparkles, Zap, Lightbulb, Plus } from 'lucide-react';
-import CartoonCharacter from '@/components/CartoonCharacter';
-import { Link } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
-import { Input } from '@/components/ui/input';
-import CharacterTraitBadge from '@/components/ui/character-trait-badge';
+import { Heart, Star, Wand2, Sparkles, Zap, Lightbulb } from 'lucide-react';
+
+// Import newly created components
+import ProgressSection from '@/components/story-elements/ProgressSection';
+import ValuesSection, { ValueItem } from '@/components/story-elements/ValuesSection';
+import ElementsSection, { StoryElement } from '@/components/story-elements/ElementsSection';
+import StoryPreviewSidebar from '@/components/story-elements/StoryPreviewSidebar';
+import NavigationButtons from '@/components/story-elements/NavigationButtons';
+import HelpSection from '@/components/story-elements/HelpSection';
 
 const StoryElements = () => {
   const [progress, setProgress] = useState(60);
   const [values, setValues] = useState<string[]>([]);
   const [elements, setElements] = useState<string[]>([]);
-  const [customValue, setCustomValue] = useState('');
-  const [customElement, setCustomElement] = useState('');
-  const { toast } = useToast();
   
-  const availableValues = [
+  // Define the available values and story elements for reuse
+  const availableValues: ValueItem[] = [
     { id: 'courage', label: 'Courage', icon: <Heart className="h-5 w-5 text-purple-600" /> },
     { id: 'perseverance', label: 'Persévérance', icon: <Zap className="h-5 w-5 text-purple-600" /> },
     { id: 'amitie', label: 'Amitié', icon: <Heart className="h-5 w-5 text-purple-600" /> },
@@ -31,7 +27,7 @@ const StoryElements = () => {
     { id: 'creativite', label: 'Créativité', icon: <Wand2 className="h-5 w-5 text-purple-600" /> }
   ];
   
-  const storyElements = [
+  const storyElements: StoryElement[] = [
     { id: 'magicObject', label: 'Un objet magique', icon: <Wand2 className="h-5 w-5 text-purple-600" /> },
     { id: 'friend', label: 'Un ami fidèle', icon: <Heart className="h-5 w-5 text-purple-600" /> },
     { id: 'villain', label: 'Un méchant à affronter', icon: <Zap className="h-5 w-5 text-purple-600" /> },
@@ -39,96 +35,6 @@ const StoryElements = () => {
     { id: 'surprise', label: 'Un rebondissement surprise', icon: <Sparkles className="h-5 w-5 text-purple-600" /> },
     { id: 'lesson', label: 'Une leçon à apprendre', icon: <Lightbulb className="h-5 w-5 text-purple-600" /> }
   ];
-
-  const handleValueToggle = (id: string) => {
-    setValues(current => {
-      // Limit to 3 selections
-      if (current.includes(id)) {
-        return current.filter(value => value !== id);
-      } else {
-        if (current.length >= 3) {
-          toast({
-            title: "Maximum 3 valeurs",
-            description: "Tu ne peux choisir que 3 valeurs pour ton histoire.",
-            variant: "destructive"
-          });
-          return current;
-        }
-        return [...current, id];
-      }
-    });
-  };
-
-  const handleElementToggle = (id: string) => {
-    setElements(current => {
-      // Limit to 3 selections
-      if (current.includes(id)) {
-        return current.filter(element => element !== id);
-      } else {
-        if (current.length >= 3) {
-          toast({
-            title: "Maximum 3 éléments",
-            description: "Tu ne peux choisir que 3 éléments pour ton histoire.",
-            variant: "destructive"
-          });
-          return current;
-        }
-        return [...current, id];
-      }
-    });
-  };
-
-  const addCustomValue = () => {
-    if (!customValue.trim()) return;
-    
-    // Create a custom ID
-    const customId = `custom-${customValue.trim().toLowerCase().replace(/\s+/g, '-')}`;
-    
-    if (values.length >= 3) {
-      toast({
-        title: "Maximum 3 valeurs",
-        description: "Tu ne peux choisir que 3 valeurs pour ton histoire.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!values.includes(customId)) {
-      setValues(prev => [...prev, customId]);
-      setCustomValue('');
-    }
-  };
-  
-  const addCustomElement = () => {
-    if (!customElement.trim()) return;
-    
-    // Create a custom ID
-    const customId = `custom-${customElement.trim().toLowerCase().replace(/\s+/g, '-')}`;
-    
-    if (elements.length >= 3) {
-      toast({
-        title: "Maximum 3 éléments",
-        description: "Tu ne peux choisir que 3 éléments pour ton histoire.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!elements.includes(customId)) {
-      setElements(prev => [...prev, customId]);
-      setCustomElement('');
-    }
-  };
-  
-  // Get custom value label from ID
-  const getCustomLabel = (id: string) => {
-    if (id.startsWith('custom-')) {
-      return id.substring(7).split('-').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' ');
-    }
-    return '';
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
@@ -141,80 +47,15 @@ const StoryElements = () => {
           </span>
         </h1>
         
-        <div className="mb-10 max-w-xl mx-auto">
-          <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
-            <span>Étape 3 sur 5</span>
-            <span>{progress}% complété</span>
-          </div>
-          <Progress value={progress} className="h-2 bg-gray-200" />
-        </div>
+        <ProgressSection progress={progress} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="lg:col-span-1 flex flex-col items-center justify-start bg-purple-100 rounded-2xl p-6 order-2 lg:order-1">
-            <div className="mb-4 text-center">
-              <h3 className="text-xl font-bold mb-2">Ton aventure</h3>
-              <p className="text-sm text-gray-600">Voici ce que tu as choisi pour ton histoire !</p>
-            </div>
-            <div className="w-full max-w-[220px]">
-              <CartoonCharacter />
-            </div>
-            <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
-              <h4 className="font-bold text-lg mb-3">Éléments de ton histoire</h4>
-              
-              {values.length > 0 ? (
-                <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Valeurs choisies :</p>
-                  <div className="flex flex-wrap gap-2">
-                    {values.map(id => {
-                      if (id.startsWith('custom-')) {
-                        return (
-                          <CharacterTraitBadge key={id} trait={getCustomLabel(id)} />
-                        );
-                      }
-                      
-                      const value = availableValues.find(v => v.id === id);
-                      return value ? (
-                        <div key={id} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium flex items-center gap-1">
-                          {value.icon}
-                          {value.label}
-                        </div>
-                      ) : null;
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 mb-3">Choisis des valeurs pour ton histoire...</p>
-              )}
-              
-              {elements.length > 0 ? (
-                <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">Éléments d'histoire :</p>
-                  <div className="flex flex-wrap gap-2">
-                    {elements.map(id => {
-                      if (id.startsWith('custom-')) {
-                        return (
-                          <div key={id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
-                            <Sparkles className="h-3 w-3" />
-                            {getCustomLabel(id)}
-                          </div>
-                        );
-                      }
-                      
-                      const element = storyElements.find(e => e.id === id);
-                      return element ? (
-                        <div key={id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
-                          {element.icon}
-                          {element.label}
-                        </div>
-                      ) : null;
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500">Choisis des éléments pour ton histoire...</p>
-              )}
-            </div>
-          </div>
+          <StoryPreviewSidebar 
+            values={values} 
+            elements={elements} 
+            availableValues={availableValues} 
+            storyElements={storyElements} 
+          />
           
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 order-1 lg:order-2">
             <h2 className="text-2xl font-bold mb-6">
@@ -222,147 +63,15 @@ const StoryElements = () => {
             </h2>
             
             <div className="space-y-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Choisis jusqu'à 3 valeurs pour ton histoire</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {availableValues.map((value) => (
-                    <Card 
-                      key={value.id}
-                      className={`cursor-pointer hover:shadow-md transition-all p-4 ${values.includes(value.id) ? 'ring-2 ring-purple-500 bg-purple-50' : ''}`}
-                      onClick={() => handleValueToggle(value.id)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0">
-                          <Checkbox 
-                            id={`value-${value.id}`} 
-                            checked={values.includes(value.id)}
-                            onCheckedChange={() => handleValueToggle(value.id)}
-                          />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {value.icon}
-                          <Label htmlFor={`value-${value.id}`} className="cursor-pointer">
-                            {value.label}
-                          </Label>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-                
-                <div className="mt-4">
-                  <Label htmlFor="custom-value" className="mb-2 block text-sm font-medium">
-                    Ou ajoute ta propre valeur personnalisée :
-                  </Label>
-                  <div className="flex gap-2">
-                    <Input 
-                      id="custom-value"
-                      placeholder="Ex: Honnêteté, Générosité..."
-                      value={customValue}
-                      onChange={(e) => setCustomValue(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={addCustomValue}
-                      variant="outline"
-                      className="gap-1"
-                    >
-                      <Plus className="h-4 w-4" /> Ajouter
-                    </Button>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-gray-500 mt-2">Ces valeurs seront mises en avant dans l'histoire.</p>
-              </div>
-              
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Choisis jusqu'à 3 éléments d'histoire</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {storyElements.map((element) => (
-                    <Card 
-                      key={element.id}
-                      className={`cursor-pointer hover:shadow-md transition-all p-4 ${elements.includes(element.id) ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
-                      onClick={() => handleElementToggle(element.id)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0">
-                          <Checkbox 
-                            id={`element-${element.id}`} 
-                            checked={elements.includes(element.id)}
-                            onCheckedChange={() => handleElementToggle(element.id)}
-                          />
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {element.icon}
-                          <Label htmlFor={`element-${element.id}`} className="cursor-pointer">
-                            {element.label}
-                          </Label>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-                
-                <div className="mt-4">
-                  <Label htmlFor="custom-element" className="mb-2 block text-sm font-medium">
-                    Ou ajoute ton propre élément d'histoire :
-                  </Label>
-                  <div className="flex gap-2">
-                    <Input 
-                      id="custom-element"
-                      placeholder="Ex: Un trésor caché, Une porte secrète..."
-                      value={customElement}
-                      onChange={(e) => setCustomElement(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button 
-                      onClick={addCustomElement}
-                      variant="outline"
-                      className="gap-1"
-                    >
-                      <Plus className="h-4 w-4" /> Ajouter
-                    </Button>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-gray-500 mt-2">Ces éléments rendront ton histoire plus intéressante.</p>
-              </div>
+              <ValuesSection values={values} onValuesChange={setValues} />
+              <ElementsSection elements={elements} onElementsChange={setElements} />
             </div>
             
-            <div className="flex justify-between items-center pt-4 border-t mt-8">
-              <Link to="/personnalisation-hero">
-                <Button variant="outline" type="button">
-                  <ChevronLeft className="mr-2 h-4 w-4" /> Retour
-                </Button>
-              </Link>
-              <Link to="/generation-histoire">
-                <Button 
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                >
-                  Continuer <ChevronRight className="ml-1 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
+            <NavigationButtons />
           </div>
         </div>
         
-        <div className="mt-12 max-w-5xl mx-auto bg-purple-50 rounded-xl p-6">
-          <h3 className="text-xl font-bold mb-4 text-center">Comment personnaliser ton histoire ?</h3>
-          <ol className="list-decimal list-inside space-y-3 ml-4">
-            <li className="text-gray-700">
-              <span className="font-medium">Choisis des valeurs</span> : Sélectionne jusqu'à 3 valeurs que tu souhaites mettre en avant dans ton histoire, ou ajoute les tiennes.
-            </li>
-            <li className="text-gray-700">
-              <span className="font-medium">Ajoute des éléments d'histoire</span> : Sélectionne jusqu'à 3 éléments qui rendront ton histoire plus intéressante, ou crée tes propres éléments.
-            </li>
-            <li className="text-gray-700">
-              <span className="font-medium">Prévisualisation</span> : Tu peux voir un aperçu des éléments que tu as choisis sur le côté gauche.
-            </li>
-            <li className="text-gray-700">
-              <span className="font-medium">Poursuis l'aventure</span> : Une fois que tu es satisfait de tes choix, continue vers l'étape suivante.
-            </li>
-          </ol>
-        </div>
+        <HelpSection />
       </main>
       
       <Footer />
