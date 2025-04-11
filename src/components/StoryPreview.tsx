@@ -23,6 +23,35 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
   onShare,
   onReset,
 }) => {
+  // Function to limit the preview to only 3 paragraphs
+  const getLimitedPreview = (text: string) => {
+    // Get all paragraphs
+    const paragraphs = text.split('\n');
+    
+    // Get non-empty paragraphs
+    const nonEmptyParagraphs = paragraphs.filter(p => p.trim() !== '');
+    
+    // Take the title + first 3 paragraphs
+    let limitedParagraphs = [];
+    
+    // Always include the title if it exists (starts with #)
+    const titleIndex = paragraphs.findIndex(p => p.startsWith('# '));
+    if (titleIndex !== -1) {
+      limitedParagraphs.push(paragraphs[titleIndex]);
+    }
+    
+    // Find the first 3 non-empty paragraphs that aren't the title
+    const contentParagraphs = paragraphs.filter(p => !p.startsWith('# ') && p.trim() !== '');
+    const selected = contentParagraphs.slice(0, 3);
+    limitedParagraphs = limitedParagraphs.concat(selected);
+    
+    // Add a note that there's more to the story
+    limitedParagraphs.push('');
+    limitedParagraphs.push('[Suite de l\'histoire disponible après achat...]');
+    
+    return limitedParagraphs.join('\n');
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <div className="flex justify-between items-center mb-6">
@@ -103,7 +132,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
           </div>
         ) : storyPreview ? (
           <div className="prose prose-purple max-w-none">
-            {storyPreview.split('\n').map((paragraph, index) => (
+            {getLimitedPreview(storyPreview).split('\n').map((paragraph, index) => (
               paragraph.startsWith('# ') ? (
                 <h2 key={index} className="text-2xl font-bold text-purple-800 mb-4">
                   {paragraph.substring(2)}
