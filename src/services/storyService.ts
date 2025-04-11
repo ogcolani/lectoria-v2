@@ -20,6 +20,18 @@ Un jour, alors qu'il se promenait dans la forêt près de chez lui, il découvri
 
 Sans hésiter, Alex accepta cette mission. Armé de son courage et de sa détermination, il partit à la recherche du premier cristal. Son voyage le mena à travers des montagnes escarpées, des déserts brûlants et des océans tumultueux.
 
+Le premier cristal se trouvait au sommet de la plus haute montagne du royaume, gardé par un ancien dragon aux écailles d'argent. Alex gravit la montagne pendant des jours, bravant le froid et les tempêtes de neige.
+
+Arrivé au sommet, il découvrit que le dragon n'était pas une créature féroce comme le racontaient les légendes, mais un sage gardien qui attendait l'arrivée de l'élu depuis des siècles.
+
+"Tu as prouvé ton courage en arrivant jusqu'ici," dit le dragon d'une voix profonde. "Mais le cristal ne peut être obtenu par la force. Il te faut résoudre une énigme."
+
+Alex réfléchit longtemps à l'énigme posée par le dragon. Finalement, il trouva la solution et le cristal s'illumina d'une lueur bleue avant de flotter jusqu'à lui.
+
+Avec le premier cristal en sa possession, Alex se dirigea vers le désert pour trouver le deuxième. La chaleur était insupportable, mais il ne perdit jamais espoir.
+
+Au cœur du désert, il rencontra une voyageuse mystérieuse qui lui offrit de l'eau et lui indiqua le chemin vers une oasis cachée. "Le cristal est gardé par un esprit ancien," l'avertit-elle.
+
 ${childAge <= 5 ? 'Il vit beaucoup d\'animaux rigolos.' : 
  childAge <= 8 ? 'Il rencontra des créatures merveilleuses qui l\'aidèrent dans son voyage.' : 
  childAge <= 12 ? 'En chemin, il fit la connaissance d\'alliés improbables qui devinrent ses plus fidèles compagnons.' : 
@@ -42,7 +54,15 @@ Sans hésiter, Alex accepta cette mission. Armé de son courage et de sa déterm
 
 Le premier cristal se trouvait au sommet de la plus haute montagne du royaume, gardé par un ancien dragon aux écailles d'argent. Alex gravit la montagne pendant des jours, bravant le froid et les tempêtes de neige.
 
-Arrivé au sommet, il découvrit que le dragon n'était pas une créature féroce comme le racontaient les légendes, mais un sage gardien qui attendait l'arrivée de l'élu depuis des siècles...
+Arrivé au sommet, il découvrit que le dragon n'était pas une créature féroce comme le racontaient les légendes, mais un sage gardien qui attendait l'arrivée de l'élu depuis des siècles.
+
+"Tu as prouvé ton courage en arrivant jusqu'ici," dit le dragon d'une voix profonde. "Mais le cristal ne peut être obtenu par la force. Il te faut résoudre une énigme."
+
+Alex réfléchit longtemps à l'énigme posée par le dragon. Finalement, il trouva la solution et le cristal s'illumina d'une lueur bleue avant de flotter jusqu'à lui.
+
+Avec le premier cristal en sa possession, Alex se dirigea vers le désert pour trouver le deuxième. La chaleur était insupportable, mais il ne perdit jamais espoir.
+
+Au cœur du désert, il rencontra une voyageuse mystérieuse qui lui offrit de l'eau et lui indiqua le chemin vers une oasis cachée. "Le cristal est gardé par un esprit ancien," l'avertit-elle.
 
 ${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour les tout-petits !' : 
  childAge <= 8 ? '⭐ Une histoire captivante avec des personnages attachants, idéale pour les apprentis lecteurs !' : 
@@ -53,7 +73,7 @@ ${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour
 
 Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`;
 
-  // Générer l'illustration pour l'histoire
+  // Générer l'illustration pour l'histoire (dans une vraie implémentation, on générerait plusieurs illustrations)
   const illustrationPrompt = "Une illustration magique d'un jeune héros trouvant un livre mystérieux dans une forêt enchantée avec une lumière brillante";
   const illustrationUrl = await generateIllustration(illustrationPrompt);
   

@@ -9,6 +9,8 @@ import StoryGenerator from '@/components/StoryGenerator';
 import StoryPreview from '@/components/StoryPreview';
 import InfoSection from '@/components/InfoSection';
 import { generateStoryService } from '@/services/storyService';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 const GenerationHistoire = () => {
   const [progress, setProgress] = useState(80);
@@ -67,6 +69,25 @@ const GenerationHistoire = () => {
     setProgress(80);
   };
 
+  // Ajout d'un bouton pour voir l'aperçu du livre
+  const previewBookButton = () => {
+    if (storyPreview && progress === 100) {
+      return (
+        <div className="mt-8 text-center">
+          <Link to="/offres-cadeaux">
+            <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+              Voir l'aperçu du livre complet
+            </Button>
+          </Link>
+          <p className="text-sm text-gray-500 mt-2">
+            Visualise ton histoire avec illustrations page par page
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
       <Header />
@@ -108,6 +129,8 @@ const GenerationHistoire = () => {
               onShare={handleShare}
               onReset={resetStory}
             />
+            
+            {previewBookButton()}
           </div>
         </div>
         

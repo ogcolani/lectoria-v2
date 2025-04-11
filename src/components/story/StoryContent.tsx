@@ -1,8 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { RefreshCwIcon, BookOpenIcon } from 'lucide-react';
+import { RefreshCwIcon, BookOpenIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import StoryIllustration from '../StoryIllustration';
 
 interface StoryContentProps {
@@ -16,41 +16,81 @@ const StoryContent: React.FC<StoryContentProps> = ({
   isGenerating,
   illustrationUrl,
 }) => {
-  // Function to limit the preview to only 3 paragraphs
-  const getLimitedPreview = (text: string) => {
+  const [currentPage, setCurrentPage] = useState(0);
+  
+  // Function to parse the story into pages
+  const parseStoryIntoPages = (text: string) => {
+    if (!text) return [];
+    
     // Get all paragraphs
-    const paragraphs = text.split('\n');
+    const paragraphs = text.split('\n').filter(p => p.trim() !== '');
     
-    // Get non-empty paragraphs
-    const nonEmptyParagraphs = paragraphs.filter(p => p.trim() !== '');
+    // Create pages with ~3 paragraphs per page
+    const pages = [];
+    let currentPageContent = [];
+    let titleFound = false;
     
-    // Take the title + first 3 paragraphs
-    let limitedParagraphs = [];
-    
-    // Always include the title if it exists (starts with #)
+    // Find the title first
     const titleIndex = paragraphs.findIndex(p => p.startsWith('# '));
+    let title = "L'histoire";
+    
     if (titleIndex !== -1) {
-      limitedParagraphs.push(paragraphs[titleIndex]);
+      title = paragraphs[titleIndex].substring(2);
+      titleFound = true;
     }
     
-    // Find the first 3 non-empty paragraphs that aren't the title
-    const contentParagraphs = paragraphs.filter(p => !p.startsWith('# ') && p.trim() !== '');
-    const selected = contentParagraphs.slice(0, 3);
-    limitedParagraphs = limitedParagraphs.concat(selected);
+    // First page is title and first paragraph
+    pages.push({
+      title: title,
+      content: titleFound ? [paragraphs[titleIndex + 1]] : [paragraphs[0]],
+      isTitle: true
+    });
     
-    // Add a note that there's more to the story
-    limitedParagraphs.push('');
-    limitedParagraphs.push('[Suite de l\'histoire disponible après achat...]');
+    // Create remaining pages with ~2-3 paragraphs per page
+    const startIndex = titleFound ? titleIndex + 2 : 1;
+    for (let i = startIndex; i < paragraphs.length; i++) {
+      // Skip special markers
+      if (paragraphs[i].startsWith('[Suite') || paragraphs[i].startsWith('⭐')) {
+        continue;
+      }
+      
+      currentPageContent.push(paragraphs[i]);
+      
+      if (currentPageContent.length >= 2 || i === paragraphs.length - 1) {
+        pages.push({
+          title: title,
+          content: [...currentPageContent],
+          isTitle: false
+        });
+        currentPageContent = [];
+      }
+    }
     
-    return limitedParagraphs.join('\n');
+    // Add a final page with "Suite de l'histoire" message
+    pages.push({
+      title: "Obtenir l'histoire complète",
+      content: ["Suite de l'histoire disponible après achat..."],
+      isTitle: false,
+      isFinal: true
+    });
+    
+    return pages;
   };
 
-  // Extract story title for the illustration alt text
-  const getStoryTitle = () => {
-    if (!storyPreview) return "Illustration de l'histoire";
-    
-    const titleLine = storyPreview.split('\n').find(line => line.startsWith('# '));
-    return titleLine ? titleLine.substring(2) : "Illustration de l'histoire";
+  // Get parsed pages
+  const pages = parseStoryIntoPages(storyPreview);
+  
+  // Handle page navigation
+  const goToNextPage = () => {
+    if (currentPage < pages.length - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  
+  const goToPrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   if (isGenerating) {
@@ -67,43 +107,95 @@ const StoryContent: React.FC<StoryContentProps> = ({
     );
   }
   
-  if (storyPreview) {
+  if (storyPreview && pages.length > 0) {
+    const currentPageData = pages[currentPage];
+    
     return (
-      <div>
-        {/* Display the story illustration */}
-        <StoryIllustration 
-          imageUrl={illustrationUrl} 
-          isGenerating={isGenerating} 
-          altText={getStoryTitle()}
-        />
+      <div className="flex flex-col h-full">
+        {/* Page count and navigation */}
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-sm text-gray-500">
+            Page {currentPage + 1} sur {pages.length}
+          </span>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={goToPrevPage}
+              disabled={currentPage === 0}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={goToNextPage}
+              disabled={currentPage === pages.length - 1}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
         
-        <div className="prose prose-purple max-w-none">
-          {getLimitedPreview(storyPreview).split('\n').map((paragraph, index) => (
-            paragraph.startsWith('# ') ? (
-              <h2 key={index} className="text-2xl font-bold text-purple-800 mb-4">
-                {paragraph.substring(2)}
+        {/* Page content */}
+        <div className="flex-1">
+          {/* Display the story illustration */}
+          {!currentPageData.isFinal && (
+            <StoryIllustration 
+              imageUrl={illustrationUrl} 
+              isGenerating={isGenerating} 
+              altText={currentPageData.title}
+            />
+          )}
+          
+          <div className="prose prose-purple max-w-none mt-4">
+            {currentPageData.isTitle && (
+              <h2 className="text-2xl font-bold text-purple-800 mb-4">
+                {currentPageData.title}
               </h2>
-            ) : paragraph === '' ? (
-              <br key={index} />
-            ) : paragraph.startsWith('⭐') ? (
-              <div key={index} className="my-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg border border-purple-200">
-                <p className="text-purple-800 font-medium text-lg">{paragraph}</p>
-              </div>
-            ) : paragraph.startsWith('[Suite') ? (
-              <div key={index} className="my-6">
-                <p className="text-gray-500 italic">{paragraph}</p>
-                <div className="mt-8 flex justify-center">
-                  <Link to="/offres-cadeaux">
-                    <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                      Obtenir l'histoire complète
-                    </Button>
-                  </Link>
+            )}
+            
+            {currentPageData.content.map((paragraph, idx) => (
+              paragraph.startsWith('⭐') ? (
+                <div key={idx} className="my-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg border border-purple-200">
+                  <p className="text-purple-800 font-medium text-lg">{paragraph}</p>
                 </div>
-              </div>
-            ) : (
-              <p key={index} className="mb-4">{paragraph}</p>
-            )
-          ))}
+              ) : paragraph.includes('Suite de l\'histoire') ? (
+                <div key={idx} className="my-6">
+                  <p className="text-gray-500 italic">{paragraph}</p>
+                  <div className="mt-8 flex justify-center">
+                    <Link to="/offres-cadeaux">
+                      <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                        Obtenir l'histoire complète
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <p key={idx} className="mb-4">{paragraph}</p>
+              )
+            ))}
+          </div>
+        </div>
+        
+        {/* Page navigation for mobile - bottom */}
+        <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={goToPrevPage}
+            disabled={currentPage === 0}
+          >
+            <ChevronLeft className="h-4 w-4 mr-1" /> Précédent
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={goToNextPage}
+            disabled={currentPage === pages.length - 1}
+          >
+            Suivant <ChevronRight className="h-4 w-4 ml-1" />
+          </Button>
         </div>
       </div>
     );
