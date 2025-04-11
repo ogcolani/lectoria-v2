@@ -17,11 +17,13 @@ const GenerationHistoire = () => {
   const [storyPreview, setStoryPreview] = useState('');
   const [prompt, setPrompt] = useState('');
   const [pageCount, setPageCount] = useState(24);
+  const [illustrationUrl, setIllustrationUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Fonction qui génère une histoire par l'IA Mistral
   const generateStory = async () => {
     setIsGenerating(true);
+    setIllustrationUrl(null);
     
     try {
       // Dans une vraie application, cette valeur serait récupérée d'un état global ou localStorage
@@ -31,11 +33,12 @@ const GenerationHistoire = () => {
       
       setFullStory(result.fullStory);
       setStoryPreview(result.storyPreview);
+      setIllustrationUrl(result.illustrationUrl);
       setProgress(100);
       
       toast({
         title: "Histoire générée !",
-        description: "Ton histoire personnalisée est prête. Découvre un aperçu et commande le livre complet !",
+        description: "Ton histoire personnalisée est prête avec une illustration unique. Découvre un aperçu et commande le livre complet !",
       });
     } catch (error) {
       toast({
@@ -60,6 +63,7 @@ const GenerationHistoire = () => {
   const resetStory = () => {
     setStoryPreview('');
     setFullStory('');
+    setIllustrationUrl(null);
     setProgress(80);
   };
 
@@ -100,6 +104,7 @@ const GenerationHistoire = () => {
               isGenerating={isGenerating}
               pageCount={pageCount}
               childAge={6} // Cette valeur serait récupérée d'un état global dans une vraie application
+              illustrationUrl={illustrationUrl}
               onShare={handleShare}
               onReset={resetStory}
             />

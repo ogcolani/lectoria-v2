@@ -1,4 +1,6 @@
 
+import { generateIllustration } from './illustrationService';
+
 export const generateStoryService = async (prompt: string, pageCount: number, childAge: number = 6) => {
   // Simuler un délai de génération
   await new Promise(resolve => setTimeout(resolve, 3000));
@@ -50,9 +52,14 @@ ${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour
 [Suite de l'histoire disponible après achat...]
 
 Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`;
+
+  // Générer l'illustration pour l'histoire
+  const illustrationPrompt = "Une illustration magique d'un jeune héros trouvant un livre mystérieux dans une forêt enchantée avec une lumière brillante";
+  const illustrationUrl = await generateIllustration(illustrationPrompt);
   
   return {
     fullStory: generatedFullStory,
-    storyPreview: generatedPreview
+    storyPreview: generatedPreview,
+    illustrationUrl: illustrationUrl
   };
 };

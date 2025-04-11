@@ -5,12 +5,14 @@ import { Link } from 'react-router-dom';
 import { Share, Eye, RefreshCwIcon, BookOpenIcon, ChevronLeft } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import StoryIllustration from './StoryIllustration';
 
 interface StoryPreviewProps {
   storyPreview: string;
   isGenerating: boolean;
   pageCount: number;
   childAge?: number;
+  illustrationUrl: string | null;
   onShare: () => void;
   onReset: () => void;
 }
@@ -20,6 +22,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
   isGenerating,
   pageCount,
   childAge = 6,
+  illustrationUrl,
   onShare,
   onReset,
 }) => {
@@ -50,6 +53,14 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
     limitedParagraphs.push('[Suite de l\'histoire disponible après achat...]');
     
     return limitedParagraphs.join('\n');
+  };
+
+  // Extract story title for the illustration alt text
+  const getStoryTitle = () => {
+    if (!storyPreview) return "Illustration de l'histoire";
+    
+    const titleLine = storyPreview.split('\n').find(line => line.startsWith('# '));
+    return titleLine ? titleLine.substring(2) : "Illustration de l'histoire";
   };
 
   return (
@@ -112,6 +123,10 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
                     <span className="font-medium">Histoire complète:</span>
                     <Badge variant="secondary">Disponible à l'achat</Badge>
                   </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Illustrations:</span>
+                    <Badge variant="secondary">Stable Diffusion XL</Badge>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -131,33 +146,42 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
             </p>
           </div>
         ) : storyPreview ? (
-          <div className="prose prose-purple max-w-none">
-            {getLimitedPreview(storyPreview).split('\n').map((paragraph, index) => (
-              paragraph.startsWith('# ') ? (
-                <h2 key={index} className="text-2xl font-bold text-purple-800 mb-4">
-                  {paragraph.substring(2)}
-                </h2>
-              ) : paragraph === '' ? (
-                <br key={index} />
-              ) : paragraph.startsWith('⭐') ? (
-                <div key={index} className="my-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg border border-purple-200">
-                  <p className="text-purple-800 font-medium text-lg">{paragraph}</p>
-                </div>
-              ) : paragraph.startsWith('[Suite') ? (
-                <div key={index} className="my-6">
-                  <p className="text-gray-500 italic">{paragraph}</p>
-                  <div className="mt-8 flex justify-center">
-                    <Link to="/offres-cadeaux">
-                      <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                        Obtenir l'histoire complète
-                      </Button>
-                    </Link>
+          <div>
+            {/* Display the story illustration */}
+            <StoryIllustration 
+              imageUrl={illustrationUrl} 
+              isGenerating={isGenerating} 
+              altText={getStoryTitle()}
+            />
+            
+            <div className="prose prose-purple max-w-none">
+              {getLimitedPreview(storyPreview).split('\n').map((paragraph, index) => (
+                paragraph.startsWith('# ') ? (
+                  <h2 key={index} className="text-2xl font-bold text-purple-800 mb-4">
+                    {paragraph.substring(2)}
+                  </h2>
+                ) : paragraph === '' ? (
+                  <br key={index} />
+                ) : paragraph.startsWith('⭐') ? (
+                  <div key={index} className="my-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg border border-purple-200">
+                    <p className="text-purple-800 font-medium text-lg">{paragraph}</p>
                   </div>
-                </div>
-              ) : (
-                <p key={index} className="mb-4">{paragraph}</p>
-              )
-            ))}
+                ) : paragraph.startsWith('[Suite') ? (
+                  <div key={index} className="my-6">
+                    <p className="text-gray-500 italic">{paragraph}</p>
+                    <div className="mt-8 flex justify-center">
+                      <Link to="/offres-cadeaux">
+                        <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                          Obtenir l'histoire complète
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <p key={index} className="mb-4">{paragraph}</p>
+                )
+              ))}
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-full">
