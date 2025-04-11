@@ -63,8 +63,8 @@ const StoryElements = () => {
             </h2>
             
             <div className="space-y-8">
-              <ValuesSection values={values} onValuesChange={setValues} />
-              <ElementsSection elements={elements} onElementsChange={setElements} />
+              <ValuesSection selectedValues={values} setSelectedValues={setValues} />
+              <ElementsSection selectedElements={elements} setSelectedElements={setElements} />
             </div>
             
             <NavigationButtons />

@@ -6,6 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
+export interface ValueItem {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
 interface ValuesSectionProps {
   selectedValues: string[];
   setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>;
