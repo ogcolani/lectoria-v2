@@ -1,15 +1,9 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import CartoonCharacter from '@/components/CartoonCharacter';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { 
   Sparkles, 
@@ -56,23 +50,8 @@ const CreationLivre = () => {
           <Progress value={progress} className="h-2 bg-gray-200" />
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="lg:col-span-1 flex flex-col items-center justify-center bg-purple-100 rounded-2xl p-6 order-2 lg:order-1">
-            <div className="mb-4 text-center">
-              <h3 className="text-xl font-bold mb-2">Ton personnage</h3>
-              <p className="text-sm text-gray-600">Tu deviendras le héros de cette aventure !</p>
-            </div>
-            <div className="w-full max-w-[220px]">
-              <CartoonCharacter />
-            </div>
-            <div className="mt-4 w-full">
-              <p className="text-center text-purple-800 font-medium">
-                {storyType ? `Prêt pour une histoire ${storyType} !` : "Choisis ton type d'histoire préféré !"}
-              </p>
-            </div>
-          </div>
-          
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 order-1 lg:order-2">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-6">
               Choisis ton type d'histoire
             </h2>
