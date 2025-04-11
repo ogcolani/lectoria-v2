@@ -1,5 +1,8 @@
+
 import React from 'react';
 import Button from './Button';
+import { Link } from 'react-router-dom';
+
 const HeroNew = () => {
   return <section className="w-full bg-gradient-to-b from-purple-50 via-white to-purple-50 pt-16 pb-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -16,9 +19,11 @@ const HeroNew = () => {
           </p>
           
           <div className="mt-8 mb-12 flex justify-center">
-            <Button size="lg" className="px-8 py-4">
-              Créer mon livre personnalisé
-            </Button>
+            <Link to="/creation-livre">
+              <Button size="lg" className="px-8 py-4">
+                Créer mon livre personnalisé
+              </Button>
+            </Link>
           </div>
           
           
