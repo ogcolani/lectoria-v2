@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -13,6 +14,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } fr
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import CharacterTraitBadge from '@/components/ui/character-trait-badge';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -40,6 +42,21 @@ const PersonnalisationHero = () => {
     // Ici vous pourriez stocker les données dans un contexte global ou localStorage
     // pour les utiliser dans les étapes suivantes
   };
+
+  // Function to split traits entered by the user
+  const getTraits = (): string[] => {
+    const traitsText = form.watch('heroTrait') || '';
+    if (!traitsText.trim()) return [];
+    
+    // Split by commas, spaces, or semicolons
+    return traitsText
+      .split(/[,;\s]+/)
+      .filter(trait => trait.trim() !== '')
+      .map(trait => trait.trim());
+  };
+
+  // Get the traits array
+  const traits = getTraits();
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
@@ -77,10 +94,11 @@ const PersonnalisationHero = () => {
               {form.watch('heroAge') && (
                 <p className="mt-2 text-sm font-medium">Âge: {form.watch('heroAge')} ans</p>
               )}
-              {form.watch('heroTrait') && (
-                <div className="mt-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full inline-block text-xs font-medium">
-                  <Heart className="inline-block w-3 h-3 mr-1" /> 
-                  {form.watch('heroTrait')}
+              {traits.length > 0 && (
+                <div className="mt-2 flex flex-wrap">
+                  {traits.map((trait, index) => (
+                    <CharacterTraitBadge key={index} trait={trait} />
+                  ))}
                 </div>
               )}
             </div>
@@ -152,12 +170,12 @@ const PersonnalisationHero = () => {
                   name="heroTrait"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Trait de caractère principal</FormLabel>
+                      <FormLabel>Traits de caractère principaux</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ex: Courageux, Curieux, Créatif..." {...field} />
+                        <Input placeholder="Ex: Courageux, Curieux, Créatif... (séparés par des virgules)" {...field} />
                       </FormControl>
                       <FormDescription>
-                        Ce trait sera mis en avant dans l'histoire
+                        Ces traits seront mis en avant dans l'histoire
                       </FormDescription>
                     </FormItem>
                   )}
