@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronRight, ChevronLeft, User, Heart, Wand2, Palette } from 'lucide-react';
+import { ChevronRight, ChevronLeft, User, Heart, Wand2, Palette, Male, Female } from 'lucide-react';
 import CartoonCharacter from '@/components/CartoonCharacter';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -15,12 +15,18 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import CharacterTraitBadge from '@/components/ui/character-trait-badge';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import ProgressSection from '@/components/story-elements/ProgressSection';
+import NavigationButtons from '@/components/story-elements/NavigationButtons';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
   heroAge: z.string().min(1, { message: "L'âge est requis" }),
   heroDescription: z.string().optional(),
   heroTrait: z.string().optional(),
+  heroGender: z.enum(["garçon", "fille"], {
+    required_error: "Sélectionne le genre de ton héros",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -38,6 +44,7 @@ const PersonnalisationHero = () => {
       heroAge: '',
       heroDescription: '',
       heroTrait: '',
+      heroGender: undefined,
     }
   });
   
@@ -86,13 +93,7 @@ const PersonnalisationHero = () => {
           </span>
         </h1>
         
-        <div className="mb-10 max-w-xl mx-auto">
-          <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
-            <span>Étape 2 sur 5</span>
-            <span>{progress}% complété</span>
-          </div>
-          <Progress value={progress} className="h-2 bg-gray-200" />
-        </div>
+        <ProgressSection progress={progress} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <div className="lg:col-span-1 flex flex-col items-center justify-start bg-purple-100 rounded-2xl p-6 order-2 lg:order-1">
@@ -110,6 +111,11 @@ const PersonnalisationHero = () => {
               </p>
               {form.watch('heroAge') && (
                 <p className="mt-2 text-sm font-medium">Âge: {form.watch('heroAge')} ans</p>
+              )}
+              {form.watch('heroGender') && (
+                <p className="mt-2 text-sm font-medium">
+                  Genre: {form.watch('heroGender') === 'garçon' ? 'Garçon' : 'Fille'}
+                </p>
               )}
               {traits.length > 0 && (
                 <div className="mt-2 flex flex-wrap">
@@ -161,6 +167,41 @@ const PersonnalisationHero = () => {
                     )}
                   />
                 </div>
+                
+                <FormField
+                  control={form.control}
+                  name="heroGender"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Genre du héros</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex gap-6"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="garçon" id="garçon" />
+                            <label htmlFor="garçon" className="flex items-center gap-1 cursor-pointer text-sm font-medium">
+                              <Male className="h-5 w-5 text-blue-500" />
+                              Garçon
+                            </label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="fille" id="fille" />
+                            <label htmlFor="fille" className="flex items-center gap-1 cursor-pointer text-sm font-medium">
+                              <Female className="h-5 w-5 text-pink-500" />
+                              Fille
+                            </label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormDescription>
+                        Le genre de ton personnage principal dans l'histoire
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
                 
                 <FormField
                   control={form.control}
@@ -236,21 +277,7 @@ const PersonnalisationHero = () => {
                   </Card>
                 </div>
                   
-                <div className="flex justify-between items-center pt-4 border-t mt-8">
-                  <Link to="/creation-livre">
-                    <Button variant="outline" type="button">
-                      <ChevronLeft className="mr-2 h-4 w-4" /> Retour
-                    </Button>
-                  </Link>
-                  <Link to="/story-elements">
-                    <Button 
-                      type="button"
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                    >
-                      Continuer <ChevronRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </div>
+                <NavigationButtons />
               </form>
             </Form>
           </div>
@@ -261,6 +288,9 @@ const PersonnalisationHero = () => {
           <ol className="list-decimal list-inside space-y-3 ml-4">
             <li className="text-gray-700">
               <span className="font-medium">Définis l'identité</span> : Donne un prénom et un âge à ton personnage principal.
+            </li>
+            <li className="text-gray-700">
+              <span className="font-medium">Choisis le genre</span> : Indique si ton héros est un garçon ou une fille.
             </li>
             <li className="text-gray-700">
               <span className="font-medium">Ajoute une description</span> : Mentionne ce que ton héros aime faire, ses loisirs ou ses rêves.
