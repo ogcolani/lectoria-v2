@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { RefreshCwIcon, BookOpenIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import StoryIllustration from '../StoryIllustration';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface StoryContentProps {
   storyPreview: string;
@@ -18,16 +19,15 @@ const StoryContent: React.FC<StoryContentProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   
-  // Function to parse the story into pages
+  // Function to parse the story into pages with less text
   const parseStoryIntoPages = (text: string) => {
     if (!text) return [];
     
     // Get all paragraphs
     const paragraphs = text.split('\n').filter(p => p.trim() !== '');
     
-    // Create pages with ~3 paragraphs per page
+    // Create pages with fewer paragraphs per page for a cleaner layout
     const pages = [];
-    let currentPageContent = [];
     let titleFound = false;
     
     // Find the title first
@@ -39,30 +39,36 @@ const StoryContent: React.FC<StoryContentProps> = ({
       titleFound = true;
     }
     
-    // First page is title and first paragraph
+    // First page is title only
     pages.push({
       title: title,
-      content: titleFound ? [paragraphs[titleIndex + 1]] : [paragraphs[0]],
+      content: [],
       isTitle: true
     });
     
-    // Create remaining pages with ~2-3 paragraphs per page
-    const startIndex = titleFound ? titleIndex + 2 : 1;
+    // Create remaining pages with just 1 paragraph per page for cleaner preview
+    const startIndex = titleFound ? titleIndex + 1 : 0;
     for (let i = startIndex; i < paragraphs.length; i++) {
       // Skip special markers
       if (paragraphs[i].startsWith('[Suite') || paragraphs[i].startsWith('⭐')) {
         continue;
       }
       
-      currentPageContent.push(paragraphs[i]);
+      // Limit paragraph length for preview
+      let paragraph = paragraphs[i];
+      if (paragraph.length > 200) {
+        paragraph = paragraph.substring(0, 200) + '...';
+      }
       
-      if (currentPageContent.length >= 2 || i === paragraphs.length - 1) {
-        pages.push({
-          title: title,
-          content: [...currentPageContent],
-          isTitle: false
-        });
-        currentPageContent = [];
+      pages.push({
+        title: title,
+        content: [paragraph],
+        isTitle: false
+      });
+      
+      // Limit to 5 content pages for the preview
+      if (pages.length >= 6) {
+        break;
       }
     }
     
@@ -137,46 +143,53 @@ const StoryContent: React.FC<StoryContentProps> = ({
           </div>
         </div>
         
-        {/* Page content */}
-        <div className="flex-1">
-          {/* Display the story illustration */}
-          {!currentPageData.isFinal && (
-            <StoryIllustration 
-              imageUrl={illustrationUrl} 
-              isGenerating={isGenerating} 
-              altText={currentPageData.title}
-            />
-          )}
-          
-          <div className="prose prose-purple max-w-none mt-4">
-            {currentPageData.isTitle && (
-              <h2 className="text-2xl font-bold text-purple-800 mb-4">
-                {currentPageData.title}
-              </h2>
-            )}
-            
-            {currentPageData.content.map((paragraph, idx) => (
-              paragraph.startsWith('⭐') ? (
-                <div key={idx} className="my-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg border border-purple-200">
-                  <p className="text-purple-800 font-medium text-lg">{paragraph}</p>
+        {/* Book-like layout */}
+        <Card className="flex-1 overflow-hidden border-0 shadow-lg bg-white">
+          <CardContent className="p-0 h-full flex flex-col">
+            {currentPageData.isTitle ? (
+              <div className="bg-gradient-to-r from-purple-100 to-pink-50 h-full flex flex-col items-center justify-center p-8 text-center">
+                <h2 className="text-3xl font-bold text-purple-800 mb-6">
+                  {currentPageData.title}
+                </h2>
+                <p className="text-purple-600 italic">Une histoire magique attend...</p>
+              </div>
+            ) : currentPageData.isFinal ? (
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 h-full flex flex-col items-center justify-center p-8 text-center">
+                <h3 className="text-xl font-bold text-purple-800 mb-4">
+                  {currentPageData.title}
+                </h3>
+                <p className="text-gray-500 italic mb-6">{currentPageData.content[0]}</p>
+                <Link to="/offres-cadeaux">
+                  <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                    Obtenir l'histoire complète
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="h-full flex flex-col md:flex-row">
+                {/* Illustration */}
+                <div className="w-full md:w-1/2 h-48 md:h-auto">
+                  <StoryIllustration 
+                    imageUrl={illustrationUrl} 
+                    isGenerating={isGenerating} 
+                    altText={currentPageData.title}
+                  />
                 </div>
-              ) : paragraph.includes('Suite de l\'histoire') ? (
-                <div key={idx} className="my-6">
-                  <p className="text-gray-500 italic">{paragraph}</p>
-                  <div className="mt-8 flex justify-center">
-                    <Link to="/offres-cadeaux">
-                      <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                        Obtenir l'histoire complète
-                      </Button>
-                    </Link>
+                
+                {/* Text content */}
+                <div className="w-full md:w-1/2 p-6 flex flex-col justify-center">
+                  <div className="prose prose-purple max-w-none">
+                    {currentPageData.content.map((paragraph, idx) => (
+                      <p key={idx} className="mb-4 text-gray-700 leading-relaxed">
+                        {paragraph}
+                      </p>
+                    ))}
                   </div>
                 </div>
-              ) : (
-                <p key={idx} className="mb-4">{paragraph}</p>
-              )
-            ))}
-          </div>
-        </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
         
         {/* Page navigation for mobile - bottom */}
         <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
