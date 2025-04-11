@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Share, RefreshCwIcon, ChevronLeft } from 'lucide-react';
+import { Share, RefreshCwIcon, ChevronLeft, ArrowLeft } from 'lucide-react';
 import StoryInfoDialog from './StoryInfoDialog';
 
 interface StoryActionsProps {
@@ -24,19 +24,34 @@ const StoryActions: React.FC<StoryActionsProps> = ({
   onShare,
   onReset,
 }) => {
-  if (position === 'top' && showShare && storyPreview) {
+  if (position === 'top') {
     return (
       <div className="flex space-x-2">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={onShare}
-        >
-          <Share className="h-4 w-4 mr-1" />
-          Partager
-        </Button>
+        <Link to="/story-elements">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Étapes précédentes
+          </Button>
+        </Link>
         
-        <StoryInfoDialog pageCount={pageCount} childAge={childAge} />
+        {showShare && storyPreview && (
+          <>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={onShare}
+            >
+              <Share className="h-4 w-4 mr-1" />
+              Partager
+            </Button>
+            
+            <StoryInfoDialog pageCount={pageCount} childAge={childAge} />
+          </>
+        )}
       </div>
     );
   }
