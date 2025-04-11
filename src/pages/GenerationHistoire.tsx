@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -21,8 +20,7 @@ const GenerationHistoire = () => {
   const [fullStory, setFullStory] = useState('');
   const [storyPreview, setStoryPreview] = useState('');
   const [prompt, setPrompt] = useState('');
-  const [childAge, setChildAge] = useState(6);
-  const [pageCount, setPageCount] = useState(40);
+  const [pageCount, setPageCount] = useState(24);
   const [previewOpen, setPreviewOpen] = useState(false);
   const { toast } = useToast();
 
@@ -35,7 +33,10 @@ const GenerationHistoire = () => {
       // Pour l'instant, nous simulons un délai et retournons une histoire générée statiquement
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // Générer une histoire complète basée sur les informations et l'âge de l'enfant
+      // Récupérer l'âge de l'enfant depuis un contexte global ou localStorage
+      // Pour cet exemple, nous utilisons une valeur par défaut
+      const childAge = 6; // Valeur par défaut ou récupérée du contexte
+      
       const vocabularyLevel = childAge <= 5 ? 'très simple' : 
                               childAge <= 8 ? 'simple' : 
                               childAge <= 12 ? 'intermédiaire' : 'avancé';
@@ -142,31 +143,12 @@ Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour le
               
               <div className="space-y-6">
                 <div>
-                  <Label htmlFor="childAge" className="text-base font-medium">
-                    Âge de l'enfant: {childAge} ans
-                  </Label>
-                  <Slider
-                    id="childAge"
-                    min={3}
-                    max={14}
-                    step={1}
-                    value={[childAge]}
-                    onValueChange={(value) => setChildAge(value[0])}
-                    className="mt-2"
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>3 ans</span>
-                    <span>14 ans</span>
-                  </div>
-                </div>
-                
-                <div>
                   <Label htmlFor="pageCount" className="text-base font-medium">
                     Nombre de pages: {pageCount}
                   </Label>
                   <Slider
                     id="pageCount"
-                    min={20}
+                    min={24}
                     max={60}
                     step={5}
                     value={[pageCount]}
@@ -174,7 +156,7 @@ Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour le
                     className="mt-2"
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>20 pages</span>
+                    <span>24 pages</span>
                     <span>60 pages</span>
                   </div>
                 </div>
@@ -225,7 +207,7 @@ Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour le
                 </h2>
                 {storyPreview && (
                   <p className="text-gray-500 text-sm mt-1">
-                    Histoire complète: {pageCount} pages, adapté aux {childAge} ans
+                    Histoire complète: {pageCount} pages, adapté aux {6} ans
                   </p>
                 )}
               </div>
@@ -262,14 +244,14 @@ Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour le
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="font-medium">Âge recommandé:</span>
-                          <Badge variant="outline">{childAge} ans</Badge>
+                          <Badge variant="outline">{6} ans</Badge>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="font-medium">Niveau de vocabulaire:</span>
                           <Badge variant="outline">
-                            {childAge <= 5 ? 'Très simple' : 
-                             childAge <= 8 ? 'Simple' : 
-                             childAge <= 12 ? 'Intermédiaire' : 'Avancé'}
+                            {6 <= 5 ? 'Très simple' : 
+                             6 <= 8 ? 'Simple' : 
+                             6 <= 12 ? 'Intermédiaire' : 'Avancé'}
                           </Badge>
                         </div>
                         <div className="flex justify-between items-center">
