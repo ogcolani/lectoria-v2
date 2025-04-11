@@ -52,11 +52,19 @@ const PersonnalisationHero = () => {
     const traitsText = form.watch('heroTrait') || '';
     if (!traitsText.trim()) return [];
     
+    // List of common French connecting words and articles to filter out
+    const connectingWords = ['et', 'ou', 'avec', 'sans', 'le', 'la', 'les', 'un', 'une', 'des', 'ce', 'cette', 'ces', 'mon', 'ma', 'mes', 'ton', 'ta', 'tes', 'son', 'sa', 'ses', 'notre', 'nos', 'votre', 'vos', 'leur', 'leurs', 'de', 'du', 'à', 'au', 'aux'];
+    
     // Split by commas, spaces, or semicolons
     return traitsText
       .split(/[,;\s]+/)
-      .filter(trait => trait.trim() !== '')
-      .map(trait => trait.trim());
+      .map(trait => trait.trim().toLowerCase())
+      .filter(trait => 
+        trait !== '' && 
+        !connectingWords.includes(trait) &&
+        trait.length > 1 // Only include words longer than 1 character
+      )
+      .map(trait => trait.charAt(0).toUpperCase() + trait.slice(1)); // Capitalize first letter
   };
 
   // Get the traits array
