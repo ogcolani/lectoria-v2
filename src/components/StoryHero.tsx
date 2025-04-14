@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import Character3D from './3d/Character3D';
+import { useToast } from '@/components/ui/use-toast';
 
 interface StoryHeroProps {
   gender?: 'garçon' | 'fille';
@@ -13,19 +14,27 @@ const StoryHero: React.FC<StoryHeroProps> = ({
   hasGlasses = false,
   use3D = true 
 }) => {
-  // Si le rendu 3D ne fonctionne pas, on a une solution de repli avec les images 2D
+  // Toast pour notifier des erreurs éventuelles
+  const { toast } = useToast();
+  
+  // État pour suivre si on doit utiliser l'image 2D au lieu du 3D
   const [fallbackTo2D, setFallbackTo2D] = useState(false);
   
-  // Images 2D de secours
+  // Images 2D de secours (upload de l'image fournie pour 'garçon')
   const heroImage = gender === 'fille' 
-    ? "/lovable-uploads/c39cb5d5-3715-4928-a188-d8c36abcf531.png" 
-    : "/lovable-uploads/42d2ab14-7e86-4008-9f16-3a830a09c095.png";
+    ? "/lovable-uploads/c39cb5d5-3715-4928-a188-d8c36abcf531.png" // Garder l'image de fille existante 
+    : "/lovable-uploads/1bf9c8d5-7083-47c4-ba3f-8b73bd96e07c.png"; // Utiliser l'image téléchargée
   
   const altText = gender === 'fille' ? "Héroïne de l'histoire" : "Héros de l'histoire";
   
   // Gérer les erreurs potentielles du rendu 3D
   const handleRenderError = () => {
     console.error("Erreur lors du rendu 3D, utilisation de l'image 2D à la place");
+    toast({
+      title: "Problème d'affichage 3D",
+      description: "Nous utilisons une image 2D en remplacement.",
+      variant: "destructive",
+    });
     setFallbackTo2D(true);
   };
 
