@@ -13,7 +13,8 @@ export const generateIllustration = async (prompt: string): Promise<string> => {
     'https://images.unsplash.com/photo-1500375592092-40eb2168fd21', // désert
     'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843', // livre magique
     'https://images.unsplash.com/photo-1517022812141-23620dba5c23', // cristaux lumineux
-    'https://images.unsplash.com/photo-1582562124811-c09040d0a901'  // héros en aventure
+    'https://images.unsplash.com/photo-1582562124811-c09040d0a901',  // héros en aventure
+    'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a'   // ciel nocturne avec étoiles
   ];
   
   // Sélection d'image basée sur le prompt
@@ -32,6 +33,8 @@ export const generateIllustration = async (prompt: string): Promise<string> => {
     imageIndex = 4;
   } else if (prompt.toLowerCase().includes('cristal')) {
     imageIndex = 5;
+  } else if (prompt.toLowerCase().includes('espace') || prompt.toLowerCase().includes('étoile') || prompt.toLowerCase().includes('etoile') || prompt.toLowerCase().includes('ciel nocturne')) {
+    imageIndex = 7; // nouvelle image pour le ciel nocturne
   } else {
     imageIndex = 6; // image par défaut du héros
   }

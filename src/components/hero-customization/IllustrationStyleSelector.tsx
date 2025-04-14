@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl } from '@/components/ui/for
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Control } from 'react-hook-form';
 import { Card } from '@/components/ui/card';
-import { Paintbrush, Palette, Image } from 'lucide-react';
+import { Paintbrush, Palette, Stars, BookImage } from 'lucide-react';
 import { z } from 'zod';
 
 // Style preview images from Unsplash (placeholders)
@@ -26,6 +26,12 @@ const styleImages = [
     name: 'Illustré',
     image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
     description: 'Illustrations détaillées et colorées'
+  },
+  {
+    id: 'style4',
+    name: 'Espace Fantastique',
+    image: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23',
+    description: 'Style Pixar avec ciel nocturne et ambiance magique'
   }
 ];
 
@@ -72,7 +78,7 @@ const IllustrationStyleSelector: React.FC<IllustrationStyleSelectorProps> = ({ c
               <RadioGroup
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
                 {styleImages.map((style) => (
                   <div key={style.id} className="relative">
@@ -101,7 +107,7 @@ const IllustrationStyleSelector: React.FC<IllustrationStyleSelectorProps> = ({ c
                       </div>
                       {field.value === style.id && (
                         <div className="absolute top-2 right-2 bg-purple-500 text-white p-1 rounded-full">
-                          <Paintbrush className="h-4 w-4" />
+                          {style.id === 'style4' ? <Stars className="h-4 w-4" /> : <Paintbrush className="h-4 w-4" />}
                         </div>
                       )}
                     </label>
