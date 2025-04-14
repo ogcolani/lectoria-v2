@@ -13,6 +13,7 @@ import BasicInfoFields from '@/components/hero-customization/BasicInfoFields';
 import AppearanceOptions from '@/components/hero-customization/AppearanceOptions';
 import CategoryTabs from '@/components/hero-customization/CategoryTabs';
 import HelpGuide from '@/components/hero-customization/HelpGuide';
+import IllustrationStyleSelector from '@/components/hero-customization/IllustrationStyleSelector';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -23,10 +24,11 @@ const formSchema = z.object({
     required_error: "Sélectionne le genre de ton héros",
   }),
   hasGlasses: z.boolean().default(false),
+  illustrationStyle: z.string().optional().default('style1')
 });
 
 type FormValues = z.infer<typeof formSchema>;
-type CategoryTab = 'personnage' | 'apparence' | 'pouvoirs';
+type CategoryTab = 'personnage' | 'apparence' | 'pouvoirs' | 'illustration';
 
 const PersonnalisationHero = () => {
   const [progress, setProgress] = useState(40);
@@ -41,6 +43,7 @@ const PersonnalisationHero = () => {
       heroTrait: '',
       heroGender: undefined,
       hasGlasses: false,
+      illustrationStyle: 'style1'
     }
   });
   
@@ -83,6 +86,8 @@ const PersonnalisationHero = () => {
     switch (activeTab) {
       case 'apparence':
         return <AppearanceOptions control={form.control} />;
+      case 'illustration':
+        return <IllustrationStyleSelector control={form.control} />;
       case 'pouvoirs':
         // For now, the powers tab is empty or could be implemented later
         return (
@@ -133,7 +138,13 @@ const PersonnalisationHero = () => {
 
                 <CategoryTabs 
                   activeTab={activeTab} 
-                  onTabChange={handleTabChange} 
+                  onTabChange={handleTabChange}
+                  tabs={[
+                    { id: 'personnage', label: 'Personnage' },
+                    { id: 'apparence', label: 'Apparence' },
+                    { id: 'illustration', label: 'Illustration' },
+                    { id: 'pouvoirs', label: 'Pouvoirs' }
+                  ]}
                 />
                   
                 <NavigationButtons />

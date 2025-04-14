@@ -21,6 +21,9 @@ const HelpGuide: React.FC = () => {
         <li className="text-gray-700">
           <span className="font-medium">Personnalise l'apparence</span> : Tu peux choisir si ton personnage porte des lunettes et voir en 3D comment il ressemble !
         </li>
+        <li className="text-gray-700">
+          <span className="font-medium">Choisis un style d'illustration</span> : Sélectionne le style qui sera utilisé pour illustrer ton histoire.
+        </li>
       </ol>
       <p className="mt-4 text-center text-purple-700 font-medium">Ton héros sera illustré dans le même style que l'histoire, parfait pour les enfants de 6 à 10 ans.</p>
     </div>
