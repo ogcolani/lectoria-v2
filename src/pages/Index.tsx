@@ -21,7 +21,6 @@ const Index = () => {
       <Header />
       <main>
         <HeroNew />
-        <LectoriaExplanation />
         <HowItWorks />
         <BookCreator />
         <Benefits />
@@ -30,6 +29,7 @@ const Index = () => {
         <ValuesSection />
         <Testimonials />
         <Pricing />
+        <LectoriaExplanation />
         <FAQ />
       </main>
       <Footer />
@@ -39,3 +39,4 @@ const Index = () => {
 };
 
 export default Index;
+
