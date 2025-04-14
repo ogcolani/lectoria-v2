@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { Star, BookOpen, PenTool, Truck } from 'lucide-react';
+
 const HowItWorks = () => {
   return <section id="how-it-works" className="py-16 bg-purple-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +17,7 @@ const HowItWorks = () => {
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">Imaginez son héros</h3>
-                <p className="text-gray-600">Entrez le prénom, l'âge, et les goûts de votre enfant</p>
+                <p className="text-gray-600">Décrivez-le en quelques mots.</p>
               </div>
             </div>
             
