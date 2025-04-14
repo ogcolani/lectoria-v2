@@ -131,10 +131,10 @@ const PersonnalisationHero = () => {
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {/* Style d'illustration en premier */}
-                <IllustrationStyleSelector control={form.control} />
-                
                 <BasicInfoFields control={form.control} />
+                
+                {/* Déplacé après les champs de base qui contiennent le genre */}
+                <IllustrationStyleSelector control={form.control} />
                 
                 {renderTabContent()}
 
