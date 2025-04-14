@@ -13,6 +13,7 @@ import BasicInfoFields from '@/components/hero-customization/BasicInfoFields';
 import AppearanceOptions from '@/components/hero-customization/AppearanceOptions';
 import CategoryTabs from '@/components/hero-customization/CategoryTabs';
 import HelpGuide from '@/components/hero-customization/HelpGuide';
+import IllustrationStyleSelector from '@/components/hero-customization/IllustrationStyleSelector';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -22,7 +23,8 @@ const formSchema = z.object({
   heroGender: z.enum(["garçon", "fille"], {
     required_error: "Sélectionne le genre de ton héros",
   }),
-  hasGlasses: z.boolean().default(false)
+  hasGlasses: z.boolean().default(false),
+  illustrationStyle: z.enum(["storybook", "fantasy", "comics"]).default("storybook")
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -40,7 +42,8 @@ const PersonnalisationHero = () => {
       heroDescription: '',
       heroTrait: '',
       heroGender: undefined,
-      hasGlasses: false
+      hasGlasses: false,
+      illustrationStyle: 'storybook'
     }
   });
   
@@ -118,6 +121,7 @@ const PersonnalisationHero = () => {
             heroGender={form.watch('heroGender')}
             hasGlasses={form.watch('hasGlasses')}
             traits={traits}
+            illustrationStyle={form.watch('illustrationStyle')}
           />
           
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 order-1 lg:order-2">
@@ -127,6 +131,9 @@ const PersonnalisationHero = () => {
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* Style d'illustration en premier */}
+                <IllustrationStyleSelector control={form.control} />
+                
                 <BasicInfoFields control={form.control} />
                 
                 {renderTabContent()}

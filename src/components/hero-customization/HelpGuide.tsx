@@ -7,6 +7,9 @@ const HelpGuide: React.FC = () => {
       <h3 className="text-xl font-bold mb-4 text-center">Comment personnaliser ton héros ?</h3>
       <ol className="list-decimal list-inside space-y-3 ml-4">
         <li className="text-gray-700">
+          <span className="font-medium">Choisis un style d'illustration</span> : Sélectionne le style artistique qui sera utilisé pour toutes les images de ton histoire.
+        </li>
+        <li className="text-gray-700">
           <span className="font-medium">Définis l'identité</span> : Donne un prénom et un âge à ton personnage principal.
         </li>
         <li className="text-gray-700">
@@ -19,7 +22,7 @@ const HelpGuide: React.FC = () => {
           <span className="font-medium">Choisis un trait de caractère</span> : Ce trait sera mis en avant dans l'histoire pour rendre ton héros unique.
         </li>
         <li className="text-gray-700">
-          <span className="font-medium">Personnalise l'apparence</span> : Tu peux choisir si ton personnage porte des lunettes et voir en 3D comment il ressemble !
+          <span className="font-medium">Personnalise l'apparence</span> : Tu peux choisir si ton personnage porte des lunettes et voir comment il ressemble selon le style d'illustration !
         </li>
       </ol>
       <p className="mt-4 text-center text-purple-700 font-medium">Ton héros sera illustré parfaitement pour les enfants de 6 à 10 ans.</p>

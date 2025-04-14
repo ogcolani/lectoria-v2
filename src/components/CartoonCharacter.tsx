@@ -2,7 +2,15 @@
 import React from 'react';
 import { Stars } from 'lucide-react';
 
-const CartoonCharacter = () => {
+interface CartoonCharacterProps {
+  gender?: 'garçon' | 'fille';
+  hasGlasses?: boolean;
+}
+
+const CartoonCharacter: React.FC<CartoonCharacterProps> = ({ 
+  gender = 'garçon',
+  hasGlasses = false 
+}) => {
   return (
     <div className="w-full h-64 relative bg-gradient-to-b from-[#1A1F2C] to-[#2E3A59] rounded-xl overflow-hidden">
       {/* Night Sky Background Elements */}
@@ -26,7 +34,7 @@ const CartoonCharacter = () => {
         <div className="absolute top-15 left-15 w-6 h-6 bg-[#7E69AB] rounded-full opacity-60"></div>
       </div>
       
-      {/* Character - Noah */}
+      {/* Character - Adapts to gender */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
         {/* Character Head */}
         <div className="relative w-20 h-20 bg-[#FFD3B4] rounded-full shadow-md">
@@ -38,6 +46,15 @@ const CartoonCharacter = () => {
             <div className="absolute w-2 h-2 bg-[#333] rounded-full left-1 top-1"></div>
           </div>
           
+          {/* Glasses if enabled */}
+          {hasGlasses && (
+            <>
+              <div className="absolute w-5 h-5 border-2 border-[#555] rounded-full left-3 top-6"></div>
+              <div className="absolute w-5 h-5 border-2 border-[#555] rounded-full right-3 top-6"></div>
+              <div className="absolute h-1 w-4 bg-[#555] left-[40%] top-6"></div>
+            </>
+          )}
+          
           {/* Smile - Wonder Expression */}
           <div className="absolute w-6 h-2 rounded-b-full border-b-2 border-[#333] left-1/2 -translate-x-1/2 top-12"></div>
           
@@ -45,10 +62,21 @@ const CartoonCharacter = () => {
           <div className="absolute w-3 h-2 bg-[#FFB6C1] rounded-full opacity-60 left-3 top-10"></div>
           <div className="absolute w-3 h-2 bg-[#FFB6C1] rounded-full opacity-60 right-3 top-10"></div>
           
-          {/* Hair */}
-          <div className="absolute -top-1 -left-1 -right-1 h-10 bg-[#8B4513] rounded-t-full"></div>
-          <div className="absolute -top-2 left-[40%] w-3 h-6 bg-[#8B4513] rounded-md transform rotate-[-20deg]"></div>
-          <div className="absolute -top-2 right-[40%] w-3 h-6 bg-[#8B4513] rounded-md transform rotate-[20deg]"></div>
+          {/* Hair - Different for boy/girl */}
+          {gender === 'garçon' ? (
+            <>
+              <div className="absolute -top-1 -left-1 -right-1 h-10 bg-[#8B4513] rounded-t-full"></div>
+              <div className="absolute -top-2 left-[40%] w-3 h-6 bg-[#8B4513] rounded-md transform rotate-[-20deg]"></div>
+              <div className="absolute -top-2 right-[40%] w-3 h-6 bg-[#8B4513] rounded-md transform rotate-[20deg]"></div>
+            </>
+          ) : (
+            <>
+              <div className="absolute -top-1 -left-1 -right-1 h-10 bg-[#E3875F] rounded-t-full"></div>
+              <div className="absolute -top-1 -left-3 h-15 w-5 bg-[#E3875F] rounded-md"></div>
+              <div className="absolute -top-1 -right-3 h-15 w-5 bg-[#E3875F] rounded-md"></div>
+              <div className="absolute -top-4 left-[30%] right-[30%] h-6 bg-[#E3875F] rounded-t-full"></div>
+            </>
+          )}
         </div>
         
         {/* Character Body - Blue Hoodie */}
@@ -90,6 +118,11 @@ const CartoonCharacter = () => {
       
       {/* Stars Icon for decoration */}
       <Stars className="absolute top-4 right-4 w-6 h-6 text-[#FFD700] animate-pulse" />
+      
+      {/* Style Label */}
+      <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+        <span className="text-xs text-gray-300 bg-black/40 px-2 py-1 rounded-t-md">Style Bande Dessinée</span>
+      </div>
     </div>
   );
 };

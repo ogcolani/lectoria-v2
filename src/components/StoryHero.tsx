@@ -2,17 +2,21 @@
 import React, { useState } from 'react';
 import Character3D from './3d/Character3D';
 import { useToast } from '@/components/ui/use-toast';
+import { IllustrationStyle } from './hero-customization/IllustrationStyleSelector';
+import CartoonCharacter from './CartoonCharacter';
 
 interface StoryHeroProps {
   gender?: 'garçon' | 'fille';
   hasGlasses?: boolean;
   use3D?: boolean;
+  illustrationStyle?: IllustrationStyle;
 }
 
 const StoryHero: React.FC<StoryHeroProps> = ({ 
   gender = 'garçon', 
   hasGlasses = false,
-  use3D = true 
+  use3D = true,
+  illustrationStyle = 'storybook'
 }) => {
   // Toast pour notifier des erreurs éventuelles
   const { toast } = useToast();
@@ -38,10 +42,31 @@ const StoryHero: React.FC<StoryHeroProps> = ({
     setFallbackTo2D(true);
   };
 
-  return (
-    <div className="w-full relative">
-      <div className="mx-auto rounded-2xl overflow-hidden">
-        {use3D && !fallbackTo2D ? (
+  // Déterminer quel type de rendu afficher selon le style choisi
+  const renderCharacter = () => {
+    if (illustrationStyle === 'comics') {
+      return <CartoonCharacter gender={gender} hasGlasses={hasGlasses} />;
+    } else if (illustrationStyle === 'fantasy') {
+      // Pour le style fantasy, on utilise une image statique pour l'exemple
+      return (
+        <div className="w-full h-full aspect-square bg-[#362C3E] relative rounded-xl overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#362C3E] to-[#715E92] opacity-80"></div>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <img 
+              src="/lovable-uploads/42d2ab14-7e86-4008-9f16-3a830a09c095.png"
+              alt={altText}
+              className="w-3/4 max-h-full object-contain mix-blend-lighten"
+            />
+            <div className="absolute bottom-0 left-0 right-0 flex justify-center p-3 bg-gradient-to-t from-[#362C3E] to-transparent">
+              <span className="text-xs text-purple-300 font-medium">Style Fantasy Semi-Réaliste</span>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      // Pour le style storybook (default), on utilise le rendu 3D
+      if (use3D && !fallbackTo2D) {
+        return (
           <div className="aspect-square">
             <Character3D 
               gender={gender} 
@@ -50,14 +75,24 @@ const StoryHero: React.FC<StoryHeroProps> = ({
               width="100%" 
             />
           </div>
-        ) : (
+        );
+      } else {
+        return (
           <img 
             src={heroImage} 
             alt={altText} 
             className="w-full object-cover" 
             onError={handleRenderError}
           />
-        )}
+        );
+      }
+    }
+  };
+
+  return (
+    <div className="w-full relative">
+      <div className="mx-auto rounded-2xl overflow-hidden">
+        {renderCharacter()}
       </div>
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-purple-100 to-transparent h-1/4 rounded-b-2xl"></div>
     </div>

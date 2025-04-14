@@ -1,39 +1,16 @@
 
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Control } from 'react-hook-form';
-import { Card } from '@/components/ui/card';
-import { Paintbrush, Palette, Stars, BookImage } from 'lucide-react';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { Paintbrush, BookOpen, Sparkles, CircleUser } from 'lucide-react';
 import { z } from 'zod';
-
-// Style preview images from Unsplash (placeholders)
-const styleImages = [
-  {
-    id: 'style1',
-    name: 'Aquarelle',
-    image: 'https://images.unsplash.com/photo-1500673922987-e212871fec22',
-    description: 'Style doux avec des couleurs aquarelle'
-  },
-  {
-    id: 'style2',
-    name: 'Cartoon',
-    image: 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843',
-    description: 'Style vif avec des personnages amusants'
-  },
-  {
-    id: 'style3',
-    name: 'Illustré',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-    description: 'Illustrations détaillées et colorées'
-  },
-  {
-    id: 'style4',
-    name: 'Espace Fantastique',
-    image: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23',
-    description: 'Style Pixar avec ciel nocturne et ambiance magique'
-  }
-];
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -44,8 +21,10 @@ const formSchema = z.object({
     required_error: "Sélectionne le genre de ton héros",
   }),
   hasGlasses: z.boolean().default(false),
-  illustrationStyle: z.string().optional().default('style1')
+  illustrationStyle: z.enum(["storybook", "fantasy", "comics"]).default("storybook")
 });
+
+export type IllustrationStyle = "storybook" | "fantasy" | "comics";
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -53,67 +32,73 @@ interface IllustrationStyleSelectorProps {
   control: Control<FormValues>;
 }
 
+// Données des styles d'illustration
+const illustrationStyles = [
+  {
+    id: 'storybook',
+    name: 'Storybook Cartoon',
+    icon: <BookOpen className="h-4 w-4 mr-2" />,
+    description: 'Illustration douce, enfantine, colorée. Inspiré par Loish, Studio Ghibli, univers féérique.'
+  },
+  {
+    id: 'fantasy',
+    name: 'Fantasy Semi-Réaliste',
+    icon: <Sparkles className="h-4 w-4 mr-2" />,
+    description: 'Illustration détaillée et épique, style ArtStation. Digital art fantasy, lumière cinématographique.'
+  },
+  {
+    id: 'comics',
+    name: 'Bande Dessinée / Ligne Claire',
+    icon: <CircleUser className="h-4 w-4 mr-2" />,
+    description: 'Propre, coloré, lisible, type BD européenne / Pixar. Ligne claire, comics jeunesse.'
+  }
+];
+
 const IllustrationStyleSelector: React.FC<IllustrationStyleSelectorProps> = ({ control }) => {
   return (
-    <div className="space-y-6 my-6 bg-purple-50 p-4 rounded-xl">
+    <div className="space-y-4 my-6 bg-purple-50 p-4 rounded-xl">
       <h3 className="text-xl font-bold flex items-center gap-2">
-        <Palette className="h-5 w-5 text-purple-600" />
+        <Paintbrush className="h-5 w-5 text-purple-600" />
         <span>Style d'illustration</span> 
       </h3>
 
-      <Card className="p-4 bg-white/80 mb-4">
-        <p className="text-sm text-gray-600 mb-2">
-          Choisis le style que tu préfères pour les illustrations de ton histoire.
-          Ce style sera utilisé pour créer toutes les images du livre.
-        </p>
-      </Card>
+      <p className="text-sm text-gray-600 mb-4">
+        Choisis le style qui sera utilisé pour illustrer ton histoire.
+        Ce style déterminera l'apparence de ton personnage et de toutes les images.
+      </p>
 
       <FormField
         control={control}
         name="illustrationStyle"
         render={({ field }) => (
-          <FormItem className="space-y-4">
-            <FormLabel className="text-base">Style d'illustrations</FormLabel>
+          <FormItem>
+            <FormLabel>Style d'illustration</FormLabel>
             <FormControl>
-              <RadioGroup
-                onValueChange={field.onChange}
+              <Select 
+                onValueChange={field.onChange} 
                 defaultValue={field.value}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
-                {styleImages.map((style) => (
-                  <div key={style.id} className="relative">
-                    <RadioGroupItem
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choisis un style d'illustration" />
+                </SelectTrigger>
+                <SelectContent>
+                  {illustrationStyles.map(style => (
+                    <SelectItem 
+                      key={style.id} 
                       value={style.id}
-                      id={style.id}
-                      className="sr-only"
-                    />
-                    <label
-                      htmlFor={style.id}
-                      className={`
-                        flex flex-col items-center p-2 rounded-lg border-2 cursor-pointer
-                        ${field.value === style.id ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-purple-200'}
-                      `}
+                      className="cursor-pointer"
                     >
-                      <div className="w-full h-40 rounded-md overflow-hidden mb-2">
-                        <img 
-                          src={style.image} 
-                          alt={style.name} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="text-center">
-                        <p className="font-medium">{style.name}</p>
-                        <p className="text-xs text-gray-500">{style.description}</p>
-                      </div>
-                      {field.value === style.id && (
-                        <div className="absolute top-2 right-2 bg-purple-500 text-white p-1 rounded-full">
-                          {style.id === 'style4' ? <Stars className="h-4 w-4" /> : <Paintbrush className="h-4 w-4" />}
+                      <div className="flex items-center">
+                        {style.icon}
+                        <div>
+                          <div className="font-medium">{style.name}</div>
+                          <div className="text-xs text-gray-500 mt-1">{style.description}</div>
                         </div>
-                      )}
-                    </label>
-                  </div>
-                ))}
-              </RadioGroup>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </FormControl>
           </FormItem>
         )}

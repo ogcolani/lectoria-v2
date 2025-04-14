@@ -3,6 +3,7 @@ import React from 'react';
 import StoryHero from '@/components/StoryHero';
 import CharacterTraitBadge from '@/components/ui/character-trait-badge';
 import { Glasses } from 'lucide-react';
+import { IllustrationStyle } from './IllustrationStyleSelector';
 
 interface HeroPreviewProps {
   heroName: string;
@@ -11,6 +12,7 @@ interface HeroPreviewProps {
   heroGender?: 'garçon' | 'fille';
   hasGlasses?: boolean;
   traits: string[];
+  illustrationStyle?: IllustrationStyle;
 }
 
 const HeroPreview: React.FC<HeroPreviewProps> = ({
@@ -19,7 +21,8 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({
   heroAge,
   heroGender,
   hasGlasses,
-  traits
+  traits,
+  illustrationStyle = 'storybook'
 }) => {
   return (
     <div className="lg:col-span-1 flex flex-col items-center justify-start bg-purple-100 rounded-2xl p-6 order-2 lg:order-1">
@@ -28,7 +31,11 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({
         <p className="text-sm text-gray-600">C'est à quoi ton héros va ressembler!</p>
       </div>
       <div className="w-full max-w-[220px]">
-        <StoryHero gender={heroGender} hasGlasses={hasGlasses} />
+        <StoryHero 
+          gender={heroGender} 
+          hasGlasses={hasGlasses}
+          illustrationStyle={illustrationStyle}
+        />
       </div>
       <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
         <h4 className="font-bold text-lg mb-2">{heroName || 'Ton héros'}</h4>
