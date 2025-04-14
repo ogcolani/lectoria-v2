@@ -101,7 +101,7 @@ const PersonnalisationHero = () => {
               <p className="text-sm text-gray-600">C'est à quoi ton héros va ressembler!</p>
             </div>
             <div className="w-full max-w-[220px]">
-              <StoryHero />
+              <StoryHero gender={form.watch('heroGender')} />
             </div>
             <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
               <h4 className="font-bold text-lg mb-2">{form.watch('heroName') || 'Ton héros'}</h4>

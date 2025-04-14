@@ -1,3 +1,4 @@
+
 import React from 'react';
 import StoryHero from '@/components/StoryHero';
 import CharacterTraitBadge from '@/components/ui/character-trait-badge';
@@ -10,13 +11,15 @@ interface StoryPreviewSidebarProps {
   elements: string[];
   availableValues: ValueItem[];
   storyElements: StoryElement[];
+  heroGender?: 'garçon' | 'fille';
 }
 
 const StoryPreviewSidebar: React.FC<StoryPreviewSidebarProps> = ({
   values,
   elements,
   availableValues,
-  storyElements
+  storyElements,
+  heroGender = 'garçon'
 }) => {
   // Get custom value label from ID
   const getCustomLabel = (id: string) => {
@@ -35,7 +38,7 @@ const StoryPreviewSidebar: React.FC<StoryPreviewSidebarProps> = ({
         <p className="text-sm text-gray-600">Voici ce que tu as choisi pour ton histoire !</p>
       </div>
       <div className="w-full max-w-[220px]">
-        <StoryHero />
+        <StoryHero gender={heroGender} />
       </div>
       <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
         <h4 className="font-bold text-lg mb-3">Éléments de ton histoire</h4>
