@@ -32,7 +32,7 @@ const Header = () => {
             </NavigationMenuItem>
             
             <NavigationMenuItem>
-              <Link to="/creer-mon-livre">
+              <Link to="/creation-livre">
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                   <BookOpen className="w-4 h-4 mr-2" />
                   Créer mon livre
@@ -65,3 +65,4 @@ const Header = () => {
 };
 
 export default Header;
+
