@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Star, BookOpen, PenTool, Truck } from 'lucide-react';
 const HowItWorks = () => {
@@ -15,7 +16,7 @@ const HowItWorks = () => {
                 1
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2">Personnalisez</h3>
+                <h3 className="font-bold text-lg mb-2">Imaginez son héros</h3>
                 <p className="text-gray-600">Entrez le prénom, l'âge, et les goûts de votre enfant</p>
               </div>
             </div>
