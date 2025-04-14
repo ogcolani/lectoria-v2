@@ -1,6 +1,5 @@
-
 import React from 'react';
-import CartoonCharacter from '@/components/CartoonCharacter';
+import StoryHero from '@/components/StoryHero';
 import CharacterTraitBadge from '@/components/ui/character-trait-badge';
 import { ValueItem } from './ValuesSection';
 import { StoryElement } from './ElementsSection';
@@ -36,7 +35,7 @@ const StoryPreviewSidebar: React.FC<StoryPreviewSidebarProps> = ({
         <p className="text-sm text-gray-600">Voici ce que tu as choisi pour ton histoire !</p>
       </div>
       <div className="w-full max-w-[220px]">
-        <CartoonCharacter />
+        <StoryHero />
       </div>
       <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
         <h4 className="font-bold text-lg mb-3">Éléments de ton histoire</h4>

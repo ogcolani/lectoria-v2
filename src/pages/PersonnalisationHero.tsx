@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ChevronRight, ChevronLeft, User, Heart, Wand2, Palette } from 'lucide-react';
-import CartoonCharacter from '@/components/CartoonCharacter';
+import StoryHero from '@/components/StoryHero';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
@@ -101,7 +101,7 @@ const PersonnalisationHero = () => {
               <p className="text-sm text-gray-600">C'est à quoi ton héros va ressembler!</p>
             </div>
             <div className="w-full max-w-[220px]">
-              <CartoonCharacter />
+              <StoryHero />
             </div>
             <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
               <h4 className="font-bold text-lg mb-2">{form.watch('heroName') || 'Ton héros'}</h4>
