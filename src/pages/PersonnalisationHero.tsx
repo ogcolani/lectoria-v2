@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -132,6 +131,9 @@ const PersonnalisationHero = () => {
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* MOVED: Illustration Style Selector to the top */}
+                <IllustrationStyleSelector control={form.control} />
+                
                 <BasicInfoFields control={form.control} />
                 
                 {renderTabContent()}
