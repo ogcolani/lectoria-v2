@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Palette, Wand2, ImageIcon } from 'lucide-react';
+import { User, Palette, Wand2 } from 'lucide-react';
 
-export type CategoryTab = 'personnage' | 'apparence' | 'pouvoirs' | 'illustration';
+export type CategoryTab = 'personnage' | 'apparence' | 'pouvoirs';
 
 interface TabItem {
   id: CategoryTab;
@@ -34,8 +34,6 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
         return <Palette className="h-4 w-4" />;
       case 'pouvoirs':
         return <Wand2 className="h-4 w-4" />;
-      case 'illustration':
-        return <ImageIcon className="h-4 w-4" />;
       default:
         return null;
     }
