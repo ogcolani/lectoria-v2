@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -5,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ChevronRight, ChevronLeft, User, Heart, Wand2, Palette } from 'lucide-react';
+import { ChevronRight, ChevronLeft, User, Heart, Wand2, Palette, Glasses } from 'lucide-react';
 import StoryHero from '@/components/StoryHero';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
@@ -17,6 +18,7 @@ import CharacterTraitBadge from '@/components/ui/character-trait-badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import ProgressSection from '@/components/story-elements/ProgressSection';
 import NavigationButtons from '@/components/story-elements/NavigationButtons';
+import { Switch } from '@/components/ui/switch';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -26,6 +28,7 @@ const formSchema = z.object({
   heroGender: z.enum(["garçon", "fille"], {
     required_error: "Sélectionne le genre de ton héros",
   }),
+  hasGlasses: z.boolean().default(false),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -44,6 +47,7 @@ const PersonnalisationHero = () => {
       heroDescription: '',
       heroTrait: '',
       heroGender: undefined,
+      hasGlasses: false,
     }
   });
   
@@ -81,6 +85,38 @@ const PersonnalisationHero = () => {
     setActiveTab(tab);
   };
 
+  // Options d'apparence à afficher uniquement quand l'onglet apparence est actif
+  const renderAppearanceOptions = () => {
+    if (activeTab !== 'apparence') return null;
+    
+    return (
+      <div className="space-y-6 my-6 bg-purple-50 p-4 rounded-xl">
+        <h3 className="text-xl font-bold">Apparence</h3>
+        
+        <FormField
+          control={form.control}
+          name="hasGlasses"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Lunettes</FormLabel>
+                <FormDescription>
+                  Ton personnage porte-t-il des lunettes ?
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
       <Header />
@@ -101,7 +137,7 @@ const PersonnalisationHero = () => {
               <p className="text-sm text-gray-600">C'est à quoi ton héros va ressembler!</p>
             </div>
             <div className="w-full max-w-[220px]">
-              <StoryHero gender={form.watch('heroGender')} />
+              <StoryHero gender={form.watch('heroGender')} hasGlasses={form.watch('hasGlasses')} />
             </div>
             <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
               <h4 className="font-bold text-lg mb-2">{form.watch('heroName') || 'Ton héros'}</h4>
@@ -114,6 +150,12 @@ const PersonnalisationHero = () => {
               {form.watch('heroGender') && (
                 <p className="mt-2 text-sm font-medium">
                   Genre: {form.watch('heroGender') === 'garçon' ? 'Garçon' : 'Fille'}
+                </p>
+              )}
+              {form.watch('hasGlasses') && (
+                <p className="mt-2 text-sm font-medium flex items-center gap-1">
+                  <Glasses className="h-4 w-4" />
+                  Porte des lunettes
                 </p>
               )}
               {traits.length > 0 && (
@@ -238,6 +280,8 @@ const PersonnalisationHero = () => {
                   )}
                 />
 
+                {renderAppearanceOptions()}
+
                 <div className="grid grid-cols-3 gap-4 mt-6">
                   <Card 
                     className={`p-4 cursor-pointer hover:bg-purple-50 transition-colors border-2 ${
@@ -298,7 +342,7 @@ const PersonnalisationHero = () => {
               <span className="font-medium">Choisis un trait de caractère</span> : Ce trait sera mis en avant dans l'histoire pour rendre ton héros unique.
             </li>
             <li className="text-gray-700">
-              <span className="font-medium">Personnalise l'apparence</span> : Tu pourras choisir comment ton personnage va ressembler visuellement.
+              <span className="font-medium">Personnalise l'apparence</span> : Tu peux choisir si ton personnage porte des lunettes et voir en 3D comment il ressemble !
             </li>
           </ol>
         </div>
