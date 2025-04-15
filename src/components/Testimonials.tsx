@@ -20,8 +20,6 @@ const Testimonials = () => {
   return (
     <section id="testimonials" className="section-padding bg-lectoria-purple/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="section-title">💛 Ils ont créé un moment magique</h2>
-        
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           <TestimonialCard 
             quote="J'ai vu les yeux de ma fille s'illuminer en découvrant son prénom dans l'histoire."
