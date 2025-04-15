@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Sparkles, Heart, Brain } from 'lucide-react';
 const DiscoverLectoria = () => {
@@ -33,7 +34,7 @@ const DiscoverLectoria = () => {
             <div>
               <h3 className="text-xl font-semibold mb-2">Confiance et estime de soi</h3>
               <p className="text-gray-600">
-                En devenant le héros de son histoire, votre enfant développe sa confiance en lui et apprend à croire en ses capacités.
+                Votre enfant devient le héros de son histoire et croit en ses capacités.
               </p>
             </div>
           </div>
