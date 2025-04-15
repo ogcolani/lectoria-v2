@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Zap, Gift, Sprout } from 'lucide-react';
 
@@ -30,7 +29,7 @@ const ValuesSection = () => {
                 🎁 Le cadeau parfait pour <br />émerveiller les enfants
               </h3>
               <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
-                Bien plus qu'un livre : une aventure unique. <br />
+                Bien plus qu'un livre : <br />une aventure unique. <br />
                 Ils deviennent les héros de l'histoire, <br />
                 éveillant leur imagination à chaque page.
               </p>
@@ -57,4 +56,3 @@ const ValuesSection = () => {
 };
 
 export default ValuesSection;
-
