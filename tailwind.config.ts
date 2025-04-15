@@ -90,10 +90,6 @@ export default {
 					from: {
 						height: 'var(--radix-accordion-content-height)',
 						opacity: '1'
-					},
-					to: {
-						height: '0',
-						opacity: '0'
 					}
 				},
 				'fade-in': {
@@ -113,9 +109,8 @@ export default {
 				'fade-in': 'fade-in 0.5s ease-out forwards'
 			},
       fontSize: {
-        // Add more responsive h1 sizes
-        'h1-mobile': ['2.5rem', { lineHeight: '1.2', fontWeight: '700' }],
-        'h1-desktop': ['4rem', { lineHeight: '1.1', fontWeight: '700' }],
+        'h1-mobile': ['2rem', { lineHeight: '1.2', fontWeight: '700' }],
+        'h1-desktop': ['3.5rem', { lineHeight: '1.1', fontWeight: '700' }],
       },
 		}
 	},
