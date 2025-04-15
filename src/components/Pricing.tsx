@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Button from './Button';
 
@@ -71,19 +70,6 @@ const Pricing = () => {
             ctaText="Choisir l'eBook"
           />
           <PricingCard 
-            title="Livre imprimé"
-            price="39,99 €"
-            description="Livraison rapide à domicile"
-            features={[
-              "Couverture rigide de qualité",
-              "Impression professionnelle",
-              "Papier premium",
-              "Envoi sous 24h après création"
-            ]}
-            popular={true}
-            ctaText="Choisir le livre"
-          />
-          <PricingCard 
             title="Pack Livre + eBook"
             price="44,99 €"
             description="Pour le lire partout, tout le temps"
@@ -93,7 +79,20 @@ const Pricing = () => {
               "Accès immédiat à la version digitale",
               "Économisez 5€ sur l'ensemble"
             ]}
+            popular={true}
             ctaText="Choisir ce pack"
+          />
+          <PricingCard 
+            title="Livre imprimé"
+            price="39,99 €"
+            description="Livraison rapide à domicile"
+            features={[
+              "Couverture rigide de qualité",
+              "Impression professionnelle",
+              "Papier premium",
+              "Envoi sous 24h après création"
+            ]}
+            ctaText="Choisir le livre"
           />
         </div>
       </div>
