@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Sparkles, Heart, Brain } from 'lucide-react';
 const DiscoverLectoria = () => {
@@ -46,7 +45,7 @@ const DiscoverLectoria = () => {
             <div>
               <h3 className="text-xl font-semibold mb-2">Développement cognitif</h3>
               <p className="text-gray-600">
-                Nos histoires sont conçues pour stimuler l'apprentissage, enrichir le vocabulaire et développer les capacités d'analyse.
+                Des récits conçus pour enrichir le vocabulaire et stimuler l'apprentissage.
               </p>
             </div>
           </div>
