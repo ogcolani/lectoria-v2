@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Button from './Button';
 import {
@@ -64,18 +63,6 @@ const Pricing = () => {
   
   const pricingOptions = [
     {
-      title: "eBook PDF",
-      price: "9,99 €",
-      description: "Envoi immédiat par email",
-      features: [
-        "Accès instantané",
-        "Format PDF haute résolution",
-        "Compatible tous appareils",
-        "Impression à domicile possible"
-      ],
-      ctaText: "Choisir l'eBook"
-    },
-    {
       title: "Pack Livre + eBook",
       price: "44,99 €",
       description: "Pour le lire partout, tout le temps",
@@ -99,6 +86,18 @@ const Pricing = () => {
         "Envoi sous 24h après création"
       ],
       ctaText: "Choisir le livre"
+    },
+    {
+      title: "eBook PDF",
+      price: "9,99 €",
+      description: "Envoi immédiat par email",
+      features: [
+        "Accès instantané",
+        "Format PDF haute résolution",
+        "Compatible tous appareils",
+        "Impression à domicile possible"
+      ],
+      ctaText: "Choisir l'eBook"
     }
   ];
 
@@ -144,4 +143,3 @@ const Pricing = () => {
 };
 
 export default Pricing;
-
