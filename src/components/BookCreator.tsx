@@ -1,5 +1,5 @@
-
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -110,9 +110,11 @@ const BookCreator = () => {
           </div>
           
           <div className="text-center">
-            <Button onClick={handleNextStep} className="px-8">
-              Commencer l'aventure
-            </Button>
+            <Link to="/creation-livre">
+              <Button className="px-8">
+                Commencer l'aventure
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
