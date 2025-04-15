@@ -43,10 +43,12 @@ const ValuesSection = () => {
                 🌱 Des valeurs qui <br />résonnent profondément
               </h3>
               <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
-                Chaque histoire transmet <br />
-                des valeurs essentielles : <br />
-                courage, persévérance <br />
-                et bienveillance.
+                Quand un enfant se reconnaît <br />
+                dans une histoire, il apprend mieux. <br />
+                Nos récits personnalisés transmettent <br />
+                avec douceur des valeurs comme <br />
+                le courage, la persévérance <br />
+                ou la bienveillance.
               </p>
             </div>
           </div>
