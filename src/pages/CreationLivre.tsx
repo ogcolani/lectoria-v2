@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Progress } from '@/components/ui/progress';
@@ -19,6 +19,11 @@ const CreationLivre = () => {
   const [step, setStep] = useState(1);
   const [storyType, setStoryType] = useState('');
   const [progress, setProgress] = useState(20);
+  
+  // Reset scroll position to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const handleSelectStoryType = (type: string) => {
     setStoryType(type);
