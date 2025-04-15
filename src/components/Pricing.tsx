@@ -59,6 +59,7 @@ const Pricing = () => {
     features: ["Accès instantané", "Format PDF haute résolution", "Compatible tous appareils", "Impression à domicile possible"],
     ctaText: "Choisir l'eBook"
   }];
+
   return <section id="pricing" className="section-padding">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="section-title">📦 Nos offres</h2>
@@ -94,4 +95,5 @@ const Pricing = () => {
       </div>
     </section>;
 };
+
 export default Pricing;
