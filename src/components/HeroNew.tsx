@@ -1,8 +1,6 @@
-
 import React from 'react';
 import Button from './Button';
 import { Link } from 'react-router-dom';
-
 const HeroNew = () => {
   return <section className="w-full bg-gradient-to-b from-purple-50 via-white to-purple-50 pt-16 pb-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,7 +11,7 @@ const HeroNew = () => {
               fait rêver votre enfant
             </span>
             <br />
-            <span className="text-gray-800">et l'aide à grandir !</span>
+            <span className="text-gray-800">et qui l'aide à grandir !</span>
           </h1>
           
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
