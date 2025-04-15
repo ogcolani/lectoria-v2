@@ -131,11 +131,17 @@ const Pricing = () => {
           </div>
         ) : (
           <div className="grid md:grid-cols-3 gap-8 mt-12">
-            {pricingOptions.map((option, index) => (
-              <div key={index} className={option.popular ? 'transform scale-110 z-10' : ''}>
-                <PricingCard {...option} />
-              </div>
-            ))}
+            <div className="md:col-start-2 md:col-span-1">
+              <PricingCard {...pricingOptions.find(option => option.popular)} />
+            </div>
+            <div className="grid grid-cols-2 gap-8">
+              {pricingOptions
+                .filter(option => !option.popular)
+                .map((option, index) => (
+                  <PricingCard key={index} {...option} />
+                ))
+              }
+            </div>
           </div>
         )}
       </div>
