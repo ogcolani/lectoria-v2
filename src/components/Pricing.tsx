@@ -135,12 +135,12 @@ const Pricing = () => {
               <PricingCard {...pricingOptions.find(option => option.popular)} />
             </div>
             <div className="grid grid-cols-2 gap-8">
-              {pricingOptions
-                .filter(option => !option.popular)
-                .map((option, index) => (
-                  <PricingCard key={index} {...option} />
-                ))
-              }
+              <div>
+                <PricingCard {...pricingOptions[1]} />
+              </div>
+              <div>
+                <PricingCard {...pricingOptions[2]} />
+              </div>
             </div>
           </div>
         )}
