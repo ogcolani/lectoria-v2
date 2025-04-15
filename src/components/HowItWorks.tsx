@@ -1,6 +1,5 @@
 import React from 'react';
 import { Star, BookOpen, PenTool, Truck } from 'lucide-react';
-
 const HowItWorks = () => {
   return <section id="how-it-works" className="py-16 bg-purple-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -10,7 +9,7 @@ const HowItWorks = () => {
         
         <div className="grid md:grid-cols-2 gap-8">
           {/* Left column - Steps */}
-          <div className="space-y-6">
+          <div className="space-y-6 my-[24px]">
             <div className="bg-white p-6 rounded-xl shadow-sm flex">
               <div className="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center mr-4 flex-shrink-0">
                 1
@@ -41,15 +40,7 @@ const HowItWorks = () => {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl shadow-sm flex">
-              <div className="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                4
-              </div>
-              <div>
-                <h3 className="font-bold text-lg mb-2">Profitez</h3>
-                <p className="text-gray-600">Recevez votre livre personnalisé en quelques jours</p>
-              </div>
-            </div>
+            
           </div>
           
           {/* Right column - Preview */}
