@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Zap, Gift, Sprout } from 'lucide-react';
 
@@ -43,9 +44,12 @@ const ValuesSection = () => {
                 🌱 Des valeurs qui <br />résonnent profondément
               </h3>
               <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
-                Un enfant apprend mieux quand il se reconnaît. <br />
-                Nos récits transmettent avec douceur <br />
-                le courage, la persévérance et la bienveillance.
+                Quand un enfant se reconnaît <br />
+                dans une histoire, il apprend mieux. <br />
+                Nos récits personnalisés transmettent <br />
+                avec douceur des valeurs comme <br />
+                le courage, la persévérance <br />
+                ou la bienveillance.
               </p>
             </div>
           </div>
