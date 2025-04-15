@@ -27,12 +27,12 @@ const Index = () => {
         <BookCreator />
         <Benefits />
         <SocialProof />
-        <JoinAdventure />
         <ValuesSection />
         <Testimonials />
         <Pricing />
         <OurMission />
         <FAQ />
+        <JoinAdventure />
       </main>
       <Footer />
       <ChatBot />
