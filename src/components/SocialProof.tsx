@@ -1,10 +1,7 @@
-
 import React from 'react';
 import { Star } from 'lucide-react';
-
 const SocialProof = () => {
-  return (
-    <section className="py-20 bg-purple-50">
+  return <section className="py-20 bg-purple-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-center mb-4">
           Ce que pensent nos clients
@@ -12,21 +9,15 @@ const SocialProof = () => {
         
         <div className="max-w-3xl mx-auto mb-12">
           <div className="flex justify-center mb-6">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
-            ))}
+            {[...Array(5)].map((_, i) => <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />)}
           </div>
-          <p className="text-center text-lg text-gray-600">
-            Plus de 10 000 enfants ravis avec une note moyenne de 4.9/5
-          </p>
+          <p className="text-center text-lg text-gray-600">Des milliers d'enfants ravis avec une note moyenne de 4.9/5</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="mb-4 flex">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-              ))}
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />)}
             </div>
             <p className="text-gray-600 italic mb-4">
               "Le livre est magnifique, les illustrations sont splendides et mon fils adore être le héros de l'histoire !"
@@ -44,9 +35,7 @@ const SocialProof = () => {
           
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="mb-4 flex">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-              ))}
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />)}
             </div>
             <p className="text-gray-600 italic mb-4">
               "Un cadeau original qui a vraiment fait la différence. Livraison rapide et service client impeccable !"
@@ -64,9 +53,7 @@ const SocialProof = () => {
           
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="mb-4 flex">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-              ))}
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />)}
             </div>
             <p className="text-gray-600 italic mb-4">
               "C'est devenu notre livre préféré pour le rituel du soir. Ma fille le réclame tous les jours !"
@@ -83,8 +70,6 @@ const SocialProof = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default SocialProof;
