@@ -1,5 +1,14 @@
+
 import React from 'react';
 import Button from './Button';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const PricingCard = ({ 
   title, 
@@ -51,53 +60,88 @@ const PricingCard = ({
 );
 
 const Pricing = () => {
+  const isMobile = useIsMobile();
+  
+  const pricingOptions = [
+    {
+      title: "eBook PDF",
+      price: "9,99 €",
+      description: "Envoi immédiat par email",
+      features: [
+        "Accès instantané",
+        "Format PDF haute résolution",
+        "Compatible tous appareils",
+        "Impression à domicile possible"
+      ],
+      ctaText: "Choisir l'eBook"
+    },
+    {
+      title: "Pack Livre + eBook",
+      price: "44,99 €",
+      description: "Pour le lire partout, tout le temps",
+      features: [
+        "Livre physique de qualité",
+        "eBook en complément",
+        "Accès immédiat à la version digitale",
+        "Économisez 5€ sur l'ensemble"
+      ],
+      popular: true,
+      ctaText: "Choisir ce pack"
+    },
+    {
+      title: "Livre imprimé",
+      price: "39,99 €",
+      description: "Livraison rapide à domicile",
+      features: [
+        "Couverture rigide de qualité",
+        "Impression professionnelle",
+        "Papier premium",
+        "Envoi sous 24h après création"
+      ],
+      ctaText: "Choisir le livre"
+    }
+  ];
+
   return (
     <section id="pricing" className="section-padding">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="section-title">📦 Nos formats disponibles</h2>
+        <h2 className="section-title">📦 Nos offres</h2>
         
-        <div className="grid md:grid-cols-3 gap-8 mt-12">
-          <PricingCard 
-            title="eBook PDF"
-            price="9,99 €"
-            description="Envoi immédiat par email"
-            features={[
-              "Accès instantané",
-              "Format PDF haute résolution",
-              "Compatible tous appareils",
-              "Impression à domicile possible"
-            ]}
-            ctaText="Choisir l'eBook"
-          />
-          <PricingCard 
-            title="Pack Livre + eBook"
-            price="44,99 €"
-            description="Pour le lire partout, tout le temps"
-            features={[
-              "Livre physique de qualité",
-              "eBook en complément",
-              "Accès immédiat à la version digitale",
-              "Économisez 5€ sur l'ensemble"
-            ]}
-            popular={true}
-            ctaText="Choisir ce pack"
-          />
-          <PricingCard 
-            title="Livre imprimé"
-            price="39,99 €"
-            description="Livraison rapide à domicile"
-            features={[
-              "Couverture rigide de qualité",
-              "Impression professionnelle",
-              "Papier premium",
-              "Envoi sous 24h après création"
-            ]}
-            ctaText="Choisir le livre"
-          />
-        </div>
+        {isMobile ? (
+          <div className="relative w-full max-w-sm mx-auto">
+            <Carousel
+              opts={{
+                align: "center",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent>
+                {pricingOptions.map((option, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <PricingCard {...option} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center gap-4 mt-6">
+                <CarouselPrevious className="static transform-none" />
+                <CarouselNext className="static transform-none" />
+              </div>
+            </Carousel>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            {pricingOptions.map((option, index) => (
+              <div key={index} className={option.popular ? 'transform scale-110 z-10' : ''}>
+                <PricingCard {...option} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 };
 
 export default Pricing;
+
