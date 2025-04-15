@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Zap, Gift, Sprout } from 'lucide-react';
 
@@ -35,7 +34,7 @@ const ValuesSection = () => {
                 éveillant leur imagination à chaque page.
               </p>
             </div>
-            
+
             <div className="flex flex-col items-center text-center space-y-4">
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
                 <Sprout className="w-8 h-8 text-green-600" />
@@ -44,12 +43,10 @@ const ValuesSection = () => {
                 🌱 Des valeurs qui <br />résonnent profondément
               </h3>
               <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
-                Quand un enfant se reconnaît <br />
-                dans une histoire, il apprend mieux. <br />
-                Nos récits personnalisés transmettent <br />
-                avec douceur des valeurs comme <br />
-                le courage, la persévérance <br />
-                ou la bienveillance.
+                Chaque histoire transmet <br />
+                des valeurs essentielles : <br />
+                courage, persévérance <br />
+                et bienveillance.
               </p>
             </div>
           </div>
