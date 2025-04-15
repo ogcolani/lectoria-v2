@@ -26,7 +26,9 @@ const HowItWorks = () => {
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">Choisissez</h3>
-                <p className="text-gray-600">Sélectionnez une aventure et laissez vous porter par la magie </p>
+                <p className="text-gray-600">Sélectionnez une aventure
+puis laissez vous porter par la magie 
+              </p>
               </div>
             </div>
             
@@ -36,7 +38,7 @@ const HowItWorks = () => {
               </div>
               <div>
                 <h3 className="font-bold text-lg mb-2">Validez</h3>
-                <p className="text-gray-600">Vérifiez votre histoire et passez à la commande</p>
+                <p className="text-gray-600">Vérifiez votre histoire et passez commande</p>
               </div>
             </div>
             
