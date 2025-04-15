@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Zap, Gift, Sprout } from 'lucide-react';
 
@@ -26,7 +27,7 @@ const ValuesSection = () => {
                 <Gift className="w-8 h-8 text-pink-600" />
               </div>
               <h3 className="text-lg font-semibold leading-snug">
-                🎁 Le cadeau parfait pour <br />émerveiller les enfants
+                Le cadeau parfait pour <br />émerveiller les enfants
               </h3>
               <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
                 Bien plus qu'un livre : <br />une aventure unique. <br />
@@ -40,7 +41,7 @@ const ValuesSection = () => {
                 <Sprout className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-lg font-semibold leading-snug">
-                🌱 Des valeurs qui <br />résonnent profondément
+                Des valeurs qui <br />résonnent profondément
               </h3>
               <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
                 Quand un enfant se reconnaît <br />
@@ -59,3 +60,4 @@ const ValuesSection = () => {
 };
 
 export default ValuesSection;
+
