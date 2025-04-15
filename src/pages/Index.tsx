@@ -15,6 +15,7 @@ import JoinAdventure from '@/components/JoinAdventure';
 import ValuesSection from '@/components/ValuesSection';
 import DiscoverLectoria from '@/components/DiscoverLectoria';
 import OurMission from '@/components/OurMission';
+import ScrollProgressBar from '@/components/ScrollProgressBar';
 
 const Index = () => {
   return (
@@ -36,6 +37,7 @@ const Index = () => {
       </main>
       <Footer />
       <ChatBot />
+      <ScrollProgressBar />
     </div>
   );
 };
