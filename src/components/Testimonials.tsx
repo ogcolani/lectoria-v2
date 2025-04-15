@@ -35,29 +35,8 @@ const TestimonialCard = ({
 };
 
 const Testimonials = () => {
-  return (
-    <section className="py-20 bg-purple-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <TestimonialCard 
-            quote="Le livre est magnifique, les illustrations sont splendides et mon fils adore être le héros de l'histoire !"
-            name="Marie"
-            relation="Maman de Tom, 6 ans"
-          />
-          <TestimonialCard 
-            quote="Un cadeau original qui a vraiment fait la différence. Livraison rapide et service client impeccable !"
-            name="Pierre"
-            relation="Oncle de Léa, 5 ans"
-          />
-          <TestimonialCard 
-            quote="C'est devenu notre livre préféré pour le rituel du soir. Ma fille le réclame tous les jours !"
-            name="Sophie"
-            relation="Maman de Chloé, 4 ans"
-          />
-        </div>
-      </div>
-    </section>
-  );
+  return null;
 };
 
 export default Testimonials;
+
