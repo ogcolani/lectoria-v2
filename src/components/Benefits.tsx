@@ -15,19 +15,19 @@ const Benefits = () => {
 
   const formats = [
     {
+      title: "Format papier",
+      icon: "/lovable-uploads/42d2ab14-7e86-4008-9f16-3a830a09c095.png",
+      description: "Livre imprimé en haute qualité avec pages épaisses et couverture rigide",
+      bgColor: "bg-purple-100",
+      hoverBgColor: "group-hover:bg-purple-200"
+    },
+    {
       title: "Pack Livre + eBook",
       icon: "/lovable-uploads/42d2ab14-7e86-4008-9f16-3a830a09c095.png",
       description: "Le meilleur des deux mondes - livre papier + ebook avec 10% de réduction",
       isPopular: true,
       bgColor: "bg-yellow-100",
       hoverBgColor: "group-hover:bg-yellow-200"
-    },
-    {
-      title: "Format papier",
-      icon: "/lovable-uploads/42d2ab14-7e86-4008-9f16-3a830a09c095.png",
-      description: "Livre imprimé en haute qualité avec pages épaisses et couverture rigide",
-      bgColor: "bg-purple-100",
-      hoverBgColor: "group-hover:bg-purple-200"
     },
     {
       title: "Ebook PDF",
