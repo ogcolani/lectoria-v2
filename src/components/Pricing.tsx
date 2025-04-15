@@ -64,6 +64,18 @@ const Pricing = () => {
   
   const pricingOptions = [
     {
+      title: "Livre imprimé",
+      price: "39,99 €",
+      description: "Livraison rapide à domicile",
+      features: [
+        "Couverture rigide de qualité",
+        "Impression professionnelle",
+        "Papier premium",
+        "Envoi sous 24h après création"
+      ],
+      ctaText: "Choisir le livre"
+    },
+    {
       title: "Pack Livre + eBook",
       price: "44,99 €",
       description: "Pour le lire partout, tout le temps",
@@ -75,18 +87,6 @@ const Pricing = () => {
       ],
       popular: true,
       ctaText: "Choisir ce pack"
-    },
-    {
-      title: "Livre imprimé",
-      price: "39,99 €",
-      description: "Livraison rapide à domicile",
-      features: [
-        "Couverture rigide de qualité",
-        "Impression professionnelle",
-        "Papier premium",
-        "Envoi sous 24h après création"
-      ],
-      ctaText: "Choisir le livre"
     },
     {
       title: "eBook PDF",
