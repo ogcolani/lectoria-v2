@@ -10,12 +10,12 @@ const OurMission = () => {
           <h3 className="text-2xl font-bold mb-4 text-center">
             Notre mission
           </h3>
-          <p className="text-gray-700 mb-6 text-center">Chez Lectoria, nous croyons que chaque enfant mérite une histoire qui lui ressemble. C'est pourquoi nous utilisons l'intelligence artificielle pour créer des livres personnalisés 
-qui reflètent les intérêts, les valeurs et les rêves de votre enfant.
+          <p className="text-gray-700 mb-6 text-center">Chez Lectoria, nous croyons que chaque enfant mérite une histoire qui lui ressemble. C'est pourquoi nous utilisons l'intelligence artificielle pour créer des livres personnalisés
+ qui reflètent les intérêts, les valeurs et les rêves de votre enfant.
 
         </p>
-          <p className="text-gray-700 text-center">Au-delà du divertissement, nos histoires transmettent des valeurs importantes comme la persévérance, l'empathie et la curiosité, tout en renforçant le lien parent-enfant à travers 
-des moments de lecture partagés.
+          <p className="text-gray-700 text-center">Au-delà du divertissement, nos histoires transmettent des valeurs importantes comme la persévérance, l'empathie et la curiosité, tout en renforçant le lien parent-enfant 
+à travers des moments de lecture partagés.
         </p>
         </div>
       </div>
