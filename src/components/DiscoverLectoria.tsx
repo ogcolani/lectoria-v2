@@ -18,7 +18,7 @@ const DiscoverLectoria = () => {
           </p>
         </div>
 
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="flex gap-4">
             <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-purple-600" />
