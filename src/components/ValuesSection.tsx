@@ -12,7 +12,7 @@ const ValuesSection = () => {
                 <Zap className="w-8 h-8 text-yellow-600" />
               </div>
               <h3 className="text-lg font-semibold leading-snug">
-                ⚡ Personnalisation magique <br />en 30 secondes
+                Personnalisation magique <br />en 30 secondes
               </h3>
               <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
                 Créez un livre unique en quelques clics. <br />
