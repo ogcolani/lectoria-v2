@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Gift, BookOpen, FileDigit } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const OffresCadeaux = () => {
   return (
@@ -50,7 +51,9 @@ const OffresCadeaux = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Acheter maintenant</Button>
+              <Link to="/creation-livre" className="w-full">
+                <Button className="w-full">Choisir le livre</Button>
+              </Link>
             </CardFooter>
           </Card>
           
@@ -113,7 +116,9 @@ const OffresCadeaux = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500">Acheter maintenant</Button>
+              <Link to="/creation-livre" className="w-full">
+                <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500">Choisir ce pack</Button>
+              </Link>
             </CardFooter>
           </Card>
         </div>
@@ -144,3 +149,4 @@ const OffresCadeaux = () => {
 };
 
 export default OffresCadeaux;
+
