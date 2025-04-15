@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -112,7 +111,12 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out forwards'
-			}
+			},
+      fontSize: {
+        // Add more responsive h1 sizes
+        'h1-mobile': ['2.5rem', { lineHeight: '1.2', fontWeight: '700' }],
+        'h1-desktop': ['4rem', { lineHeight: '1.1', fontWeight: '700' }],
+      },
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
