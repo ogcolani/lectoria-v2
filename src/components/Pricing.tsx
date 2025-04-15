@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Button from './Button';
 import {
@@ -30,7 +31,7 @@ const PricingCard = ({
     flex flex-col justify-between animate-fade-in
   `}>
     {popular && (
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1 rounded-full text-sm font-medium">
         Le plus populaire
       </div>
     )}
