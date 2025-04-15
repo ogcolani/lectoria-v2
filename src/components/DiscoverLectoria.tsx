@@ -1,10 +1,7 @@
-
 import React from 'react';
 import { Sparkles, Heart, Brain } from 'lucide-react';
-
 const DiscoverLectoria = () => {
-  return (
-    <section className="py-16 bg-white">
+  return <section className="py-16 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">
@@ -24,10 +21,8 @@ const DiscoverLectoria = () => {
               <Sparkles className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Imagination sans limites</h3>
-              <p className="text-gray-600">
-                Lectoria crée des histoires uniques qui stimulent l'imagination de votre enfant et l'encouragent à rêver grand.
-              </p>
+              <h3 className="text-xl font-semibold mb-2">Stimule l’imaginaire en 30 secondes</h3>
+              <p className="text-gray-600">Des histoires uniques qui stimulent l'imagination et encouragent à rêver grand.</p>
             </div>
           </div>
 
@@ -56,8 +51,6 @@ const DiscoverLectoria = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default DiscoverLectoria;
