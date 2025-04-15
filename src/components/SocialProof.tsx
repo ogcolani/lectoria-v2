@@ -84,11 +84,11 @@ const SocialProof = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
+              <div className="flex justify-center gap-4 mt-6">
+                <CarouselPrevious className="static transform-none" />
+                <CarouselNext className="static transform-none" />
+              </div>
             </Carousel>
-            <div className="flex justify-center gap-4 mt-6">
-              <CarouselPrevious className="static transform-none" />
-              <CarouselNext className="static transform-none" />
-            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -103,4 +103,3 @@ const SocialProof = () => {
 };
 
 export default SocialProof;
-
