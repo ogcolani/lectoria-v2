@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
@@ -6,6 +5,7 @@ import { Control } from 'react-hook-form';
 import { z } from 'zod';
 import { Glasses, Backpack } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import PhotoUpload from './PhotoUpload';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -38,6 +38,8 @@ const AppearanceOptions: React.FC<AppearanceOptionsProps> = ({ control }) => {
           Tu peux le personnaliser en choisissant les options ci-dessous.
         </p>
       </Card>
+
+      <PhotoUpload control={control} />
       
       <FormField
         control={control}
@@ -76,12 +78,6 @@ const AppearanceOptions: React.FC<AppearanceOptionsProps> = ({ control }) => {
           </div>
           <Switch checked={true} disabled />
         </div>
-      </div>
-
-      <div className="mt-4 text-center">
-        <p className="text-sm text-purple-700">
-          D'autres options de personnalisation seront bientôt disponibles !
-        </p>
       </div>
     </div>
   );
