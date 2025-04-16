@@ -10,7 +10,7 @@ const ProgressSection: React.FC<ProgressSectionProps> = ({ progress }) => {
   return (
     <div className="mb-10 max-w-xl mx-auto">
       <div className="flex justify-between text-sm font-medium text-gray-500 mb-2">
-        <span>Étape 1 sur 5</span>
+        <span>Étape 2 sur 5</span>
         <span>{progress}% complété</span>
       </div>
       <Progress value={progress} className="h-2 bg-gray-200" />
