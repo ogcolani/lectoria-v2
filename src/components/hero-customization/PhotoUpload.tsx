@@ -16,6 +16,7 @@ interface PhotoUploadProps {
 const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [generatedCharacterUrl, setGeneratedCharacterUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -25,15 +26,11 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
 
     try {
       setIsUploading(true);
-      // Créer l'URL de prévisualisation
       const preview = URL.createObjectURL(file);
       setPreviewUrl(preview);
-      
-      // Analyser la photo
+
       const analysisResults = await analyzePhoto(preview);
       console.log('Résultats de l\'analyse:', analysisResults);
-      
-      // Mettre à jour le formulaire avec les résultats
       setValue('hasGlasses', analysisResults.hasGlasses);
       setValue('heroGender', analysisResults.gender);
 
@@ -41,7 +38,8 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
         title: "Photo analysée avec succès",
         description: "Les caractéristiques du personnage ont été mises à jour.",
       });
-      
+
+      await generateCharacterFromPhoto(file);
     } catch (error) {
       console.error('Erreur lors du traitement de la photo:', error);
       toast({
@@ -51,6 +49,32 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
       });
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const generateCharacterFromPhoto = async (photo: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", photo);
+
+      const response = await fetch("/api/generate-character", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (data?.imageUrl) {
+        setGeneratedCharacterUrl(data.imageUrl);
+      } else {
+        throw new Error("Image non générée");
+      }
+    } catch (error) {
+      console.error("Erreur de génération du personnage:", error);
+      toast({
+        title: "Erreur génération",
+        description: "Le personnage n'a pas pu être généré automatiquement.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -82,7 +106,7 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
-    
+
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
       await handleFileChange(file);
@@ -104,7 +128,7 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
         </FormDescription>
       </div>
 
-      <Card 
+      <Card
         className={`p-4 ${isDragging ? 'border-2 border-purple-500 bg-purple-50' : ''}`}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -114,13 +138,13 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
         <div className="space-y-4">
           <div className="flex justify-center">
             {previewUrl ? (
-              <img 
-                src={previewUrl} 
-                alt="Preview" 
+              <img
+                src={previewUrl}
+                alt="Preview"
                 className="max-h-48 rounded-lg object-cover"
               />
             ) : (
-              <div 
+              <div
                 className="h-48 w-full max-w-48 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
@@ -132,6 +156,17 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
               </div>
             )}
           </div>
+
+          {generatedCharacterUrl && (
+            <div className="mt-4 text-center">
+              <p className="mb-2 font-semibold text-sm text-gray-600">Personnage généré :</p>
+              <img
+                src={generatedCharacterUrl}
+                alt="Personnage généré"
+                className="max-h-48 mx-auto rounded-md shadow-md"
+              />
+            </div>
+          )}
 
           <div className="flex justify-center">
             <Button
