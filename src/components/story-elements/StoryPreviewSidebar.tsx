@@ -1,3 +1,4 @@
+
 import React from 'react';
 import StoryHero from '@/components/StoryHero';
 import CharacterTraitBadge from '@/components/ui/character-trait-badge';
@@ -44,58 +45,39 @@ const StoryPreviewSidebar: React.FC<StoryPreviewSidebarProps> = ({
       <div className="mt-6 p-4 bg-white rounded-xl shadow-sm w-full">
         <h4 className="font-bold text-lg mb-3">Éléments de ton histoire</h4>
         
-        {values.length > 0 ? (
-          <div className="mb-4">
-            <p className="text-sm font-medium text-gray-700 mb-2">Valeurs choisies :</p>
-            <div className="flex flex-wrap gap-2">
+        <div className="mb-4">
+          <p className="text-sm font-medium text-gray-700 mb-2">Valeurs choisies :</p>
+          {values.length > 0 ? (
+            <p className="text-sm text-gray-600 pl-3 mb-2">
               {values.map(id => {
                 if (id.startsWith('custom-')) {
-                  return (
-                    <CharacterTraitBadge key={id} trait={getCustomLabel(id)} />
-                  );
+                  return getCustomLabel(id);
                 }
-                
                 const value = availableValues.find(v => v.id === id);
-                return value ? (
-                  <div key={id} className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium flex items-center gap-1">
-                    {value.icon}
-                    {value.label}
-                  </div>
-                ) : null;
-              })}
-            </div>
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500 mb-3">Choisis des valeurs pour ton histoire...</p>
-        )}
+                return value?.label;
+              }).filter(Boolean).join(", ")}
+            </p>
+          ) : (
+            <p className="text-sm text-gray-500 pl-3">Aucune valeur sélectionnée</p>
+          )}
+        </div>
         
-        {elements.length > 0 ? (
-          <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">Éléments d'histoire :</p>
-            <div className="flex flex-wrap gap-2">
+        <div>
+          <p className="text-sm font-medium text-gray-700 mb-2">Éléments d'histoire :</p>
+          {elements.length > 0 ? (
+            <p className="text-sm text-gray-600 pl-3">
               {elements.map(id => {
                 if (id.startsWith('custom-')) {
-                  return (
-                    <div key={id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
-                      <Sparkles className="h-3 w-3" />
-                      {getCustomLabel(id)}
-                    </div>
-                  );
+                  return getCustomLabel(id);
                 }
-                
                 const element = storyElements.find(e => e.id === id);
-                return element ? (
-                  <div key={id} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium flex items-center gap-1">
-                    {element.icon}
-                    {element.label}
-                  </div>
-                ) : null;
-              })}
-            </div>
-          </div>
-        ) : (
-          <p className="text-sm text-gray-500">Choisis des éléments pour ton histoire...</p>
-        )}
+                return element?.label;
+              }).filter(Boolean).join(", ")}
+            </p>
+          ) : (
+            <p className="text-sm text-gray-500 pl-3">Aucun élément sélectionné</p>
+          )}
+        </div>
       </div>
     </div>
   );
