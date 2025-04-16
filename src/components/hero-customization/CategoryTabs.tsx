@@ -1,16 +1,21 @@
+
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Palette, Wand2 } from 'lucide-react';
+
 export type CategoryTab = 'personnage' | 'apparence' | 'pouvoirs';
+
 interface TabItem {
   id: CategoryTab;
   label: string;
 }
+
 interface CategoryTabsProps {
   activeTab: CategoryTab;
   onTabChange: (tab: CategoryTab) => void;
   tabs?: TabItem[];
 }
+
 const CategoryTabs: React.FC<CategoryTabsProps> = ({
   activeTab,
   onTabChange,
@@ -38,10 +43,21 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
         return null;
     }
   };
-  return <div className="my-6">
-      <Tabs defaultValue={activeTab} value={activeTab} onValueChange={value => onTabChange(value as CategoryTab)}>
-        
+
+  return (
+    <div className="my-6">
+      <Tabs defaultValue={activeTab} value={activeTab} onValueChange={(value) => onTabChange(value as CategoryTab)}>
+        <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto">
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2">
+              {getTabIcon(tab.id)}
+              <span>{tab.label}</span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
       </Tabs>
-    </div>;
+    </div>
+  );
 };
+
 export default CategoryTabs;
