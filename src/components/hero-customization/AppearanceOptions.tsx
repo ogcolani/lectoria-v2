@@ -4,7 +4,7 @@ import { FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/
 import { Switch } from '@/components/ui/switch';
 import { Control, UseFormSetValue } from 'react-hook-form';
 import { z } from 'zod';
-import { Glasses, Backpack } from 'lucide-react';
+import { Glasses, Backpack, ImageIcon } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import PhotoUpload from './PhotoUpload';
 
@@ -36,10 +36,13 @@ const AppearanceOptions: React.FC<AppearanceOptionsProps> = ({ control, setValue
       </h3>
       
       <Card className="p-4 bg-white/80 mb-4">
-        <p className="text-sm text-gray-600 mb-2">
-          Ton personnage est représenté en 3D dans le style des livres pour enfants de 6 à 10 ans. 
-          Tu peux le personnaliser en choisissant les options ci-dessous.
-        </p>
+        <div className="flex items-start gap-3">
+          <ImageIcon className="w-5 h-5 mt-1 text-purple-600" />
+          <p className="text-sm text-gray-600">
+            Ton personnage est représenté en 3D dans le style des livres pour enfants. 
+            Tu peux le personnaliser en important une photo ou en utilisant les options ci-dessous.
+          </p>
+        </div>
       </Card>
 
       <PhotoUpload control={control} setValue={setValue} />

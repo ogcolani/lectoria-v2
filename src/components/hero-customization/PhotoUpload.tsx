@@ -1,9 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { FormField, FormItem, FormLabel, FormDescription } from '@/components/ui/form';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, Loader2 } from 'lucide-react';
+import { ImagePlus, Loader2, Upload } from 'lucide-react';
 import { Control, UseFormSetValue } from 'react-hook-form';
 import { analyzePhoto } from '@/services/photoAnalysisService';
 import { useToast } from '@/components/ui/use-toast';
@@ -16,10 +16,11 @@ interface PhotoUploadProps {
 const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFileChange = async (file: File) => {
     if (!file) return;
 
     try {
@@ -53,6 +54,47 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
     }
   };
 
+  const handleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await handleFileChange(file);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      await handleFileChange(file);
+    } else {
+      toast({
+        title: "Format non supporté",
+        description: "Veuillez déposer une image (JPG, PNG, etc.)",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <FormItem className="space-y-4">
       <div className="space-y-2">
@@ -62,7 +104,13 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
         </FormDescription>
       </div>
 
-      <Card className="p-4">
+      <Card 
+        className={`p-4 ${isDragging ? 'border-2 border-purple-500 bg-purple-50' : ''}`}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
         <div className="space-y-4">
           <div className="flex justify-center">
             {previewUrl ? (
@@ -72,10 +120,14 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
                 className="max-h-48 rounded-lg object-cover"
               />
             ) : (
-              <div className="h-48 w-full max-w-48 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg">
-                <div className="text-center">
-                  <ImagePlus className="mx-auto h-8 w-8 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-500">Aucune photo sélectionnée</p>
+              <div 
+                className="h-48 w-full max-w-48 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="text-center p-4">
+                  <Upload className="mx-auto h-8 w-8 text-purple-400" />
+                  <p className="mt-2 text-sm text-gray-700 font-medium">Glissez une photo ici</p>
+                  <p className="text-xs text-gray-500">ou cliquez pour en sélectionner une</p>
                 </div>
               </div>
             )}
@@ -85,7 +137,8 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
             <Button
               variant="outline"
               disabled={isUploading}
-              onClick={() => document.getElementById('photo-upload')?.click()}
+              onClick={() => fileInputRef.current?.click()}
+              className="bg-white hover:bg-purple-50"
             >
               {isUploading ? (
                 <>
@@ -100,11 +153,12 @@ const PhotoUpload: React.FC<PhotoUploadProps> = ({ setValue }) => {
               )}
             </Button>
             <input
+              ref={fileInputRef}
               id="photo-upload"
               type="file"
               className="hidden"
               accept="image/*"
-              onChange={handleFileChange}
+              onChange={handleInputChange}
             />
           </div>
         </div>
