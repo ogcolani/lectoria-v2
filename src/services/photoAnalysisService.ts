@@ -1,4 +1,3 @@
-
 import { pipeline } from '@huggingface/transformers';
 import { env } from '@huggingface/transformers';
 
@@ -16,9 +15,7 @@ export const analyzePhoto = async (imageUrl: string): Promise<PhotoAnalysisResul
     console.log('Démarrage de l\'analyse de la photo...');
     
     // Initialiser le pipeline de détection d'objets
-    const detector = await pipeline('object-detection', 'Xenova/detr-resnet-50', {
-      quantized: false,
-    });
+    const detector = await pipeline('object-detection', 'Xenova/detr-resnet-50');
 
     // Analyser l'image
     const results = await detector(imageUrl);
