@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface NavigationButtonsProps {
   backHref?: string;
@@ -10,7 +10,7 @@ interface NavigationButtonsProps {
 }
 
 const NavigationButtons: React.FC<NavigationButtonsProps> = ({ 
-  backHref = "/personnalisation-hero", 
+  backHref = "/creation-livre", // Updated to point to story type selection page
   nextHref = "/generation-histoire" 
 }) => {
   return (
