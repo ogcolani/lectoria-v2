@@ -1,12 +1,12 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
-import { Control } from 'react-hook-form';
+import { Control, UseFormSetValue } from 'react-hook-form';
 import { z } from 'zod';
 import { Glasses, Backpack } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import PhotoUpload from './PhotoUpload';
-import { UseFormSetValue } from 'react-hook-form';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -23,10 +23,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface AppearanceOptionsProps {
   control: Control<FormValues>;
-  setValue: UseFormSetValue<any>;
+  setValue: UseFormSetValue<FormValues>;
 }
 
-const AppearanceOptions: React.FC<AppearanceOptionsProps> = ({ control }) => {
+const AppearanceOptions: React.FC<AppearanceOptionsProps> = ({ control, setValue }) => {
   
   return (
     <div className="space-y-6 my-6 bg-purple-50 p-4 rounded-xl">
@@ -42,7 +42,7 @@ const AppearanceOptions: React.FC<AppearanceOptionsProps> = ({ control }) => {
         </p>
       </Card>
 
-      <PhotoUpload control={control} setValue={control._formState.setValue} />
+      <PhotoUpload control={control} setValue={setValue} />
       
       <FormField
         control={control}

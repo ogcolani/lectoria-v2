@@ -85,7 +85,7 @@ const PersonnalisationHero = () => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'apparence':
-        return <AppearanceOptions control={form.control} />;
+        return <AppearanceOptions control={form.control} setValue={form.setValue} />;
       case 'pouvoirs':
         // For now, the powers tab is empty or could be implemented later
         return (
