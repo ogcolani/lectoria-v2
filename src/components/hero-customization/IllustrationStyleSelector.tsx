@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
 import { Control } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Paintbrush, BookOpen, Sparkles, CircleUser } from 'lucide-react';
 import { z } from 'zod';
+
 const formSchema = z.object({
   heroName: z.string().min(2, {
     message: "Le nom doit contenir au moins 2 caractères"
@@ -19,8 +21,11 @@ const formSchema = z.object({
   hasGlasses: z.boolean().default(false),
   illustrationStyle: z.enum(["storybook", "fantasy", "comics"]).default("storybook")
 });
+
 export type IllustrationStyle = "storybook" | "fantasy" | "comics";
+
 type FormValues = z.infer<typeof formSchema>;
+
 interface IllustrationStyleSelectorProps {
   control: Control<FormValues>;
 }
@@ -42,9 +47,51 @@ const illustrationStyles = [{
   icon: <CircleUser className="h-4 w-4 mr-2" />,
   description: 'Propre, coloré, lisible, type BD européenne / Pixar. Ligne claire, comics jeunesse.'
 }];
+
 const IllustrationStyleSelector: React.FC<IllustrationStyleSelectorProps> = ({
   control
 }) => {
-  return;
+  return (
+    <div className="space-y-6 my-6 bg-purple-50 p-4 rounded-xl">
+      <h3 className="text-xl font-bold flex items-center gap-2">
+        <Paintbrush className="h-5 w-5 text-purple-600" />
+        <span>Style d'illustration</span>
+      </h3>
+      
+      <FormField
+        control={control}
+        name="illustrationStyle"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Choisis le style d'illustration que tu préfères</FormLabel>
+            <Select 
+              onValueChange={field.onChange} 
+              defaultValue={field.value}
+            >
+              <FormControl>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Sélectionne un style" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                {illustrationStyles.map((style) => (
+                  <SelectItem key={style.id} value={style.id}>
+                    <div className="flex items-center">
+                      {style.icon}
+                      <span>{style.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-gray-500 mt-2">
+              {illustrationStyles.find(style => style.id === field.value)?.description}
+            </p>
+          </FormItem>
+        )}
+      />
+    </div>
+  );
 };
+
 export default IllustrationStyleSelector;
