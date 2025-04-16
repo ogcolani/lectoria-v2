@@ -44,19 +44,19 @@ const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext)
   const itemContext = React.useContext(FormItemContext)
   
-  // Add check to ensure formContext exists before using it
-  const formContext = useFormContext();
-  
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>")
   }
 
-  const { id } = itemContext || {}; // Add null check here
+  const { id } = itemContext || {}
   
-  // Check if formContext and formContext.getFieldState exist
-  const fieldState = formContext && formContext.getFieldState 
-    ? formContext.getFieldState(fieldContext.name, formContext.formState)
-    : {};
+  // Safely access form context
+  const formContext = useFormContext()
+  
+  // Ensure fieldState always has an error property, even if it's null
+  const fieldState = formContext?.formState?.errors?.[fieldContext.name]
+    ? { error: formContext.formState.errors[fieldContext.name] }
+    : { error: null }
 
   return {
     id,
