@@ -10,7 +10,7 @@ interface ProgressSectionProps {
 
 const ProgressSection: React.FC<ProgressSectionProps> = ({ 
   progress, 
-  currentStep = 2, 
+  currentStep = 3, 
   totalSteps = 5 
 }) => {
   return (
