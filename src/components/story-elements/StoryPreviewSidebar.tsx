@@ -1,10 +1,9 @@
 
 import React from 'react';
 import StoryHero from '@/components/StoryHero';
-import CharacterTraitBadge from '@/components/ui/character-trait-badge';
+import { Sparkles } from 'lucide-react';
 import { ValueItem } from './ValuesSection';
 import { StoryElement } from './ElementsSection';
-import { Sparkles } from 'lucide-react';
 
 interface StoryPreviewSidebarProps {
   values: string[];
