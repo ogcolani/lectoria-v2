@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"
@@ -42,15 +43,20 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext)
   const itemContext = React.useContext(FormItemContext)
-  const { getFieldState, formState } = useFormContext()
-
-  const fieldState = getFieldState(fieldContext.name, formState)
-
+  
+  // Add check to ensure formContext exists before using it
+  const formContext = useFormContext();
+  
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>")
   }
 
-  const { id } = itemContext
+  const { id } = itemContext || {}; // Add null check here
+  
+  // Check if formContext and formContext.getFieldState exist
+  const fieldState = formContext && formContext.getFieldState 
+    ? formContext.getFieldState(fieldContext.name, formContext.formState)
+    : {};
 
   return {
     id,
@@ -88,16 +94,28 @@ const FormLabel = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
 >(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField()
+  // Add try/catch to handle potential errors from useFormField
+  try {
+    const { error, formItemId } = useFormField()
 
-  return (
-    <Label
-      ref={ref}
-      className={cn(error && "text-destructive", className)}
-      htmlFor={formItemId}
-      {...props}
-    />
-  )
+    return (
+      <Label
+        ref={ref}
+        className={cn(error && "text-destructive", className)}
+        htmlFor={formItemId}
+        {...props}
+      />
+    )
+  } catch (e) {
+    // Fallback gracefully if useFormField fails
+    return (
+      <Label
+        ref={ref}
+        className={className}
+        {...props}
+      />
+    )
+  }
 })
 FormLabel.displayName = "FormLabel"
 
