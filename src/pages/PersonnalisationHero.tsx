@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -148,7 +147,9 @@ const PersonnalisationHero = () => {
                   ]}
                 />
                   
-                <NavigationButtons />
+                <NavigationButtons 
+                  nextHref="/story-elements" 
+                />
               </form>
             </Form>
           </div>

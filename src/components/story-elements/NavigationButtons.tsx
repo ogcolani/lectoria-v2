@@ -10,7 +10,7 @@ interface NavigationButtonsProps {
 }
 
 const NavigationButtons: React.FC<NavigationButtonsProps> = ({ 
-  backHref = "/creation-livre", // Updated to point to story type selection page
+  backHref = "/creation-livre", // Default to story type selection page
   nextHref = "/generation-histoire" 
 }) => {
   return (
