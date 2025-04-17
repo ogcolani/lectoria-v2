@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -83,7 +82,9 @@ const OffresCadeaux = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">Acheter maintenant</Button>
+              <Link to="/creation-livre" className="w-full">
+                <Button className="w-full">Acheter maintenant</Button>
+              </Link>
             </CardFooter>
           </Card>
           
@@ -149,4 +150,3 @@ const OffresCadeaux = () => {
 };
 
 export default OffresCadeaux;
-

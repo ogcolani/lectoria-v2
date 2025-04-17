@@ -39,7 +39,7 @@ const Benefits = () => {
   ];
 
   const FormatCard = ({ format, index }) => (
-    <Link to="/personnalisation-hero" className="group relative">
+    <Link to="/creation-livre" className="group relative">
       {format.isPopular && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-1 rounded-full text-sm max-w-[90%] truncate">
           Le plus populaire

@@ -51,7 +51,7 @@ const PricingCard = ({
         ))}
       </ul>
     </div>
-    <Link to="/personnalisation-hero">
+    <Link to="/creation-livre">
       <Button 
         variant={popular ? 'primary' : 'outline'} 
         className="w-full mt-4"
