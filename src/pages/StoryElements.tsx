@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -47,7 +46,11 @@ const StoryElements = () => {
           </span>
         </h1>
         
-        <ProgressSection progress={progress} />
+      <ProgressSection 
+        progress={progress} 
+        currentStep={3}  // Changed from 2 to 3
+        totalSteps={5} 
+      />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <StoryPreviewSidebar 
