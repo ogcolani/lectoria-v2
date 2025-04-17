@@ -1,5 +1,7 @@
+
 import React from 'react';
 import Button from './Button';
+import { Link } from 'react-router-dom';
 import {
   Carousel,
   CarouselContent,
@@ -49,12 +51,14 @@ const PricingCard = ({
         ))}
       </ul>
     </div>
-    <Button 
-      variant={popular ? 'primary' : 'outline'} 
-      className="w-full mt-4"
-    >
-      {ctaText}
-    </Button>
+    <Link to="/personnalisation-hero">
+      <Button 
+        variant={popular ? 'primary' : 'outline'} 
+        className="w-full mt-4"
+      >
+        {ctaText}
+      </Button>
+    </Link>
   </div>
 );
 
