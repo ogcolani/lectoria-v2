@@ -7,11 +7,15 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 interface NavigationButtonsProps {
   backHref?: string;
   nextHref?: string;
+  values?: string[];
+  elements?: string[];
 }
 
 const NavigationButtons: React.FC<NavigationButtonsProps> = ({ 
   backHref = "/creation-livre", // Default to story type selection page
-  nextHref = "/generation-histoire" 
+  nextHref = "/generation-histoire",
+  values = [],
+  elements = []
 }) => {
   return (
     <div className="flex justify-between items-center pt-4 border-t mt-8">
@@ -20,7 +24,10 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
           <ChevronLeft className="mr-2 h-4 w-4" /> Retour
         </Button>
       </Link>
-      <Link to={nextHref}>
+      <Link 
+        to={nextHref}
+        state={{ storyValues: values, storyElements: elements }}
+      >
         <Button 
           className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
         >

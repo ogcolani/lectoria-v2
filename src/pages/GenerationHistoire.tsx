@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Progress } from '@/components/ui/progress';
@@ -10,7 +10,7 @@ import StoryPreview from '@/components/StoryPreview';
 import InfoSection from '@/components/InfoSection';
 import { generateStoryService } from '@/services/storyService';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const GenerationHistoire = () => {
   const [progress, setProgress] = useState(80);
@@ -21,6 +21,20 @@ const GenerationHistoire = () => {
   const [pageCount, setPageCount] = useState(24);
   const [illustrationUrl, setIllustrationUrl] = useState<string | null>(null);
   const { toast } = useToast();
+  const location = useLocation();
+  
+  // Get story elements and values from location state if available
+  const [values, setValues] = useState<string[]>([]);
+  const [elements, setElements] = useState<string[]>([]);
+  
+  // Load values and elements from location state on initial render
+  useEffect(() => {
+    if (location.state) {
+      const { storyValues, storyElements } = location.state;
+      if (storyValues) setValues(storyValues);
+      if (storyElements) setElements(storyElements);
+    }
+  }, [location]);
 
   // Fonction qui génère une histoire par l'IA Mistral
   const generateStory = async () => {
@@ -31,7 +45,13 @@ const GenerationHistoire = () => {
       // Dans une vraie application, cette valeur serait récupérée d'un état global ou localStorage
       const childAge = 6; 
 
-      const result = await generateStoryService(prompt, pageCount, childAge);
+      const result = await generateStoryService({
+        prompt,
+        pageCount,
+        childAge,
+        values,
+        elements
+      });
       
       setFullStory(result.fullStory);
       setStoryPreview(result.storyPreview);

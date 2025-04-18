@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -35,6 +36,22 @@ const StoryElements = () => {
     { id: 'lesson', label: 'Une leçon à apprendre', icon: <Lightbulb className="h-5 w-5 text-purple-600" /> }
   ];
 
+  // Get the selected value labels for passing to the next page
+  const getSelectedValueLabels = () => {
+    return values.map(valueId => {
+      const value = availableValues.find(v => v.id === valueId);
+      return value ? value.label : valueId;
+    });
+  };
+
+  // Get the selected element labels for passing to the next page
+  const getSelectedElementLabels = () => {
+    return elements.map(elementId => {
+      const element = storyElements.find(e => e.id === elementId);
+      return element ? element.label : elementId;
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
       <Header />
@@ -70,7 +87,10 @@ const StoryElements = () => {
               <ElementsSection selectedElements={elements} setSelectedElements={setElements} />
             </div>
             
-            <NavigationButtons />
+            <NavigationButtons 
+              values={getSelectedValueLabels()} 
+              elements={getSelectedElementLabels()} 
+            />
           </div>
         </div>
         
