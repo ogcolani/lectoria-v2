@@ -5,15 +5,22 @@
 # Make the script exit if any command fails
 set -e
 
-# Check if vite command is directly available
-if command -v vite &> /dev/null; then
+# Check if project has node_modules folder
+if [ ! -d "node_modules" ]; then
+  echo "Installing dependencies first..."
+  npm install
+fi
+
+# Try different ways to run vite
+if [ -f "node_modules/.bin/vite" ]; then
+  echo "Using local vite from node_modules..."
+  node_modules/.bin/vite
+elif command -v vite &> /dev/null; then
   echo "Using system vite..."
   vite
-# Check if npx is available to run vite
 elif command -v npx &> /dev/null; then
   echo "Using npx to run vite..."
   npx vite
-# As a last resort, try using npm to run vite
 else
   echo "Using npm to run vite..."
   npm exec vite
