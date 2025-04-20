@@ -11,6 +11,12 @@ if [ ! -d "node_modules" ]; then
   npm install
 fi
 
+# Check if vite is installed in the project
+if [ ! -f "node_modules/.bin/vite" ]; then
+  echo "Vite not found in node_modules, installing it locally..."
+  npm install --no-save vite@latest @vitejs/plugin-react-swc@latest
+fi
+
 # Try different ways to run vite
 if [ -f "node_modules/.bin/vite" ]; then
   echo "Using local vite from node_modules..."
