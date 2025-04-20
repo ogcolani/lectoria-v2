@@ -1,5 +1,5 @@
 
-import { generateIllustration } from './illustrationService';
+import { generateIllustration, generateStoryIllustrations, IllustrationStyle } from './illustrationService';
 
 // Interface for story generation parameters
 interface StoryGenerationParams {
@@ -8,6 +8,7 @@ interface StoryGenerationParams {
   childAge: number;
   values?: string[];
   elements?: string[];
+  illustrationStyle?: IllustrationStyle;
 }
 
 export const generateStoryService = async ({
@@ -15,7 +16,8 @@ export const generateStoryService = async ({
   pageCount,
   childAge = 6,
   values = [],
-  elements = []
+  elements = [],
+  illustrationStyle = 'storybook-cute'
 }: StoryGenerationParams) => {
   try {
     // Convert values and elements to a string format for the prompt
@@ -116,21 +118,24 @@ export const generateStoryService = async ({
       `Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`
     ].join('\n');
     
-    // Create prompts for illustrations based on story content
-    // Extract key scenes from the story by looking for vivid descriptive paragraphs
-    const storySegments = extractKeyScenes(generatedFullStory, 5);
+    // Extract key scenes from the story for illustrations
+    // Nous générons maintenant plusieurs illustrations, une pour chaque page
+    const storySegments = extractKeyScenes(generatedFullStory, pageCount);
     
-    // Select a random segment for illustration
-    const randomIndex = Math.floor(Math.random() * storySegments.length);
-    const selectedSegment = storySegments[randomIndex];
+    console.log(`Generating ${storySegments.length} illustrations for ${pageCount} story pages`);
     
-    // Generate illustration for the selected scene
-    const illustrationUrl = await generateIllustration(selectedSegment.prompt);
+    // Générer toutes les illustrations avec le style choisi
+    const illustrations = await generateStoryIllustrations(storySegments, illustrationStyle);
+    
+    // Sélectionner une illustration pour l'aperçu (la première généralement)
+    const previewIllustrationUrl = illustrations.length > 0 ? illustrations[0] : null;
     
     return {
       fullStory: generatedFullStory,
       storyPreview: storyPreview,
-      illustrationUrl: illustrationUrl
+      illustrationUrl: previewIllustrationUrl,
+      illustrations: illustrations, // Liste de toutes les illustrations générées
+      storySegments: storySegments // Pour référence des segments qui ont généré chaque image
     };
   } catch (error) {
     console.error("Error generating story:", error);
@@ -140,9 +145,12 @@ export const generateStoryService = async ({
 };
 
 // Helper function to extract key scenes from the story for illustrations
-function extractKeyScenes(story: string, count: number) {
+function extractKeyScenes(story: string, pageCount: number) {
   const paragraphs = story.split('\n').filter(p => p.trim() !== '' && !p.startsWith('#'));
   const scenes = [];
+  
+  // Déterminer le nombre d'illustrations à générer (1 par page ou moins selon la longueur)
+  const sceneCount = Math.min(pageCount, paragraphs.length, 15); // Maximum 15 pour éviter trop d'illustrations
   
   // Find paragraphs that are likely to be descriptive scenes
   // Look for longer paragraphs that aren't dialogue (don't start with - or ")
@@ -151,19 +159,19 @@ function extractKeyScenes(story: string, count: number) {
   );
   
   // If we don't have enough descriptive paragraphs, use regular paragraphs
-  const sourceParagraphs = descriptiveParagraphs.length >= count ? descriptiveParagraphs : paragraphs;
+  const sourceParagraphs = descriptiveParagraphs.length >= sceneCount ? descriptiveParagraphs : paragraphs;
   
   // Select evenly distributed paragraphs across the story
-  const step = Math.max(1, Math.floor(sourceParagraphs.length / count));
+  const step = Math.max(1, Math.floor(sourceParagraphs.length / sceneCount));
   
-  for (let i = 0; i < count && i * step < sourceParagraphs.length; i++) {
+  for (let i = 0; i < sceneCount && i * step < sourceParagraphs.length; i++) {
     const paragraph = sourceParagraphs[i * step];
     // Create a prompt that's suitable for image generation
     // Limit to 150 chars to avoid overly complex prompts
     const text = paragraph.slice(0, 150);
     scenes.push({
       text: text,
-      prompt: `Une illustration de style enfantin: ${text}`
+      prompt: `Une illustration de style enfantin pour un livre: ${text}`
     });
   }
   
@@ -214,9 +222,34 @@ ${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour
 
 Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`;
 
+  // Create fallback scenes for illustrations
+  const fallbackScenes = [
+    {
+      text: "Un enfant trouve un livre magique dans la forêt",
+      prompt: "Une illustration de style enfantin d'un enfant trouvant un livre magique brillant dans une forêt mystérieuse"
+    },
+    {
+      text: "Des montagnes escarpées sous un ciel étoilé",
+      prompt: "Une illustration de style enfantin de montagnes escarpées sous un ciel étoilé magique"
+    },
+    {
+      text: "Un désert brûlant avec des dunes dorées",
+      prompt: "Une illustration de style enfantin d'un désert aux dunes dorées sous un soleil brillant"
+    }
+  ];
+  
+  // Generate some placeholder illustrations
+  const placeholderIllustrations = [
+    'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843', // livre magique
+    'https://images.unsplash.com/photo-1486718448742-163732cd1544', // montagnes
+    'https://images.unsplash.com/photo-1500375592092-40eb2168fd21'  // désert
+  ];
+
   return {
     fullStory: generatedFullStory,
     storyPreview: generatedPreview,
-    illustrationUrl: null
+    illustrationUrl: placeholderIllustrations[0],
+    illustrations: placeholderIllustrations,
+    storySegments: fallbackScenes
   };
 }

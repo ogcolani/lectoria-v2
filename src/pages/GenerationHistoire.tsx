@@ -11,6 +11,7 @@ import InfoSection from '@/components/InfoSection';
 import { generateStoryService } from '@/services/storyService';
 import { Button } from '@/components/ui/button';
 import { Link, useLocation } from 'react-router-dom';
+import { IllustrationStyle } from '@/services/illustrationService';
 
 const GenerationHistoire = () => {
   const [progress, setProgress] = useState(80);
@@ -20,6 +21,8 @@ const GenerationHistoire = () => {
   const [prompt, setPrompt] = useState('');
   const [pageCount, setPageCount] = useState(24);
   const [illustrationUrl, setIllustrationUrl] = useState<string | null>(null);
+  const [illustrations, setIllustrations] = useState<string[]>([]);
+  const [illustrationStyle, setIllustrationStyle] = useState<IllustrationStyle>('storybook-cute');
   const { toast } = useToast();
   const location = useLocation();
   
@@ -40,6 +43,7 @@ const GenerationHistoire = () => {
   const generateStory = async () => {
     setIsGenerating(true);
     setIllustrationUrl(null);
+    setIllustrations([]);
     
     try {
       // Dans une vraie application, cette valeur serait récupérée d'un état global ou localStorage
@@ -50,17 +54,24 @@ const GenerationHistoire = () => {
         pageCount,
         childAge,
         values,
-        elements
+        elements,
+        illustrationStyle
       });
       
       setFullStory(result.fullStory);
       setStoryPreview(result.storyPreview);
       setIllustrationUrl(result.illustrationUrl);
+      
+      // Stocker toutes les illustrations générées
+      if (result.illustrations && result.illustrations.length > 0) {
+        setIllustrations(result.illustrations);
+      }
+      
       setProgress(100);
       
       toast({
         title: "Histoire générée !",
-        description: "Ton histoire personnalisée est prête avec une illustration unique. Découvre un aperçu et commande le livre complet !",
+        description: `Ton histoire personnalisée est prête avec ${result.illustrations?.length || 0} illustrations uniques. Découvre un aperçu et commande le livre complet !`,
       });
     } catch (error) {
       toast({
@@ -86,7 +97,19 @@ const GenerationHistoire = () => {
     setStoryPreview('');
     setFullStory('');
     setIllustrationUrl(null);
+    setIllustrations([]);
     setProgress(80);
+  };
+
+  // Fonction pour changer le style d'illustration
+  const handleStyleChange = (style: IllustrationStyle) => {
+    setIllustrationStyle(style);
+    if (storyPreview) {
+      toast({
+        title: "Style d'illustration modifié",
+        description: "Regénère l'histoire pour voir les illustrations dans ce nouveau style !",
+      });
+    }
   };
 
   // Ajout d'un bouton pour voir l'aperçu du livre
@@ -100,7 +123,7 @@ const GenerationHistoire = () => {
             </Button>
           </Link>
           <p className="text-sm text-gray-500 mt-2">
-            Visualise ton histoire avec illustrations page par page
+            Visualise ton histoire avec {illustrations.length} illustrations page par page
           </p>
         </div>
       );
@@ -136,6 +159,8 @@ const GenerationHistoire = () => {
               onPromptChange={setPrompt}
               onPageCountChange={setPageCount}
               onGenerate={generateStory}
+              illustrationStyle={illustrationStyle}
+              onStyleChange={handleStyleChange}
             />
           </div>
           
@@ -146,6 +171,7 @@ const GenerationHistoire = () => {
               pageCount={pageCount}
               childAge={6} // Cette valeur serait récupérée d'un état global dans une vraie application
               illustrationUrl={illustrationUrl}
+              illustrations={illustrations}
               onShare={handleShare}
               onReset={resetStory}
             />

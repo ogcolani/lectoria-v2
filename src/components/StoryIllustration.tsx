@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ImageIcon } from 'lucide-react';
 
 interface StoryIllustrationProps {
   imageUrl: string | null;
@@ -27,10 +27,21 @@ const StoryIllustration: React.FC<StoryIllustrationProps> = ({
           className="w-full h-full object-cover transition-opacity duration-300"
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-purple-50">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-purple-50">
+          <ImageIcon className="h-10 w-10 text-purple-200 mb-2" />
           <p className="text-sm text-gray-500">
             L'illustration apparaîtra ici
           </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Génère une histoire pour voir les illustrations
+          </p>
+        </div>
+      )}
+      
+      {/* Overlay de style pour les illustrations */}
+      {imageUrl && (
+        <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-black/40 to-transparent flex items-end">
+          <span className="text-white text-xs p-2">Illustration générée par IA • SDXL</span>
         </div>
       )}
     </div>
