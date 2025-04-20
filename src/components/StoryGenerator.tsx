@@ -1,13 +1,25 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Sparkles, Upload, Lightbulb, Info, ImageIcon } from 'lucide-react';
+import { Sparkles, Upload, Lightbulb, Info, ImageIcon, RefreshCw } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { IllustrationStyle } from '@/services/illustrationService';
+
+// Liste complète des suggestions d'histoires
+const storyIdeas = [
+  { text: "Une aventure dans une forêt enchantée où les arbres parlent et cachent un trésor ancien.", label: "Forêt enchantée" },
+  { text: "Un voyage sous-marin à la découverte d'une cité perdue et de ses habitants.", label: "Monde sous-marin" },
+  { text: "Un enfant qui découvre qu'il peut parler aux animaux et les aide à résoudre leurs problèmes.", label: "Amis animaux" },
+  { text: "Une quête magique dans les étoiles à la recherche d'une constellation disparue.", label: "Aventure spatiale" },
+  { text: "L'histoire d'un petit dragon qui apprend à faire de la pâtisserie plutôt que de cracher du feu.", label: "Dragon pâtissier" },
+  { text: "Un voyage dans le temps pour rencontrer des dinosaures amicaux.", label: "Dinos du passé" },
+  { text: "Une école secrète où les enfants apprennent à faire pousser des bonbons magiques.", label: "École des bonbons" },
+  { text: "L'aventure d'un nuage qui veut devenir arc-en-ciel.", label: "Nuage coloré" },
+  { text: "Un cirque magique où les acrobates volent vraiment et les clowns peuvent se transformer.", label: "Cirque enchanté" }
+];
 
 interface StoryGeneratorProps {
   prompt: string;
@@ -30,7 +42,24 @@ const StoryGenerator = ({
   onGenerate,
   onStyleChange = () => {}
 }: StoryGeneratorProps) => {
+  // État pour suivre les suggestions actuellement affichées
+  const [currentIdeasIndex, setCurrentIdeasIndex] = useState(0);
   
+  // Fonction pour obtenir les 3 suggestions suivantes
+  const getNextIdeas = () => {
+    setCurrentIdeasIndex((prevIndex) => (prevIndex + 3) % storyIdeas.length);
+  };
+  
+  // Obtenir les 3 suggestions actuelles
+  const getCurrentIdeas = () => {
+    const ideas = [];
+    for (let i = 0; i < 3; i++) {
+      const index = (currentIdeasIndex + i) % storyIdeas.length;
+      ideas.push(storyIdeas[index]);
+    }
+    return ideas;
+  };
+
   // Styles d'illustration disponibles
   const illustrationStyles: { id: IllustrationStyle; label: string; description: string }[] = [
     { 
@@ -131,37 +160,33 @@ const StoryGenerator = ({
             </div>
 
             <div className="mt-4 border-t pt-4">
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start mb-3">
                 <div className="flex items-start">
                   <Lightbulb className="h-4 w-4 text-amber-500 mt-0.5 mr-2" />
                   <span className="text-sm text-gray-600">Idées d'inspiration</span>
                 </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={getNextIdeas}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                  Autres idées
+                </Button>
               </div>
               <div className="mt-2 space-y-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mr-2 text-xs"
-                  onClick={() => onPromptChange("Une aventure dans une forêt enchantée où les arbres parlent et cachent un trésor ancien.")}
-                >
-                  Forêt enchantée
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mr-2 text-xs"
-                  onClick={() => onPromptChange("Un voyage sous-marin à la découverte d'une cité perdue et de ses habitants.")}
-                >
-                  Monde sous-marin
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mr-2 text-xs"
-                  onClick={() => onPromptChange("Un enfant qui découvre qu'il peut parler aux animaux et les aide à résoudre leurs problèmes.")}
-                >
-                  Amis animaux
-                </Button>
+                {getCurrentIdeas().map((idea, index) => (
+                  <Button 
+                    key={index}
+                    variant="outline" 
+                    size="sm" 
+                    className="mr-2 text-xs"
+                    onClick={() => onPromptChange(idea.text)}
+                  >
+                    {idea.label}
+                  </Button>
+                ))}
               </div>
             </div>
           </div>
