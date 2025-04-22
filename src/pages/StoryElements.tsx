@@ -88,6 +88,8 @@ const StoryElements = () => {
             </div>
             
             <NavigationButtons 
+              nextHref="/generation-histoire"
+              backHref="/personnalisation-hero"
               values={getSelectedValueLabels()} 
               elements={getSelectedElementLabels()} 
             />
