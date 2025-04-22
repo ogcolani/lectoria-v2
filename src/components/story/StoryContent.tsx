@@ -32,7 +32,7 @@ const StoryContent: React.FC<StoryContentProps> = ({
     }
   }, [storyPreview]);
   
-  // Function to parse the story into pages with less text
+  // Function to parse the story into pages with actual content
   const parseStoryIntoPages = (text: string) => {
     if (!text) return [];
     
@@ -45,7 +45,7 @@ const StoryContent: React.FC<StoryContentProps> = ({
     
     // Find the title first
     const titleIndex = paragraphs.findIndex(p => p.startsWith('# '));
-    let title = "L'histoire";
+    let title = "Mon Histoire";
     
     if (titleIndex !== -1) {
       title = paragraphs[titleIndex].substring(2);
@@ -59,36 +59,33 @@ const StoryContent: React.FC<StoryContentProps> = ({
       isTitle: true
     });
     
-    // Create remaining pages with just 1 paragraph per page for cleaner preview
-    const startIndex = titleFound ? titleIndex + 1 : 0;
-    for (let i = startIndex; i < paragraphs.length; i++) {
-      // Skip special markers
-      if (paragraphs[i].startsWith('[Suite') || paragraphs[i].startsWith('⭐')) {
-        continue;
-      }
+    // Create content pages with actual story content
+    const contentParagraphs = paragraphs.filter(p => 
+      !p.startsWith('# ') && 
+      !p.startsWith('[Suite') && 
+      !p.startsWith('⭐')
+    );
+    
+    // For each content page, add 1-2 paragraphs
+    for (let i = 0; i < Math.min(contentParagraphs.length, 9); i += 2) {
+      const pageContent = [];
+      pageContent.push(contentParagraphs[i]);
       
-      // Limit paragraph length for preview
-      let paragraph = paragraphs[i];
-      if (paragraph.length > 200) {
-        paragraph = paragraph.substring(0, 200) + '...';
+      if (i + 1 < contentParagraphs.length) {
+        pageContent.push(contentParagraphs[i + 1]);
       }
       
       pages.push({
         title: title,
-        content: [paragraph],
+        content: pageContent,
         isTitle: false
       });
-      
-      // Limit to 5 content pages for the preview
-      if (pages.length >= 6) {
-        break;
-      }
     }
     
     // Add a final page with "Suite de l'histoire" message
     pages.push({
       title: "Obtenir l'histoire complète",
-      content: ["Suite de l'histoire disponible après achat..."],
+      content: ["Tu veux lire la suite ? Passe à l'étape suivante pour continuer ou recevoir ton livre complet."],
       isTitle: false,
       isFinal: true
     });
@@ -104,10 +101,9 @@ const StoryContent: React.FC<StoryContentProps> = ({
     if (currentPage < pages.length - 1) {
       setCurrentPage(currentPage + 1);
       
-      // Si nous avons des illustrations pour chaque page et que nous ne sommes pas sur la page titre
-      // ou la page finale, on change aussi l'illustration
+      // Change illustration when changing content pages
       if (illustrations.length > 0 && currentPage > 0 && currentPage < pages.length - 2) {
-        const nextIllustrationIndex = Math.min(currentPage - 1, illustrations.length - 1);
+        const nextIllustrationIndex = Math.min(currentPage, illustrations.length - 1);
         onIllustrationChange(nextIllustrationIndex);
       }
     }
@@ -117,7 +113,7 @@ const StoryContent: React.FC<StoryContentProps> = ({
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
       
-      // Même logique pour les illustrations lors du retour en arrière
+      // Change illustration when going back
       if (illustrations.length > 0 && currentPage > 1 && currentPage < pages.length - 1) {
         const prevIllustrationIndex = Math.max(currentPage - 2, 0);
         onIllustrationChange(prevIllustrationIndex);
@@ -125,7 +121,7 @@ const StoryContent: React.FC<StoryContentProps> = ({
     }
   };
   
-  // Fonction pour naviguer entre les illustrations
+  // Function to navigate between illustrations
   const changeIllustration = (direction: 'next' | 'prev') => {
     if (direction === 'next' && currentIllustrationIndex < illustrations.length - 1) {
       onIllustrationChange(currentIllustrationIndex + 1);
@@ -228,9 +224,9 @@ const StoryContent: React.FC<StoryContentProps> = ({
                 {/* Illustration with navigation controls */}
                 <div className="w-full md:w-1/2 h-48 md:h-auto relative">
                   <StoryIllustration 
-                    imageUrl={illustrationUrl} 
+                    imageUrl={illustrations[currentPage - 1] || illustrationUrl} 
                     isGenerating={isGenerating} 
-                    altText={currentPageData.title}
+                    altText={`Illustration pour ${currentPageData.title}`}
                   />
                   
                   {/* Navigation pour les illustrations si on en a plusieurs */}
@@ -303,7 +299,7 @@ const StoryContent: React.FC<StoryContentProps> = ({
     <div className="flex flex-col items-center justify-center h-full">
       <BookOpenIcon className="h-16 w-16 text-purple-300 mb-4" />
       <p className="text-center text-gray-500">
-        Clique sur "Générer mon histoire" pour créer un aperçu de ton histoire personnalisée avec illustrations.
+        Clique sur "Générer mon histoire" pour créer une histoire personnalisée avec illustrations.
       </p>
     </div>
   );
