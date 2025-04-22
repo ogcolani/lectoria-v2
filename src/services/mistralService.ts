@@ -1,7 +1,7 @@
 
 interface MistralGenerationParams {
   prompt: string;
-  agentId: string;
+  agentId?: string; // Changed to optional with ? since it has a default value
   temperature?: number;
   topP?: number;
   maxTokens?: number;
