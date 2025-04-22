@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { IllustrationStyle } from '@/services/illustrationService';
+import { useLocation } from 'react-router-dom';
 
 // Liste complète des suggestions d'histoires
 const storyIdeas = [
@@ -42,12 +43,32 @@ const StoryGenerator = ({
   onGenerate,
   onStyleChange = () => {}
 }: StoryGeneratorProps) => {
-  // État pour suivre les suggestions actuellement affichées
   const [currentIdeasIndex, setCurrentIdeasIndex] = useState(0);
+  const location = useLocation();
   
   // Fonction pour obtenir les 3 suggestions suivantes
   const getNextIdeas = () => {
     setCurrentIdeasIndex((prevIndex) => (prevIndex + 3) % storyIdeas.length);
+  };
+
+  // Récupération des valeurs et éléments des pages précédentes
+  const { storyValues = [], storyElements = [] } = location.state || {};
+  
+  // Fonction pour formater une idée avec les éléments et valeurs sélectionnés
+  const formatStoryIdea = (baseIdea: string) => {
+    let formattedIdea = baseIdea;
+    
+    // Ajouter les valeurs sélectionnées si présentes
+    if (storyValues && storyValues.length > 0) {
+      formattedIdea += "\n\nL'histoire met en avant les valeurs suivantes : " + storyValues.join(", ");
+    }
+    
+    // Ajouter les éléments d'histoire sélectionnés si présents
+    if (storyElements && storyElements.length > 0) {
+      formattedIdea += "\n\nElements à inclure dans l'histoire : " + storyElements.join(", ");
+    }
+    
+    return formattedIdea;
   };
   
   // Obtenir les 3 suggestions actuelles
@@ -58,6 +79,11 @@ const StoryGenerator = ({
       ideas.push(storyIdeas[index]);
     }
     return ideas;
+  };
+
+  // Gestionnaire de clic sur une idée d'inspiration
+  const handleIdeaClick = (ideaText: string) => {
+    onPromptChange(formatStoryIdea(ideaText));
   };
 
   // Styles d'illustration disponibles
@@ -124,7 +150,7 @@ const StoryGenerator = ({
               <Slider
                 id="pageCount"
                 defaultValue={[pageCount]}
-                min={10}
+                min={24}
                 max={40}
                 step={2}
                 onValueChange={(value) => onPageCountChange(value[0])}
@@ -182,7 +208,7 @@ const StoryGenerator = ({
                     variant="outline" 
                     size="sm" 
                     className="mr-2 text-xs"
-                    onClick={() => onPromptChange(idea.text)}
+                    onClick={() => handleIdeaClick(idea.text)}
                   >
                     {idea.label}
                   </Button>
