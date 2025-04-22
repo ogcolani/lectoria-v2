@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Heart, Star, Wand2, Sparkles, Zap, Lightbulb } from 'lucide-react';
@@ -11,11 +11,22 @@ import ElementsSection, { StoryElement } from '@/components/story-elements/Eleme
 import StoryPreviewSidebar from '@/components/story-elements/StoryPreviewSidebar';
 import NavigationButtons from '@/components/story-elements/NavigationButtons';
 import HelpSection from '@/components/story-elements/HelpSection';
+import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 const StoryElements = () => {
-  const [progress, setProgress] = useState(60);
-  const [values, setValues] = useState<string[]>([]);
-  const [elements, setElements] = useState<string[]>([]);
+  // Utiliser le store Zustand
+  const { 
+    selectedValues,
+    selectedStoryElements,
+    setSelectedValues,
+    setSelectedStoryElements,
+    setProgress
+  } = useLectoriaStore();
+  
+  useEffect(() => {
+    // Initialiser la progression pour cette étape
+    setProgress(60);
+  }, [setProgress]);
   
   // Define the available values and story elements for reuse
   const availableValues: ValueItem[] = [
@@ -38,7 +49,7 @@ const StoryElements = () => {
 
   // Get the selected value labels for passing to the next page
   const getSelectedValueLabels = () => {
-    return values.map(valueId => {
+    return selectedValues.map(valueId => {
       const value = availableValues.find(v => v.id === valueId);
       return value ? value.label : valueId;
     });
@@ -46,7 +57,7 @@ const StoryElements = () => {
 
   // Get the selected element labels for passing to the next page
   const getSelectedElementLabels = () => {
-    return elements.map(elementId => {
+    return selectedStoryElements.map(elementId => {
       const element = storyElements.find(e => e.id === elementId);
       return element ? element.label : elementId;
     });
@@ -64,15 +75,15 @@ const StoryElements = () => {
         </h1>
         
       <ProgressSection 
-        progress={progress} 
-        currentStep={3}  // Changed from 2 to 3
+        progress={useLectoriaStore(state => state.progress)} 
+        currentStep={3}
         totalSteps={5} 
       />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <StoryPreviewSidebar 
-            values={values} 
-            elements={elements} 
+            values={selectedValues} 
+            elements={selectedStoryElements} 
             availableValues={availableValues} 
             storyElements={storyElements} 
           />
@@ -83,8 +94,8 @@ const StoryElements = () => {
             </h2>
             
             <div className="space-y-8">
-              <ValuesSection selectedValues={values} setSelectedValues={setValues} />
-              <ElementsSection selectedElements={elements} setSelectedElements={setElements} />
+              <ValuesSection selectedValues={selectedValues} setSelectedValues={setSelectedValues} />
+              <ElementsSection selectedElements={selectedStoryElements} setSelectedElements={setSelectedStoryElements} />
             </div>
             
             <NavigationButtons 

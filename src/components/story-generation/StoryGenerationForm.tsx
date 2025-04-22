@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import StoryGenerator from '@/components/StoryGenerator';
 import { IllustrationStyle } from '@/services/illustrationService';
+import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 interface StoryGenerationFormProps {
   prompt: string;
@@ -25,8 +25,6 @@ const StoryGenerationForm: React.FC<StoryGenerationFormProps> = ({
   onGenerate,
   onStyleChange,
 }) => {
-  const location = useLocation();
-
   return (
     <div className="lg:col-span-1 order-2 lg:order-1">
       <StoryGenerator

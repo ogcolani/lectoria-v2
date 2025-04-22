@@ -1,6 +1,5 @@
 
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Progress } from '@/components/ui/progress';
@@ -8,11 +7,10 @@ import InfoSection from '@/components/InfoSection';
 import StoryGenerationForm from '@/components/story-generation/StoryGenerationForm';
 import StoryPreviewSection from '@/components/story-generation/StoryPreviewSection';
 import { useStoryGeneration } from '@/hooks/useStoryGeneration';
+import SessionRecovery from '@/components/session/SessionRecovery';
+import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 const GenerationHistoire = () => {
-  const location = useLocation();
-  const { storyValues = [], storyElements = [], heroName, heroGender, heroAge, heroTrait } = location.state || {};
-  
   const {
     isGenerating,
     progress,
@@ -31,16 +29,11 @@ const GenerationHistoire = () => {
     resetStory,
     toggleBookPreview,
     handleContinue
-  } = useStoryGeneration({
-    values: storyValues,
-    elements: storyElements,
-    heroInfo: {
-      heroName: heroName || '',
-      heroGender: heroGender || '',
-      heroAge: heroAge || '',
-      heroTrait: heroTrait || ''
-    }
-  });
+  } = useStoryGeneration();
+  
+  // Récupérer des données supplémentaires du store
+  const heroName = useLectoriaStore(state => state.heroName);
+  const heroAge = useLectoriaStore(state => state.heroAge);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
@@ -95,6 +88,7 @@ const GenerationHistoire = () => {
       </main>
       
       <Footer />
+      <SessionRecovery />
     </div>
   );
 };

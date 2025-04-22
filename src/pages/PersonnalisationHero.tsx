@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useForm } from 'react-hook-form';
@@ -13,6 +14,9 @@ import AppearanceOptions from '@/components/hero-customization/AppearanceOptions
 import CategoryTabs from '@/components/hero-customization/CategoryTabs';
 import HelpGuide from '@/components/hero-customization/HelpGuide';
 import IllustrationStyleSelector from '@/components/hero-customization/IllustrationStyleSelector';
+import { useLectoriaStore } from '@/store/useLectoriaStore';
+import { useToast } from '@/components/ui/use-toast';
+import { IllustrationStyle } from '@/services/illustrationService';
 
 const formSchema = z.object({
   heroName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -30,26 +34,65 @@ type FormValues = z.infer<typeof formSchema>;
 type CategoryTab = 'personnage' | 'apparence' | 'pouvoirs';
 
 const PersonnalisationHero = () => {
-  const [progress, setProgress] = useState(40);
-  const [activeTab, setActiveTab] = useState<CategoryTab>('personnage');
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = React.useState<CategoryTab>('personnage');
+  
+  // Récupérer les données du store
+  const {
+    heroName, 
+    heroAge, 
+    heroDescription, 
+    heroTrait, 
+    heroGender, 
+    hasGlasses, 
+    illustrationStyle,
+    setHeroName,
+    setHeroAge,
+    setHeroDescription,
+    setHeroTrait,
+    setHeroGender,
+    setHasGlasses,
+    setIllustrationStyle,
+    setProgress
+  } = useLectoriaStore();
+  
+  useEffect(() => {
+    // Initialiser la progression pour cette étape
+    setProgress(40);
+  }, [setProgress]);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      heroName: '',
-      heroAge: '',
-      heroDescription: '',
-      heroTrait: '',
-      heroGender: undefined,
-      hasGlasses: false,
-      illustrationStyle: 'storybook'
+      heroName: heroName || '',
+      heroAge: heroAge || '',
+      heroDescription: heroDescription || '',
+      heroTrait: heroTrait || '',
+      heroGender: heroGender,
+      hasGlasses: hasGlasses || false,
+      illustrationStyle: (illustrationStyle as IllustrationStyle) || 'storybook'
     }
   });
   
+  // Mettre à jour le store quand le formulaire change
+  const watchedFields = form.watch();
+  useEffect(() => {
+    setHeroName(watchedFields.heroName);
+    setHeroAge(watchedFields.heroAge);
+    setHeroDescription(watchedFields.heroDescription || '');
+    setHeroTrait(watchedFields.heroTrait || '');
+    if (watchedFields.heroGender) {
+      setHeroGender(watchedFields.heroGender);
+    }
+    setHasGlasses(watchedFields.hasGlasses);
+    setIllustrationStyle(watchedFields.illustrationStyle as IllustrationStyle);
+  }, [watchedFields, setHeroName, setHeroAge, setHeroDescription, setHeroTrait, setHeroGender, setHasGlasses, setIllustrationStyle]);
+  
   const onSubmit = (data: FormValues) => {
-    console.log("Données du héros:", data);
-    // Ici vous pourriez stocker les données dans un contexte global ou localStorage
-    // pour les utiliser dans les étapes suivantes
+    toast({
+      title: "Personnage sauvegardé",
+      description: "Les informations de ton héros ont été sauvegardées.",
+    });
   };
 
   // Function to split traits entered by the user
@@ -110,7 +153,7 @@ const PersonnalisationHero = () => {
           </span>
         </h1>
         
-        <ProgressSection progress={progress} />
+        <ProgressSection progress={useLectoriaStore(state => state.progress)} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <HeroPreview 
@@ -132,7 +175,6 @@ const PersonnalisationHero = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <BasicInfoFields control={form.control} />
                 
-                {/* Déplacé après les champs de base qui contiennent le genre */}
                 <IllustrationStyleSelector control={form.control} />
                 
                 {renderTabContent()}

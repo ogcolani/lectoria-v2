@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { ImageIcon, Info, Sparkles } from 'lucide-react';
@@ -11,6 +10,7 @@ import StoryIdeas from './story-generator/StoryIdeas';
 import PageCountSelector from './story-generator/PageCountSelector';
 import IllustrationStyleSelector from './story-generator/IllustrationStyleSelector';
 import { storyIdeas } from './story-generator/storyIdeasData';
+import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 interface StoryGeneratorProps {
   prompt: string;
@@ -34,19 +34,26 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
   onStyleChange = () => {}
 }) => {
   const [currentIdeasIndex, setCurrentIdeasIndex] = useState(0);
-  const location = useLocation();
   
-  const { storyValues = [], storyElements = [], heroName, heroGender, heroAge, heroTrait } = location.state || {};
+  // Récupérer les données du store
+  const {
+    heroName,
+    heroGender,
+    heroAge,
+    heroTrait,
+    selectedValues,
+    selectedStoryElements
+  } = useLectoriaStore();
   
   const formatStoryIdea = (baseIdea: string) => {
     let formattedIdea = baseIdea;
     
-    if (storyValues && storyValues.length > 0) {
-      formattedIdea += "\n\nL'histoire met en avant les valeurs suivantes : " + storyValues.join(", ");
+    if (selectedValues && selectedValues.length > 0) {
+      formattedIdea += "\n\nL'histoire met en avant les valeurs suivantes : " + selectedValues.join(", ");
     }
     
-    if (storyElements && storyElements.length > 0) {
-      formattedIdea += "\n\nElements à inclure dans l'histoire : " + storyElements.join(", ");
+    if (selectedStoryElements && selectedStoryElements.length > 0) {
+      formattedIdea += "\n\nElements à inclure dans l'histoire : " + selectedStoryElements.join(", ");
     }
     
     // Add hero information if available

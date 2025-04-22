@@ -16,6 +16,7 @@ import ValuesSection from '@/components/ValuesSection';
 import DiscoverLectoria from '@/components/DiscoverLectoria';
 import OurMission from '@/components/OurMission';
 import ScrollProgressBar from '@/components/ScrollProgressBar';
+import SessionRecovery from '@/components/session/SessionRecovery';
 
 const Index = () => {
   return (
@@ -38,6 +39,7 @@ const Index = () => {
       <Footer />
       <ChatBot />
       <ScrollProgressBar />
+      <SessionRecovery />
     </div>
   );
 };
