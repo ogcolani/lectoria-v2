@@ -1,26 +1,16 @@
+
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
-import { Sparkles, Upload, Lightbulb, Info, ImageIcon, RefreshCw } from 'lucide-react';
+import { ImageIcon, Info, Sparkles } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
 import { IllustrationStyle } from '@/services/illustrationService';
-import { useLocation } from 'react-router-dom';
-
-// Liste complète des suggestions d'histoires
-const storyIdeas = [
-  { text: "Une aventure dans une forêt enchantée où les arbres parlent et cachent un trésor ancien.", label: "Forêt enchantée" },
-  { text: "Un voyage sous-marin à la découverte d'une cité perdue et de ses habitants.", label: "Monde sous-marin" },
-  { text: "Un enfant qui découvre qu'il peut parler aux animaux et les aide à résoudre leurs problèmes.", label: "Amis animaux" },
-  { text: "Une quête magique dans les étoiles à la recherche d'une constellation disparue.", label: "Aventure spatiale" },
-  { text: "L'histoire d'un petit dragon qui apprend à faire de la pâtisserie plutôt que de cracher du feu.", label: "Dragon pâtissier" },
-  { text: "Un voyage dans le temps pour rencontrer des dinosaures amicaux.", label: "Dinos du passé" },
-  { text: "Une école secrète où les enfants apprennent à faire pousser des bonbons magiques.", label: "École des bonbons" },
-  { text: "L'aventure d'un nuage qui veut devenir arc-en-ciel.", label: "Nuage coloré" },
-  { text: "Un cirque magique où les acrobates volent vraiment et les clowns peuvent se transformer.", label: "Cirque enchanté" }
-];
+import StoryIdeas from './story-generator/StoryIdeas';
+import PageCountSelector from './story-generator/PageCountSelector';
+import IllustrationStyleSelector from './story-generator/IllustrationStyleSelector';
+import { storyIdeas } from './story-generator/storyIdeasData';
 
 interface StoryGeneratorProps {
   prompt: string;
@@ -33,7 +23,7 @@ interface StoryGeneratorProps {
   onStyleChange?: (style: IllustrationStyle) => void;
 }
 
-const StoryGenerator = ({
+const StoryGenerator: React.FC<StoryGeneratorProps> = ({
   prompt,
   pageCount,
   isGenerating,
@@ -42,36 +32,30 @@ const StoryGenerator = ({
   onPageCountChange,
   onGenerate,
   onStyleChange = () => {}
-}: StoryGeneratorProps) => {
+}) => {
   const [currentIdeasIndex, setCurrentIdeasIndex] = useState(0);
   const location = useLocation();
   
-  // Fonction pour obtenir les 3 suggestions suivantes
-  const getNextIdeas = () => {
-    setCurrentIdeasIndex((prevIndex) => (prevIndex + 3) % storyIdeas.length);
-  };
-
-  // Récupération des valeurs et éléments des pages précédentes
   const { storyValues = [], storyElements = [] } = location.state || {};
   
-  // Fonction pour formater une idée avec les éléments et valeurs sélectionnés
   const formatStoryIdea = (baseIdea: string) => {
     let formattedIdea = baseIdea;
     
-    // Ajouter les valeurs sélectionnées si présentes
     if (storyValues && storyValues.length > 0) {
       formattedIdea += "\n\nL'histoire met en avant les valeurs suivantes : " + storyValues.join(", ");
     }
     
-    // Ajouter les éléments d'histoire sélectionnés si présents
     if (storyElements && storyElements.length > 0) {
       formattedIdea += "\n\nElements à inclure dans l'histoire : " + storyElements.join(", ");
     }
     
     return formattedIdea;
   };
-  
-  // Obtenir les 3 suggestions actuelles
+
+  const getNextIdeas = () => {
+    setCurrentIdeasIndex((prevIndex) => (prevIndex + 3) % storyIdeas.length);
+  };
+
   const getCurrentIdeas = () => {
     const ideas = [];
     for (let i = 0; i < 3; i++) {
@@ -81,35 +65,10 @@ const StoryGenerator = ({
     return ideas;
   };
 
-  // Gestionnaire de clic sur une idée d'inspiration
   const handleIdeaClick = (ideaText: string) => {
     onPromptChange(formatStoryIdea(ideaText));
   };
 
-  // Styles d'illustration disponibles
-  const illustrationStyles: { id: IllustrationStyle; label: string; description: string }[] = [
-    { 
-      id: 'storybook-cute', 
-      label: 'Album Enfantin',
-      description: 'Style doux et coloré, parfait pour les jeunes enfants' 
-    },
-    { 
-      id: 'fantasy-vibrant', 
-      label: 'Fantaisie Vibrante',
-      description: 'Couleurs vives et détails magiques pour les histoires fantastiques' 
-    },
-    { 
-      id: 'comic-style', 
-      label: 'Bande Dessinée',
-      description: 'Style BD avec traits nets et couleurs contrastées' 
-    },
-    { 
-      id: 'realistic', 
-      label: 'Semi-Réaliste',
-      description: 'Plus de détails et de textures, pour un rendu plus mature' 
-    }
-  ];
-  
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <h2 className="text-2xl font-bold mb-6">Générateur d'histoire</h2>
@@ -140,29 +99,11 @@ const StoryGenerator = ({
               </div>
             </div>
             
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <Label htmlFor="pageCount" className="text-base font-medium">
-                  Longueur du livre
-                </Label>
-                <span className="text-sm font-medium">{pageCount} pages</span>
-              </div>
-              <Slider
-                id="pageCount"
-                defaultValue={[pageCount]}
-                min={24}
-                max={40}
-                step={2}
-                onValueChange={(value) => onPageCountChange(value[0])}
-                disabled={isGenerating}
-                className="py-2"
-              />
-              <div className="flex justify-between text-xs text-gray-500 mt-1">
-                <span>Court</span>
-                <span>Moyen</span>
-                <span>Long</span>
-              </div>
-            </div>
+            <PageCountSelector 
+              pageCount={pageCount}
+              onPageCountChange={onPageCountChange}
+              isGenerating={isGenerating}
+            />
             
             <div className="mt-8">
               <Button
@@ -185,36 +126,11 @@ const StoryGenerator = ({
               </Button>
             </div>
 
-            <div className="mt-4 border-t pt-4">
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex items-start">
-                  <Lightbulb className="h-4 w-4 text-amber-500 mt-0.5 mr-2" />
-                  <span className="text-sm text-gray-600">Idées d'inspiration</span>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={getNextIdeas}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  Autres idées
-                </Button>
-              </div>
-              <div className="mt-2 space-y-2">
-                {getCurrentIdeas().map((idea, index) => (
-                  <Button 
-                    key={index}
-                    variant="outline" 
-                    size="sm" 
-                    className="mr-2 text-xs"
-                    onClick={() => handleIdeaClick(idea.text)}
-                  >
-                    {idea.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
+            <StoryIdeas
+              currentIdeas={getCurrentIdeas()}
+              onIdeaClick={handleIdeaClick}
+              onRefresh={getNextIdeas}
+            />
           </div>
         </TabsContent>
         
@@ -225,22 +141,10 @@ const StoryGenerator = ({
               <h3 className="text-base font-medium">Style des illustrations</h3>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {illustrationStyles.map((style) => (
-                <Card 
-                  key={style.id}
-                  className={`cursor-pointer transition border-2 hover:border-purple-300 ${
-                    illustrationStyle === style.id ? 'border-purple-500 bg-purple-50' : 'border-gray-200'
-                  }`}
-                  onClick={() => onStyleChange(style.id)}
-                >
-                  <CardContent className="p-4">
-                    <div className="font-medium">{style.label}</div>
-                    <p className="text-xs text-gray-500 mt-1">{style.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <IllustrationStyleSelector
+              selectedStyle={illustrationStyle}
+              onStyleChange={onStyleChange}
+            />
             
             <div className="mt-4 text-xs text-gray-500 flex items-start">
               <Info className="h-3.5 w-3.5 mr-1 mt-0.5 flex-shrink-0" />
