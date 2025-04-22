@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, Palette, Wand2 } from 'lucide-react';
 
@@ -49,9 +50,19 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
       <Tabs defaultValue={activeTab} value={activeTab} onValueChange={(value) => onTabChange(value as CategoryTab)}>
         <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto">
           {tabs.map((tab) => (
-            <TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2">
-              {getTabIcon(tab.id)}
-              <span>{tab.label}</span>
+            <TabsTrigger 
+              key={tab.id} 
+              value={tab.id}
+              className="flex items-center gap-2"
+              asChild
+            >
+              <Link to="#" onClick={(e) => {
+                e.preventDefault();
+                onTabChange(tab.id);
+              }}>
+                {getTabIcon(tab.id)}
+                <span>{tab.label}</span>
+              </Link>
             </TabsTrigger>
           ))}
         </TabsList>
