@@ -1,4 +1,6 @@
-
+import { generateWithMistral } from './mistralService';
+import { formatStoryPrompt } from './utils/promptUtils';
+import { generateStoryPreview } from './previewService';
 import { generateIllustration, generateStoryIllustrations, IllustrationStyle } from './illustrationService';
 
 // Interface for story generation parameters
@@ -28,135 +30,40 @@ export const generateStoryService = async ({
   heroTrait
 }: StoryGenerationParams) => {
   try {
-    // Convert values and elements to a string format for the prompt
-    const valuesText = values.length > 0 ? `Les valeurs importantes dans cette histoire sont: ${values.join(', ')}.` : '';
-    const elementsText = elements.length > 0 ? `L'histoire doit inclure les éléments suivants: ${elements.join(', ')}.` : '';
+    // Format the prompt with all available information
+    const formattedPrompt = formatStoryPrompt(
+      prompt,
+      childAge,
+      pageCount,
+      values,
+      elements,
+      { heroName, heroGender, heroAge, heroTrait }
+    );
     
-    // Add hero information if available
-    const heroInfo = [];
-    if (heroName) heroInfo.push(`Le personnage principal s'appelle ${heroName}.`);
-    if (heroGender) heroInfo.push(`C'est un/une ${heroGender}.`);
-    if (heroAge) heroInfo.push(`Il/Elle a ${heroAge} ans.`);
-    if (heroTrait) heroInfo.push(`Ses traits de caractère sont: ${heroTrait}.`);
-    const heroText = heroInfo.length > 0 ? heroInfo.join(' ') : '';
+    console.log("Envoi de la requête à l'API Mistral avec le prompt:", formattedPrompt);
     
-    // Calculate approximate word count based on page count (assuming ~100 words per page)
-    const wordCount = pageCount * 100;
+    // Generate the story using Mistral
+    const generatedFullStory = await generateWithMistral({ prompt: formattedPrompt });
     
-    // Adapt vocabulary based on child age
-    const vocabularyLevel = childAge <= 5 ? 'très simple avec des phrases courtes' : 
-                           childAge <= 8 ? 'simple et accessible' : 
-                           childAge <= 12 ? 'intermédiaire avec quelques mots plus recherchés' : 'riche et varié';
-    
-    // Create a comprehensive prompt for Mistral API
-    const mistralPrompt = `
-    Génère une histoire pour enfant de ${childAge} ans, qui fera environ ${pageCount} pages.
-    
-    Instructions spécifiques:
-    - Utilise un vocabulaire ${vocabularyLevel}
-    - L'histoire doit faire environ ${wordCount} mots au total
-    - Crée un titre captivant
-    - Inclus une introduction, un développement avec des rebondissements, et une conclusion
-    ${valuesText}
-    ${elementsText}
-    ${heroText}
-    
-    Instructions supplémentaires de l'utilisateur:
-    ${prompt}
-    
-    Format de retour:
-    - Sépare clairement le titre avec un # au début
-    - Utilise des paragraphes courts et aérés
-    - Ne mentionne pas dans l'histoire qu'elle est générée par IA
-    `;
-    
-    console.log("Envoi de la requête à l'API Mistral avec le prompt:", mistralPrompt);
-    
-    // Call Mistral API with the agent ID
-    const agentId = "ag:b1efb91e:20250417:untitled-agent:42bf825d";
-    const response = await fetch(`https://api.mistral.ai/v1/agents/${agentId}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.MISTRAL_API_KEY || 'sk-...'}` // Replace with actual API key in production
-      },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: "user",
-            content: mistralPrompt
-          }
-        ],
-        temperature: 0.7,
-        top_p: 0.9,
-        max_tokens: 4000
-      })
-    });
-    
-    if (!response.ok) {
-      console.error("Mistral API error:", await response.text());
-      throw new Error(`Mistral API error: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log("Received response from Mistral API:", data);
-    
-    // Extract generated story from the Mistral response
-    const generatedFullStory = data.choices[0].message.content;
-    
-    // Create a shorter preview for the UI
-    // Extract title and first few paragraphs for the preview
-    const lines = generatedFullStory.split('\n');
-    let title = "Histoire Générée";
-    let contentStart = 0;
-    
-    // Find the title (starts with #)
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith('# ')) {
-        title = lines[i].substring(2);
-        contentStart = i + 1;
-        break;
-      }
-    }
-    
-    // Create preview with first few paragraphs (about 30% of the full story)
-    const previewParagraphs = Math.min(Math.ceil(lines.length * 0.3), 10);
-    const storyPreview = [
-      `# ${title}`,
-      ...lines.slice(contentStart, contentStart + previewParagraphs),
-      '',
-      `${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour les tout-petits !' : 
-       childAge <= 8 ? '⭐ Une histoire captivante avec des personnages attachants, idéale pour les apprentis lecteurs !' : 
-       childAge <= 12 ? '⭐ Un récit palpitant rempli de rebondissements, parfait pour développer l\'imagination !' : 
-       '⭐ Une aventure épique aux multiples dimensions, conçue pour stimuler la réflexion et l\'empathie !'}`,
-      '',
-      `[Suite de l'histoire disponible après achat...]`,
-      '',
-      `Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`
-    ].join('\n');
+    // Create the preview version of the story
+    const storyPreview = generateStoryPreview(generatedFullStory, pageCount, childAge);
     
     // Extract key scenes from the story for illustrations
-    // Nous générons maintenant plusieurs illustrations, une pour chaque page
     const storySegments = extractKeyScenes(generatedFullStory, pageCount);
-    
     console.log(`Generating ${storySegments.length} illustrations for ${pageCount} story pages`);
     
-    // Générer toutes les illustrations avec le style choisi
+    // Generate all illustrations with the chosen style
     const illustrations = await generateStoryIllustrations(storySegments, illustrationStyle);
-    
-    // Sélectionner une illustration pour l'aperçu (la première généralement)
-    const previewIllustrationUrl = illustrations.length > 0 ? illustrations[0] : null;
     
     return {
       fullStory: generatedFullStory,
-      storyPreview: storyPreview,
-      illustrationUrl: previewIllustrationUrl,
-      illustrations: illustrations, // Liste de toutes les illustrations générées
-      storySegments: storySegments // Pour référence des segments qui ont généré chaque image
+      storyPreview,
+      illustrationUrl: illustrations.length > 0 ? illustrations[0] : null,
+      illustrations,
+      storySegments
     };
   } catch (error) {
     console.error("Error generating story:", error);
-    // Fallback to a simple story in case of error
     return generateFallbackStory(pageCount, childAge);
   }
 };
@@ -166,11 +73,10 @@ function extractKeyScenes(story: string, pageCount: number) {
   const paragraphs = story.split('\n').filter(p => p.trim() !== '' && !p.startsWith('#'));
   const scenes = [];
   
-  // Déterminer le nombre d'illustrations à générer (1 par page ou moins selon la longueur)
-  const sceneCount = Math.min(pageCount, paragraphs.length, 15); // Maximum 15 pour éviter trop d'illustrations
+  // Determine number of illustrations to generate (1 per page or less based on length)
+  const sceneCount = Math.min(pageCount, paragraphs.length, 15);
   
   // Find paragraphs that are likely to be descriptive scenes
-  // Look for longer paragraphs that aren't dialogue (don't start with - or ")
   const descriptiveParagraphs = paragraphs.filter(p => 
     p.length > 100 && !p.trimStart().startsWith('-') && !p.trimStart().startsWith('"')
   );
@@ -183,16 +89,14 @@ function extractKeyScenes(story: string, pageCount: number) {
   
   for (let i = 0; i < sceneCount && i * step < sourceParagraphs.length; i++) {
     const paragraph = sourceParagraphs[i * step];
-    // Create a prompt that's suitable for image generation
-    // Limit to 150 chars to avoid overly complex prompts
     const text = paragraph.slice(0, 150);
     scenes.push({
-      text: text,
+      text,
       prompt: `Une illustration de style enfantin pour un livre: ${text}`
     });
   }
   
-  // Ensure we have at least some scenes
+  // Ensure we have at least one scene
   if (scenes.length === 0) {
     scenes.push({
       text: "Un enfant partant à l'aventure dans un monde magique",
