@@ -2,11 +2,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Lightbulb, RefreshCw } from 'lucide-react';
-
-interface StoryIdea {
-  text: string;
-  label: string;
-}
+import { StoryIdea } from './storyIdeasData';
+import { useLocation } from 'react-router-dom';
 
 interface StoryIdeasProps {
   currentIdeas: StoryIdea[];
@@ -19,6 +16,25 @@ const StoryIdeas: React.FC<StoryIdeasProps> = ({
   onIdeaClick,
   onRefresh,
 }) => {
+  const location = useLocation();
+  const state = location.state || {};
+  const { heroGender, heroAge } = state;
+
+  // Filter ideas based on gender and age if available
+  const filteredIdeas = currentIdeas.filter(idea => {
+    if (heroGender && idea.gender !== 'both' && idea.gender !== heroGender) {
+      return false;
+    }
+    
+    if (heroAge) {
+      const age = parseInt(heroAge);
+      if (idea.minAge && age < idea.minAge) return false;
+      if (idea.maxAge && age > idea.maxAge) return false;
+    }
+    
+    return true;
+  });
+
   return (
     <div className="mt-4 border-t pt-4">
       <div className="flex justify-between items-start mb-3">
@@ -37,20 +53,27 @@ const StoryIdeas: React.FC<StoryIdeasProps> = ({
         </Button>
       </div>
       <div className="mt-2 space-y-2">
-        {currentIdeas.map((idea, index) => (
-          <Button 
-            key={index}
-            variant="outline" 
-            size="sm" 
-            className="mr-2 text-xs"
-            onClick={() => onIdeaClick(idea.text)}
-          >
-            {idea.label}
-          </Button>
-        ))}
+        {filteredIdeas.length > 0 ? (
+          filteredIdeas.map((idea, index) => (
+            <Button 
+              key={index}
+              variant="outline" 
+              size="sm" 
+              className="mr-2 text-xs"
+              onClick={() => onIdeaClick(idea.text)}
+            >
+              {idea.label}
+            </Button>
+          ))
+        ) : (
+          <p className="text-sm text-gray-500">
+            Aucune idée ne correspond aux critères actuels. Essayez de rafraîchir pour voir d'autres suggestions.
+          </p>
+        )}
       </div>
     </div>
   );
 };
 
 export default StoryIdeas;
+
