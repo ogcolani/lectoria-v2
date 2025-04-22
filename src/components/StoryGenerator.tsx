@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,7 +36,7 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
   const [currentIdeasIndex, setCurrentIdeasIndex] = useState(0);
   const location = useLocation();
   
-  const { storyValues = [], storyElements = [] } = location.state || {};
+  const { storyValues = [], storyElements = [], heroName, heroGender, heroAge, heroTrait } = location.state || {};
   
   const formatStoryIdea = (baseIdea: string) => {
     let formattedIdea = baseIdea;
@@ -46,6 +47,17 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
     
     if (storyElements && storyElements.length > 0) {
       formattedIdea += "\n\nElements à inclure dans l'histoire : " + storyElements.join(", ");
+    }
+    
+    // Add hero information if available
+    const heroInfo = [];
+    if (heroName) heroInfo.push(`Le personnage principal s'appelle ${heroName}.`);
+    if (heroGender) heroInfo.push(`C'est un/une ${heroGender}.`);
+    if (heroAge) heroInfo.push(`Il/Elle a ${heroAge} ans.`);
+    if (heroTrait) heroInfo.push(`Ses traits de caractère sont: ${heroTrait}.`);
+    
+    if (heroInfo.length > 0) {
+      formattedIdea += "\n\nInformations sur le héros : " + heroInfo.join(" ");
     }
     
     return formattedIdea;

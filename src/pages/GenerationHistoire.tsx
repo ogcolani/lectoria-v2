@@ -29,13 +29,27 @@ const GenerationHistoire = () => {
   // Get story elements and values from location state if available
   const [values, setValues] = useState<string[]>([]);
   const [elements, setElements] = useState<string[]>([]);
+  const [heroInfo, setHeroInfo] = useState({
+    heroName: '',
+    heroGender: '',
+    heroAge: '',
+    heroTrait: ''
+  });
   
-  // Load values and elements from location state on initial render
+  // Load values, elements and hero info from location state on initial render
   useEffect(() => {
     if (location.state) {
-      const { storyValues, storyElements } = location.state;
+      const { storyValues, storyElements, heroName, heroGender, heroAge, heroTrait } = location.state;
       if (storyValues) setValues(storyValues);
       if (storyElements) setElements(storyElements);
+      
+      // Set hero information
+      setHeroInfo({
+        heroName: heroName || '',
+        heroGender: heroGender || '',
+        heroAge: heroAge || '',
+        heroTrait: heroTrait || ''
+      });
     }
   }, [location]);
 
@@ -46,8 +60,8 @@ const GenerationHistoire = () => {
     setIllustrations([]);
     
     try {
-      // Dans une vraie application, cette valeur serait récupérée d'un état global ou localStorage
-      const childAge = 6; 
+      // Get child age from hero info if available, or use default
+      const childAge = heroInfo.heroAge ? parseInt(heroInfo.heroAge) : 6;
 
       const result = await generateStoryService({
         prompt,
@@ -55,7 +69,12 @@ const GenerationHistoire = () => {
         childAge,
         values,
         elements,
-        illustrationStyle
+        illustrationStyle,
+        // Pass hero information to the story service
+        heroName: heroInfo.heroName,
+        heroGender: heroInfo.heroGender,
+        heroAge: heroInfo.heroAge,
+        heroTrait: heroInfo.heroTrait
       });
       
       setFullStory(result.fullStory);

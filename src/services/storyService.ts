@@ -9,6 +9,10 @@ interface StoryGenerationParams {
   values?: string[];
   elements?: string[];
   illustrationStyle?: IllustrationStyle;
+  heroName?: string;
+  heroGender?: string;
+  heroAge?: string;
+  heroTrait?: string;
 }
 
 export const generateStoryService = async ({
@@ -17,12 +21,24 @@ export const generateStoryService = async ({
   childAge = 6,
   values = [],
   elements = [],
-  illustrationStyle = 'storybook-cute'
+  illustrationStyle = 'storybook-cute',
+  heroName,
+  heroGender,
+  heroAge,
+  heroTrait
 }: StoryGenerationParams) => {
   try {
     // Convert values and elements to a string format for the prompt
     const valuesText = values.length > 0 ? `Les valeurs importantes dans cette histoire sont: ${values.join(', ')}.` : '';
     const elementsText = elements.length > 0 ? `L'histoire doit inclure les éléments suivants: ${elements.join(', ')}.` : '';
+    
+    // Add hero information if available
+    const heroInfo = [];
+    if (heroName) heroInfo.push(`Le personnage principal s'appelle ${heroName}.`);
+    if (heroGender) heroInfo.push(`C'est un/une ${heroGender}.`);
+    if (heroAge) heroInfo.push(`Il/Elle a ${heroAge} ans.`);
+    if (heroTrait) heroInfo.push(`Ses traits de caractère sont: ${heroTrait}.`);
+    const heroText = heroInfo.length > 0 ? heroInfo.join(' ') : '';
     
     // Calculate approximate word count based on page count (assuming ~100 words per page)
     const wordCount = pageCount * 100;
@@ -43,6 +59,7 @@ export const generateStoryService = async ({
     - Inclus une introduction, un développement avec des rebondissements, et une conclusion
     ${valuesText}
     ${elementsText}
+    ${heroText}
     
     Instructions supplémentaires de l'utilisateur:
     ${prompt}
@@ -53,17 +70,17 @@ export const generateStoryService = async ({
     - Ne mentionne pas dans l'histoire qu'elle est générée par IA
     `;
     
-    console.log("Sending request to Mistral API with prompt:", mistralPrompt);
+    console.log("Envoi de la requête à l'API Mistral avec le prompt:", mistralPrompt);
     
-    // Call Mistral API
-    const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
+    // Call Mistral API with the agent ID
+    const agentId = "ag:b1efb91e:20250417:untitled-agent:42bf825d";
+    const response = await fetch(`https://api.mistral.ai/v1/agents/${agentId}/chat/completions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.MISTRAL_API_KEY || 'sk-...'}` // Replace with actual API key in production
       },
       body: JSON.stringify({
-        model: "mistral-large-latest", // Use appropriate model
         messages: [
           {
             role: "user",
