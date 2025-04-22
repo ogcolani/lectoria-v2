@@ -13,19 +13,17 @@ export const generateStoryPreview = (generatedFullStory: string, pageCount: numb
     }
   }
   
-  // Create preview with first few paragraphs (about 30% of the full story)
-  const previewParagraphs = Math.min(Math.ceil(lines.length * 0.3), 10);
+  // Create a shorter preview (about 20% of the full story)
+  const previewParagraphs = Math.min(Math.ceil(lines.length * 0.2), 5);
   return [
     `# ${title}`,
     ...lines.slice(contentStart, contentStart + previewParagraphs),
     '',
-    `${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour les tout-petits !' : 
-     childAge <= 8 ? '⭐ Une histoire captivante avec des personnages attachants, idéale pour les apprentis lecteurs !' : 
-     childAge <= 12 ? '⭐ Un récit palpitant rempli de rebondissements, parfait pour développer l\'imagination !' : 
-     '⭐ Une aventure épique aux multiples dimensions, conçue pour stimuler la réflexion et l\'empathie !'}`,
+    '⭐ Un aperçu de ton histoire personnalisée !',
     '',
-    `[Suite de l'histoire disponible après achat...]`,
+    'Pour découvrir la suite de cette aventure unique...',
     '',
-    `Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`
+    `Histoire complète en ${pageCount} pages, adaptée aux ${childAge} ans`
   ].join('\n');
 };
+

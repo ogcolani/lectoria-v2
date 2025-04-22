@@ -107,70 +107,28 @@ function extractKeyScenes(story: string, pageCount: number) {
   return scenes;
 }
 
-// Fallback function in case the API fails
+// Simplified fallback story
 function generateFallbackStory(pageCount: number, childAge: number) {
   const title = "L'Aventure Magique";
-  const intro = "Il était une fois, dans un monde rempli de merveilles et de magie, un jeune héros nommé Alex. Alex avait toujours rêvé de partir à l'aventure, de découvrir des terres inconnues et de vivre des expériences extraordinaires.";
+  const intro = "Il était une fois, dans un monde rempli de merveilles, un jeune héros qui rêvait de vivre une grande aventure.";
   
-  // Simple story structure as fallback
-  const generatedFullStory = `# ${title}
-
-${intro}
-
-Un jour, alors qu'il se promenait dans la forêt près de chez lui, il découvrit un vieux livre mystérieux, caché sous un rocher couvert de mousse. En l'ouvrant, une lumière éblouissante en jaillit, et une voix douce murmura: "Toi qui as trouvé ce livre, tu es l'élu. Tu dois retrouver les trois cristaux de pouvoir pour sauver notre monde."
-
-Sans hésiter, Alex accepta cette mission. Armé de son courage et de sa détermination, il partit à la recherche du premier cristal. Son voyage le mena à travers des montagnes escarpées, des déserts brûlants et des océans tumultueux.
-
-[... Histoire complète sur ${pageCount} pages ...]
-
-Et c'est ainsi que le jeune héros comprit que la véritable magie ne résidait pas dans les objets enchantés, mais dans le cœur de chacun.
-
-Fin.`;
-
-  // Preview with more detail
-  const generatedPreview = `# ${title}
-
-${intro}
-
-Un jour, alors qu'il se promenait dans la forêt près de chez lui, il découvrit un vieux livre mystérieux, caché sous un rocher couvert de mousse. En l'ouvrant, une lumière éblouissante en jaillit, et une voix douce murmura: "Toi qui as trouvé ce livre, tu es l'élu. Tu dois retrouver les trois cristaux de pouvoir pour sauver notre monde."
-
-${childAge <= 5 ? '⭐ Une aventure magique avec des mots simples, parfaite pour les tout-petits !' : 
- childAge <= 8 ? '⭐ Une histoire captivante avec des personnages attachants, idéale pour les apprentis lecteurs !' : 
- childAge <= 12 ? '⭐ Un récit palpitant rempli de rebondissements, parfait pour développer l\'imagination !' : 
- '⭐ Une aventure épique aux multiples dimensions, conçue pour stimuler la réflexion et l\'empathie !'}
-
-[Suite de l'histoire disponible après achat...]
-
-Cette histoire complète fait ${pageCount} pages, spécialement adaptée pour les enfants de ${childAge} ans.`;
-
-  // Create fallback scenes for illustrations
-  const fallbackScenes = [
-    {
-      text: "Un enfant trouve un livre magique dans la forêt",
-      prompt: "Une illustration de style enfantin d'un enfant trouvant un livre magique brillant dans une forêt mystérieuse"
-    },
-    {
-      text: "Des montagnes escarpées sous un ciel étoilé",
-      prompt: "Une illustration de style enfantin de montagnes escarpées sous un ciel étoilé magique"
-    },
-    {
-      text: "Un désert brûlant avec des dunes dorées",
-      prompt: "Une illustration de style enfantin d'un désert aux dunes dorées sous un soleil brillant"
-    }
-  ];
+  const generatedFullStory = `# ${title}\n\n${intro}\n\nUn jour magique, notre héros découvrit un mystérieux livre aux pages dorées. En l'ouvrant, une douce lumière en jaillit, l'invitant à vivre sa propre histoire.`;
   
-  // Generate some placeholder illustrations
+  const preview = generateStoryPreview(generatedFullStory, pageCount, childAge);
+  
+  // Simplified illustration placeholders
   const placeholderIllustrations = [
-    'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843', // livre magique
-    'https://images.unsplash.com/photo-1486718448742-163732cd1544', // montagnes
-    'https://images.unsplash.com/photo-1500375592092-40eb2168fd21'  // désert
+    'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843'
   ];
 
   return {
     fullStory: generatedFullStory,
-    storyPreview: generatedPreview,
+    storyPreview: preview,
     illustrationUrl: placeholderIllustrations[0],
     illustrations: placeholderIllustrations,
-    storySegments: fallbackScenes
+    storySegments: [{
+      text: intro,
+      prompt: "Une illustration magique d'un jeune héros découvrant un livre mystérieux"
+    }]
   };
 }
