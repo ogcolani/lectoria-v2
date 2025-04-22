@@ -5,6 +5,7 @@ import { Control } from 'react-hook-form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Paintbrush, BookOpen, Sparkles, CircleUser } from 'lucide-react';
 import { z } from 'zod';
+import { IllustrationStyle } from '@/services/illustrationService';
 
 const formSchema = z.object({
   heroName: z.string().min(2, {
@@ -19,10 +20,8 @@ const formSchema = z.object({
     required_error: "Sélectionne le genre de ton héros"
   }),
   hasGlasses: z.boolean().default(false),
-  illustrationStyle: z.enum(["storybook", "fantasy", "comics"]).default("storybook")
+  illustrationStyle: z.enum(["storybook-cute", "fantasy-vibrant", "comic-style", "realistic"]).default("storybook-cute")
 });
-
-export type IllustrationStyle = "storybook" | "fantasy" | "comics";
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -32,20 +31,25 @@ interface IllustrationStyleSelectorProps {
 
 // Données des styles d'illustration
 const illustrationStyles = [{
-  id: 'storybook',
+  id: 'storybook-cute',
   name: 'Storybook Cartoon',
   icon: <BookOpen className="h-4 w-4 mr-2" />,
   description: 'Illustration douce, enfantine, colorée. Inspiré par Loish, Studio Ghibli, univers féérique.'
 }, {
-  id: 'fantasy',
+  id: 'fantasy-vibrant',
   name: 'Fantasy Semi-Réaliste',
   icon: <Sparkles className="h-4 w-4 mr-2" />,
   description: 'Illustration détaillée et épique, style ArtStation. Digital art fantasy, lumière cinématographique.'
 }, {
-  id: 'comics',
+  id: 'comic-style',
   name: 'Bande Dessinée / Ligne Claire',
   icon: <CircleUser className="h-4 w-4 mr-2" />,
   description: 'Propre, coloré, lisible, type BD européenne / Pixar. Ligne claire, comics jeunesse.'
+}, {
+  id: 'realistic',
+  name: 'Semi-Réaliste',
+  icon: <CircleUser className="h-4 w-4 mr-2" />,
+  description: 'Plus de détails et de textures, pour un rendu plus mature et réaliste.'
 }];
 
 const IllustrationStyleSelector: React.FC<IllustrationStyleSelectorProps> = ({

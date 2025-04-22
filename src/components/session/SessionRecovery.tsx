@@ -8,17 +8,23 @@ import { RefreshCw, Trash } from 'lucide-react';
 const SessionRecovery = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const hasExistingSession = useLectoriaStore(state => state.hasExistingSession);
-  const resetAllData = useLectoriaStore(state => state.resetAllData);
-  const heroName = useLectoriaStore(state => state.heroName);
-  const storyPreview = useLectoriaStore(state => state.storyPreview);
+  
+  // Access the store safely with conditional checks
+  const store = useLectoriaStore();
+  const hasExistingSession = store ? store.hasExistingSession : () => false;
+  const heroName = store ? store.heroName : '';
+  const storyPreview = store ? store.storyPreview : '';
+  const resetAllData = store ? store.resetAllData : () => {};
   
   useEffect(() => {
-    // Vérifier s'il y a des données à restaurer
-    if (hasExistingSession()) {
-      setOpen(true);
+    // Verify store is initialized before checking for existing session
+    if (store && typeof hasExistingSession === 'function') {
+      const hasSession = hasExistingSession();
+      if (hasSession) {
+        setOpen(true);
+      }
     }
-  }, [hasExistingSession]);
+  }, [store, hasExistingSession]);
 
   const handleResumeSession = () => {
     setOpen(false);
@@ -33,7 +39,9 @@ const SessionRecovery = () => {
 
   const handleStartNew = () => {
     // Réinitialiser toutes les données
-    resetAllData();
+    if (typeof resetAllData === 'function') {
+      resetAllData();
+    }
     setOpen(false);
   };
 

@@ -39,7 +39,8 @@ const Index = () => {
       <Footer />
       <ChatBot />
       <ScrollProgressBar />
-      <SessionRecovery />
+      {/* Only render SessionRecovery if the store is initialized */}
+      {typeof window !== 'undefined' && <SessionRecovery />}
     </div>
   );
 };

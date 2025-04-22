@@ -27,7 +27,7 @@ const formSchema = z.object({
     required_error: "Sélectionne le genre de ton héros",
   }),
   hasGlasses: z.boolean().default(false),
-  illustrationStyle: z.enum(["storybook", "fantasy", "comics"]).default("storybook")
+  illustrationStyle: z.enum(["storybook-cute", "fantasy-vibrant", "comic-style", "realistic"]).default("storybook-cute")
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -68,9 +68,9 @@ const PersonnalisationHero = () => {
       heroAge: heroAge || '',
       heroDescription: heroDescription || '',
       heroTrait: heroTrait || '',
-      heroGender: heroGender,
+      heroGender: heroGender || 'garçon',
       hasGlasses: hasGlasses || false,
-      illustrationStyle: (illustrationStyle as IllustrationStyle) || 'storybook'
+      illustrationStyle: (illustrationStyle as IllustrationStyle) || 'storybook-cute'
     }
   });
   

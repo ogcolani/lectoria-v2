@@ -3,7 +3,7 @@ import React from 'react';
 import StoryHero from '@/components/StoryHero';
 import CharacterTraitBadge from '@/components/ui/character-trait-badge';
 import { Glasses } from 'lucide-react';
-import { IllustrationStyle } from './IllustrationStyleSelector';
+import { IllustrationStyle } from '@/services/illustrationService';
 
 interface HeroPreviewProps {
   heroName: string;
@@ -22,7 +22,7 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({
   heroGender,
   hasGlasses,
   traits,
-  illustrationStyle = 'storybook'
+  illustrationStyle = 'storybook-cute'
 }) => {
   return (
     <div className="lg:col-span-1 flex flex-col items-center justify-start bg-purple-100 rounded-2xl p-6 order-2 lg:order-1">

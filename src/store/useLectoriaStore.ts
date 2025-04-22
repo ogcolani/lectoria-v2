@@ -72,7 +72,7 @@ export const useLectoriaStore = create<LectoriaState>()(
       heroTrait: '',
       heroGender: undefined,
       hasGlasses: false,
-      illustrationStyle: 'storybook-cute',
+      illustrationStyle: 'storybook-cute' as IllustrationStyle,
       
       // Valeurs initiales des éléments d'histoire
       selectedValues: [],
@@ -131,7 +131,7 @@ export const useLectoriaStore = create<LectoriaState>()(
         heroTrait: '',
         heroGender: undefined,
         hasGlasses: false,
-        illustrationStyle: 'storybook-cute',
+        illustrationStyle: 'storybook-cute' as IllustrationStyle,
         selectedValues: [],
         selectedStoryElements: [],
         prompt: '',
