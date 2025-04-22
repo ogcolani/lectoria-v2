@@ -7,10 +7,11 @@ import { useToast } from '@/components/ui/use-toast';
 
 import StoryGenerator from '@/components/StoryGenerator';
 import StoryPreview from '@/components/StoryPreview';
+import BookPreview from '@/components/BookPreview';
 import InfoSection from '@/components/InfoSection';
 import { generateStoryService } from '@/services/storyService';
 import { Button } from '@/components/ui/button';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IllustrationStyle } from '@/services/illustrationService';
 
 const GenerationHistoire = () => {
@@ -23,8 +24,10 @@ const GenerationHistoire = () => {
   const [illustrationUrl, setIllustrationUrl] = useState<string | null>(null);
   const [illustrations, setIllustrations] = useState<string[]>([]);
   const [illustrationStyle, setIllustrationStyle] = useState<IllustrationStyle>('storybook-cute');
+  const [showBookPreview, setShowBookPreview] = useState(false);
   const { toast } = useToast();
   const location = useLocation();
+  const navigate = useNavigate();
   
   // Get story elements and values from location state if available
   const [values, setValues] = useState<string[]>([]);
@@ -118,6 +121,7 @@ const GenerationHistoire = () => {
     setIllustrationUrl(null);
     setIllustrations([]);
     setProgress(80);
+    setShowBookPreview(false);
   };
 
   // Fonction pour changer le style d'illustration
@@ -131,23 +135,39 @@ const GenerationHistoire = () => {
     }
   };
 
-  // Ajout d'un bouton pour voir l'aperçu du livre
-  const previewBookButton = () => {
-    if (storyPreview && progress === 100) {
-      return (
-        <div className="mt-8 text-center">
-          <Link to="/offres-cadeaux">
-            <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-              Voir l'aperçu du livre complet
-            </Button>
-          </Link>
-          <p className="text-sm text-gray-500 mt-2">
-            Visualise ton histoire avec {illustrations.length} illustrations page par page
-          </p>
-        </div>
-      );
+  // Extraire les paragraphes de l'histoire pour le BookPreview
+  const getStoryParagraphs = () => {
+    if (!fullStory) return [];
+    
+    const paragraphs = fullStory.split('\n')
+      .filter(p => p.trim() !== '' && !p.startsWith('#') && !p.startsWith('⭐'))
+      .slice(0, 5);
+    
+    return paragraphs;
+  };
+  
+  // Extraire le titre de l'histoire
+  const getStoryTitle = () => {
+    if (!fullStory) return "Mon Histoire";
+    
+    const lines = fullStory.split('\n');
+    for (const line of lines) {
+      if (line.startsWith('# ')) {
+        return line.substring(2);
+      }
     }
-    return null;
+    
+    return "Mon Histoire";
+  };
+  
+  // Fonction pour passer à l'étape suivante
+  const handleContinue = () => {
+    navigate('/offres-cadeaux');
+  };
+  
+  // Changer la vue entre aperçu et prévisualisation du livre
+  const toggleBookPreview = () => {
+    setShowBookPreview(!showBookPreview);
   };
 
   return (
@@ -169,35 +189,65 @@ const GenerationHistoire = () => {
           <Progress value={progress} className="h-2 bg-gray-200" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="lg:col-span-1 order-2 lg:order-1">
-            <StoryGenerator 
-              prompt={prompt}
-              pageCount={pageCount}
-              isGenerating={isGenerating}
-              onPromptChange={setPrompt}
-              onPageCountChange={setPageCount}
-              onGenerate={generateStory}
-              illustrationStyle={illustrationStyle}
-              onStyleChange={handleStyleChange}
-            />
-          </div>
-          
-          <div className="lg:col-span-2 order-1 lg:order-2">
-            <StoryPreview 
-              storyPreview={storyPreview}
-              isGenerating={isGenerating}
-              pageCount={pageCount}
-              childAge={6} // Cette valeur serait récupérée d'un état global dans une vraie application
-              illustrationUrl={illustrationUrl}
+        {showBookPreview && storyPreview ? (
+          <div className="max-w-6xl mx-auto">
+            <BookPreview 
+              storyTitle={getStoryTitle()}
+              heroName={heroInfo.heroName}
+              storyContent={getStoryParagraphs()}
               illustrations={illustrations}
-              onShare={handleShare}
-              onReset={resetStory}
+              onContinue={handleContinue}
             />
-            
-            {previewBookButton()}
+            <div className="text-center mt-6">
+              <Button variant="outline" onClick={toggleBookPreview}>
+                Revenir à l'aperçu
+              </Button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="lg:col-span-1 order-2 lg:order-1">
+              <StoryGenerator 
+                prompt={prompt}
+                pageCount={pageCount}
+                isGenerating={isGenerating}
+                onPromptChange={setPrompt}
+                onPageCountChange={setPageCount}
+                onGenerate={generateStory}
+                illustrationStyle={illustrationStyle}
+                onStyleChange={handleStyleChange}
+              />
+            </div>
+            
+            <div className="lg:col-span-2 order-1 lg:order-2">
+              <StoryPreview 
+                storyPreview={storyPreview}
+                isGenerating={isGenerating}
+                pageCount={pageCount}
+                childAge={heroInfo.heroAge ? parseInt(heroInfo.heroAge) : 6}
+                illustrationUrl={illustrationUrl}
+                illustrations={illustrations}
+                onShare={handleShare}
+                onReset={resetStory}
+              />
+              
+              {storyPreview && progress === 100 && (
+                <div className="mt-8 text-center">
+                  <Button 
+                    size="lg" 
+                    onClick={toggleBookPreview}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  >
+                    Prévisualiser le livre
+                  </Button>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Visualise ton histoire en format livre avec {illustrations.length} illustrations
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         
         <InfoSection />
       </main>
