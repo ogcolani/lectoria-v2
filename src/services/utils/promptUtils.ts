@@ -19,34 +19,38 @@ export const formatStoryPrompt = (
                          childAge <= 8 ? 'simple et accessible' : 
                          childAge <= 12 ? 'intermédiaire avec quelques mots plus recherchés' : 'riche et varié';
 
-  const valuesText = values.length > 0 ? `Les valeurs importantes dans cette histoire sont: ${values.join(', ')}.` : '';
-  const elementsText = elements.length > 0 ? `L'histoire doit inclure les éléments suivants: ${elements.join(', ')}.` : '';
+  const valuesText = values.length > 0 ? `Les valeurs importantes à transmettre dans cette histoire sont: ${values.join(', ')}.` : '';
+  const elementsText = elements.length > 0 ? `L'histoire doit absolument inclure ces éléments: ${elements.join(', ')}.` : '';
   
   const heroInfoArray = [];
-  if (heroInfo.heroName) heroInfoArray.push(`Le personnage principal s'appelle ${heroInfo.heroName}.`);
-  if (heroInfo.heroGender) heroInfoArray.push(`C'est un/une ${heroInfo.heroGender}.`);
+  if (heroInfo.heroName) heroInfoArray.push(`Le héros/héroïne principal(e) s'appelle ${heroInfo.heroName}.`);
+  if (heroInfo.heroGender) heroInfoArray.push(`C'est un(e) ${heroInfo.heroGender}.`);
   if (heroInfo.heroAge) heroInfoArray.push(`Il/Elle a ${heroInfo.heroAge} ans.`);
-  if (heroInfo.heroTrait) heroInfoArray.push(`Ses traits de caractère sont: ${heroInfo.heroTrait}.`);
+  if (heroInfo.heroTrait) heroInfoArray.push(`Ses traits de caractère principaux sont: ${heroInfo.heroTrait}.`);
   const heroText = heroInfoArray.length > 0 ? heroInfoArray.join(' ') : '';
 
-  return `
-    Génère une histoire pour enfant de ${childAge} ans, qui fera environ ${pageCount} pages.
-    
-    Instructions spécifiques:
+  return `Tu es un expert en création d'histoires pour enfants. Je veux que tu génères une histoire captivante et personnalisée.
+
+    Instructions détaillées:
+    - Histoire pour enfant de ${childAge} ans
+    - Environ ${pageCount} pages (${wordCount} mots)
     - Utilise un vocabulaire ${vocabularyLevel}
-    - L'histoire doit faire environ ${wordCount} mots au total
-    - Crée un titre captivant
-    - Inclus une introduction, un développement avec des rebondissements, et une conclusion
-    ${valuesText}
-    ${elementsText}
+    
+    Informations sur le héros:
     ${heroText}
     
-    Instructions supplémentaires de l'utilisateur:
+    Éléments narratifs:
+    ${valuesText}
+    ${elementsText}
+    
+    Instructions spécifiques:
     ${basePrompt}
     
-    Format de retour:
-    - Sépare clairement le titre avec un # au début
-    - Utilise des paragraphes courts et aérés
-    - Ne mentionne pas dans l'histoire qu'elle est générée par IA
-  `;
+    Format requis:
+    1. Commence par le titre précédé de "# "
+    2. Écris l'histoire en plusieurs paragraphes courts
+    3. Assure-toi que chaque paragraphe soit bien séparé par une ligne vide
+    4. N'écris pas "Chapitre 1" ou des numéros de chapitres
+    5. Ne mentionne pas que c'est une histoire générée par IA
+    6. Crée une histoire cohérente qui intègre naturellement tous les éléments demandés`;
 };

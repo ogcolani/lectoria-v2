@@ -1,7 +1,7 @@
 
 interface MistralGenerationParams {
   prompt: string;
-  agentId?: string; // Changed to optional with ? since it has a default value
+  agentId?: string;
   temperature?: number;
   topP?: number;
   maxTokens?: number;
@@ -18,7 +18,7 @@ export const generateWithMistral = async ({
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.MISTRAL_API_KEY || 'sk-...'}`
+      "Authorization": `Bearer ccHJPzAguqBac3OhFbNYAxcFD70MwYFu`
     },
     body: JSON.stringify({
       messages: [
