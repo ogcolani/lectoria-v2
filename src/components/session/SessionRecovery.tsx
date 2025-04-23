@@ -4,6 +4,7 @@ import { useLectoriaStore } from '@/store/useLectoriaStore';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { useNavigate } from 'react-router-dom';
 import { RefreshCw, Trash } from 'lucide-react';
+import { isSessionValid } from '@/utils/sessionUtils';
 
 const SessionRecovery = () => {
   const [open, setOpen] = useState(false);
@@ -11,20 +12,21 @@ const SessionRecovery = () => {
   
   // Access the store safely with conditional checks
   const store = useLectoriaStore();
-  const hasExistingSession = store ? store.hasExistingSession : () => false;
+  const clearAll = store ? store.clearAll : () => {};
   const heroName = store ? store.heroName : '';
   const storyPreview = store ? store.storyPreview : '';
-  const resetAllData = store ? store.resetAllData : () => {};
   
   useEffect(() => {
-    // Verify store is initialized before checking for existing session
-    if (store && typeof hasExistingSession === 'function') {
-      const hasSession = hasExistingSession();
-      if (hasSession) {
+    // Seulement vérifier si nous avons une instance valide du store
+    if (store) {
+      // Utiliser la nouvelle fonction isSessionValid pour déterminer si une session valide existe
+      const sessionValid = isSessionValid(store);
+      
+      if (sessionValid) {
         setOpen(true);
       }
     }
-  }, [store, hasExistingSession]);
+  }, [store]);
 
   const handleResumeSession = () => {
     setOpen(false);
@@ -32,15 +34,15 @@ const SessionRecovery = () => {
     // Naviguer vers la dernière page pertinente
     if (storyPreview) {
       navigate('/generation-histoire');
-    } else if (heroName) {
+    } else if (heroName && heroName.trim().length > 1) {
       navigate('/story-elements');
     }
   };
 
   const handleStartNew = () => {
-    // Réinitialiser toutes les données
-    if (typeof resetAllData === 'function') {
-      resetAllData();
+    // Réinitialiser toutes les données avec la nouvelle méthode clearAll
+    if (typeof clearAll === 'function') {
+      clearAll();
     }
     setOpen(false);
   };

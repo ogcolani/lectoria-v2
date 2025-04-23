@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { IllustrationStyle } from '@/services/illustrationService';
@@ -56,6 +55,7 @@ interface LectoriaState {
   // Réinitialisation des données
   resetStoryData: () => void;
   resetAllData: () => void;
+  clearAll: () => void;
   
   // Session management
   hasExistingSession: () => boolean;
@@ -125,6 +125,28 @@ export const useLectoriaStore = create<LectoriaState>()(
       
       // Réinitialisation complète
       resetAllData: () => set({
+        heroName: '',
+        heroAge: '',
+        heroDescription: '',
+        heroTrait: '',
+        heroGender: undefined,
+        hasGlasses: false,
+        illustrationStyle: 'storybook-cute' as IllustrationStyle,
+        selectedValues: [],
+        selectedStoryElements: [],
+        prompt: '',
+        pageCount: 24,
+        isGenerating: false,
+        progress: 0,
+        storyPreview: '',
+        fullStory: '',
+        illustrationUrl: null,
+        illustrations: [],
+        showBookPreview: false
+      }),
+      
+      // Méthode complète pour vider tous les champs
+      clearAll: () => set({
         heroName: '',
         heroAge: '',
         heroDescription: '',
