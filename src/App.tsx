@@ -13,6 +13,9 @@ import StoryElements from "./pages/StoryElements";
 import GenerationHistoire from "./pages/GenerationHistoire";
 import NotreHistoire from "./pages/NotreHistoire";
 import OffresCadeaux from "./pages/OffresCadeaux";
+import RecapitulatifCommande from "./pages/RecapitulatifCommande";
+import Commande from "./pages/Commande";
+import CommandeConfirmee from "./pages/CommandeConfirmee";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,9 @@ const App = () => (
           <Route path="/personnalisation-hero" element={<PersonnalisationHero />} />
           <Route path="/story-elements" element={<StoryElements />} />
           <Route path="/generation-histoire" element={<GenerationHistoire />} />
+          <Route path="/recapitulatif-commande" element={<RecapitulatifCommande />} />
+          <Route path="/commande" element={<Commande />} />
+          <Route path="/commande-confirmee" element={<CommandeConfirmee />} />
           <Route path="/notre-histoire" element={<NotreHistoire />} />
           <Route path="/offres-cadeaux" element={<OffresCadeaux />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
