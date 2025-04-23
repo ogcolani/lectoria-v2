@@ -10,12 +10,16 @@ const OrderDetails = () => {
   const navigate = useNavigate();
   const { heroName, pageCount } = useLectoriaStore();
   
+  const handleModifyClick = () => {
+    navigate('/recapitulatif-commande');
+  };
+  
   return (
     <Card className="bg-white p-6 rounded-xl shadow-lg mb-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold">Détails du livre</h3>
         <button 
-          onClick={() => navigate('/recapitulatif-commande')}
+          onClick={handleModifyClick}
           className="text-sm text-purple-600 hover:text-purple-800 flex items-center"
         >
           <ArrowLeft className="h-3 w-3 mr-1" />

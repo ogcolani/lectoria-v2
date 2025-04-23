@@ -1,8 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Character3D from './3d/Character3D';
 import { useToast } from '@/components/ui/use-toast';
-import { IllustrationStyle } from '@/services/illustrationService'; // Update import path
+import { IllustrationStyle } from '@/services/illustrationService';
 import CartoonCharacter from './CartoonCharacter';
 
 interface StoryHeroProps {
@@ -33,16 +33,18 @@ const StoryHero: React.FC<StoryHeroProps> = ({
   
   // Gérer les erreurs potentielles du rendu 3D
   const handleRenderError = () => {
-    console.error("Erreur lors du rendu 3D, utilisation de l'image 2D à la place");
-    toast({
-      title: "Problème d'affichage 3D",
-      description: "Nous utilisons une image 2D en remplacement.",
-      variant: "destructive",
-    });
-    setFallbackTo2D(true);
+    if (!fallbackTo2D) { // Vérifier qu'on n'est pas déjà en mode fallback
+      console.error("Erreur lors du rendu 3D, utilisation de l'image 2D à la place");
+      toast({
+        title: "Problème d'affichage 3D",
+        description: "Nous utilisons une image 2D en remplacement.",
+        variant: "destructive",
+      });
+      setFallbackTo2D(true);
+    }
   };
 
-  // Déterminer quel type de rendu afficher selon le style choisi
+  // Détermine le type de rendu à utiliser en fonction du style et des propriétés
   const renderCharacter = () => {
     if (illustrationStyle === 'comics') {
       return <CartoonCharacter gender={gender} hasGlasses={hasGlasses} />;
@@ -64,7 +66,7 @@ const StoryHero: React.FC<StoryHeroProps> = ({
         </div>
       );
     } else {
-      // Pour le style storybook (default), on utilise le rendu 3D
+      // Pour le style storybook (default), on utilise le rendu 3D ou fallback
       if (use3D && !fallbackTo2D) {
         return (
           <div className="aspect-square">
