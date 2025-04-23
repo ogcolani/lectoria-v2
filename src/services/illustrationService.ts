@@ -1,4 +1,3 @@
-
 // Service d'illustration basé sur Stable Diffusion XL (SDXL) local
 // Dans une implémentation réelle, ce service communiquerait avec une instance locale 
 // d'Automatic1111 ou ComfyUI pour générer des images

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Character3D from './3d/Character3D';
 import { useToast } from '@/components/ui/use-toast';
-import { IllustrationStyle } from './hero-customization/IllustrationStyleSelector';
+import { IllustrationStyle } from '@/services/illustrationService'; // Update import path
 import CartoonCharacter from './CartoonCharacter';
 
 interface StoryHeroProps {
