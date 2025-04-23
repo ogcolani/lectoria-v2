@@ -73,20 +73,45 @@ const PersonnalisationHero = () => {
       illustrationStyle: (illustrationStyle as IllustrationStyle) || 'storybook-cute'
     }
   });
-  
-  // Mettre à jour le store quand le formulaire change
-  const watchedFields = form.watch();
-  useEffect(() => {
-    setHeroName(watchedFields.heroName);
-    setHeroAge(watchedFields.heroAge);
-    setHeroDescription(watchedFields.heroDescription || '');
-    setHeroTrait(watchedFields.heroTrait || '');
-    if (watchedFields.heroGender) {
-      setHeroGender(watchedFields.heroGender);
+
+  // Cette fonction est appelée uniquement lorsque les valeurs du formulaire changent réellement
+  const handleFormValuesChange = React.useCallback((values: Partial<FormValues>) => {
+    if (values.heroName !== undefined && values.heroName !== heroName) {
+      setHeroName(values.heroName);
     }
-    setHasGlasses(watchedFields.hasGlasses);
-    setIllustrationStyle(watchedFields.illustrationStyle as IllustrationStyle);
-  }, [watchedFields, setHeroName, setHeroAge, setHeroDescription, setHeroTrait, setHeroGender, setHasGlasses, setIllustrationStyle]);
+    if (values.heroAge !== undefined && values.heroAge !== heroAge) {
+      setHeroAge(values.heroAge);
+    }
+    if (values.heroDescription !== undefined && values.heroDescription !== heroDescription) {
+      setHeroDescription(values.heroDescription);
+    }
+    if (values.heroTrait !== undefined && values.heroTrait !== heroTrait) {
+      setHeroTrait(values.heroTrait);
+    }
+    if (values.heroGender !== undefined && values.heroGender !== heroGender) {
+      setHeroGender(values.heroGender);
+    }
+    if (values.hasGlasses !== undefined && values.hasGlasses !== hasGlasses) {
+      setHasGlasses(values.hasGlasses);
+    }
+    if (values.illustrationStyle !== undefined && values.illustrationStyle !== illustrationStyle) {
+      setIllustrationStyle(values.illustrationStyle as IllustrationStyle);
+    }
+  }, [
+    heroName, setHeroName,
+    heroAge, setHeroAge,
+    heroDescription, setHeroDescription,
+    heroTrait, setHeroTrait,
+    heroGender, setHeroGender,
+    hasGlasses, setHasGlasses,
+    illustrationStyle, setIllustrationStyle
+  ]);
+
+  // Observer les changements du formulaire de manière optimisée
+  const formValues = form.watch();
+  useEffect(() => {
+    handleFormValuesChange(formValues);
+  }, [formValues, handleFormValuesChange]);
   
   const onSubmit = (data: FormValues) => {
     toast({
@@ -115,8 +140,8 @@ const PersonnalisationHero = () => {
       .map(trait => trait.charAt(0).toUpperCase() + trait.slice(1)); // Capitalize first letter
   };
 
-  // Get the traits array
-  const traits = getTraits();
+  // Get the traits array using memoization to prevent unnecessary recalculations
+  const traits = React.useMemo(() => getTraits(), [form.watch('heroTrait')]);
   
   // Handle tab selection
   const handleTabChange = (tab: CategoryTab) => {

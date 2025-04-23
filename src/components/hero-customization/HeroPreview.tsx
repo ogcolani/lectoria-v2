@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import StoryHero from '@/components/StoryHero';
 import CharacterTraitBadge from '@/components/ui/character-trait-badge';
 import { Glasses } from 'lucide-react';
@@ -15,7 +15,8 @@ interface HeroPreviewProps {
   illustrationStyle?: IllustrationStyle;
 }
 
-const HeroPreview: React.FC<HeroPreviewProps> = ({
+// Utilisation de memo pour éviter des re-rendus inutiles de ce composant
+const HeroPreview: React.FC<HeroPreviewProps> = memo(({
   heroName,
   heroDescription,
   heroAge,
@@ -66,6 +67,8 @@ const HeroPreview: React.FC<HeroPreviewProps> = ({
       </div>
     </div>
   );
-};
+});
+
+HeroPreview.displayName = 'HeroPreview';
 
 export default HeroPreview;
