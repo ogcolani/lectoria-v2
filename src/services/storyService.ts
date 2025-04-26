@@ -16,6 +16,8 @@ interface StoryGenerationParams {
   heroGender?: string;
   heroAge?: string;
   heroTrait?: string;
+  heroDescription?: string;
+  hasGlasses?: boolean;
 }
 
 export const generateStoryService = async ({
