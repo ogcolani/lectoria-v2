@@ -10,10 +10,11 @@ const path = require('path');
 function runCommand(command) {
   console.log(`Running: ${command}`);
   try {
-    const output = execSync(command, { stdio: 'inherit' });
+    execSync(command, { stdio: 'inherit' });
     return true;
   } catch (error) {
     console.error(`Command failed: ${command}`);
+    console.error(error.message);
     return false;
   }
 }
@@ -33,7 +34,6 @@ if (!fs.existsSync(path.join(__dirname, 'node_modules', '.bin', 'vite'))) {
 // Try to run vite in different ways
 const methods = [
   () => runCommand('node_modules/.bin/vite'),
-  () => runCommand('vite'),
   () => runCommand('npx vite'),
   () => runCommand('npm exec vite')
 ];
@@ -41,11 +41,14 @@ const methods = [
 // Try each method until one succeeds
 let success = false;
 for (const method of methods) {
+  console.log("Attempting to start Vite development server...");
   success = method();
   if (success) break;
 }
 
 if (!success) {
   console.error('Failed to start the development server using any method.');
-  console.log('Alternative: You can try modifying vite.config.ts to use a different port if there are port conflicts.');
+  console.log('Try installing Vite globally with: npm install -g vite');
+  console.log('Or try running the start-dev.js script with: node start-dev.js');
+  process.exit(1);
 }

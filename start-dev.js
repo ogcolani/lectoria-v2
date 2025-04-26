@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-console.log('📦 Starting Lectoria development server...');
+console.log('📦 Starting development server...');
 
 // Function to run a command and print output
 function runCommand(command, args = []) {
