@@ -28,7 +28,9 @@ export const generateStoryService = async ({
   heroName,
   heroGender,
   heroAge,
-  heroTrait
+  heroTrait,
+  heroDescription,
+  hasGlasses
 }: StoryGenerationParams) => {
   try {
     // Format the prompt with all available information
@@ -38,7 +40,7 @@ export const generateStoryService = async ({
       pageCount,
       values,
       elements,
-      { heroName, heroGender, heroAge, heroTrait }
+      { heroName, heroGender, heroAge, heroTrait, heroDescription, hasGlasses, illustrationStyle }
     );
     
     console.log("Envoi de la requête à l'API Mistral avec le prompt:", formattedPrompt);
