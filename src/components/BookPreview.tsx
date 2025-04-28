@@ -35,6 +35,10 @@ const BookPreview: React.FC<BookPreviewProps> = ({
     ? illustrations[0]
     : 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158';
   
+  const handleContinue = () => {
+    navigate('/choix-format');
+  };
+  
   return (
     <div className="w-full max-w-4xl mx-auto my-8">
       <div className="text-center mb-6">
@@ -163,7 +167,7 @@ const BookPreview: React.FC<BookPreviewProps> = ({
       
       <div className="flex justify-center mt-8">
         <Button
-          onClick={onContinue}
+          onClick={handleContinue}
           className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
         >
           Passer à l'étape suivante

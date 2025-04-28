@@ -11,6 +11,7 @@ import CreationLivre from "./pages/CreationLivre";
 import PersonnalisationHero from "./pages/PersonnalisationHero";
 import StoryElements from "./pages/StoryElements";
 import GenerationHistoire from "./pages/GenerationHistoire";
+import ChoixFormat from "./pages/ChoixFormat";
 import NotreHistoire from "./pages/NotreHistoire";
 import OffresCadeaux from "./pages/OffresCadeaux";
 import RecapitulatifCommande from "./pages/RecapitulatifCommande";
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/personnalisation-hero" element={<PersonnalisationHero />} />
           <Route path="/story-elements" element={<StoryElements />} />
           <Route path="/generation-histoire" element={<GenerationHistoire />} />
+          <Route path="/choix-format" element={<ChoixFormat />} />
           <Route path="/recapitulatif-commande" element={<RecapitulatifCommande />} />
           <Route path="/commande" element={<Commande />} />
           <Route path="/commande-confirmee" element={<CommandeConfirmee />} />

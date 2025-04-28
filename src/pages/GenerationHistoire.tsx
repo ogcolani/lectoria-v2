@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Progress } from '@/components/ui/progress';
@@ -11,6 +12,7 @@ import SessionRecovery from '@/components/session/SessionRecovery';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 const GenerationHistoire = () => {
+  const navigate = useNavigate();
   const {
     isGenerating,
     progress,
@@ -27,13 +29,16 @@ const GenerationHistoire = () => {
     generateStory,
     handleShare,
     resetStory,
-    toggleBookPreview,
-    handleContinue
+    toggleBookPreview
   } = useStoryGeneration();
   
   // Récupérer des données supplémentaires du store
   const heroName = useLectoriaStore(state => state.heroName);
   const heroAge = useLectoriaStore(state => state.heroAge);
+  
+  const handleContinue = () => {
+    navigate('/choix-format');
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
