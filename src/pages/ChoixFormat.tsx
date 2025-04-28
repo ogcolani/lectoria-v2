@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -14,6 +13,12 @@ import OrderSummary from '@/components/order/OrderSummary';
 
 // Définition des formats et prix
 const formatOptions = {
+  pdf: {
+    label: "Format PDF",
+    description: "Version numérique à télécharger immédiatement",
+    price: 14.99,
+    discount: 0,
+  },
   papier: { 
     label: "Format physique seul",
     description: "Livre imprimé de qualité premium avec couverture rigide",
@@ -36,7 +41,7 @@ const validPromoCodes = {
 
 const ChoixFormat: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedFormat, setSelectedFormat] = useState<'papier' | 'pack'>('papier');
+  const [selectedFormat, setSelectedFormat] = useState<'pdf' | 'papier' | 'pack'>('papier');
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
   const [appliedDiscount, setAppliedDiscount] = useState(0);
@@ -59,7 +64,7 @@ const ChoixFormat: React.FC = () => {
   const totalBeforePromo = basePrice - formatDiscount;
   const finalTotal = totalBeforePromo - appliedDiscount;
   
-  const handleFormatSelection = (format: 'papier' | 'pack') => {
+  const handleFormatSelection = (format: 'pdf' | 'papier' | 'pack') => {
     setSelectedFormat(format);
   };
   
@@ -109,7 +114,44 @@ const ChoixFormat: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {/* Colonne de gauche: Options de format */}
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              {/* Option Format PDF */}
+              <Card 
+                className={`p-6 cursor-pointer transition-all hover:shadow-md ${
+                  selectedFormat === 'pdf' ? 'border-2 border-purple-500 bg-purple-50' : 'border border-gray-200'
+                }`}
+                onClick={() => handleFormatSelection('pdf')}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="font-bold text-lg">Format PDF</h3>
+                    <p className="text-gray-600 text-sm">Version numérique</p>
+                  </div>
+                  {selectedFormat === 'pdf' && (
+                    <div className="bg-purple-500 text-white rounded-full p-1">
+                      <Check className="h-4 w-4" />
+                    </div>
+                  )}
+                </div>
+                <div className="text-2xl font-bold text-purple-700">
+                  14,99 €
+                </div>
+                <ul className="mt-3 text-sm text-gray-600 space-y-1">
+                  <li className="flex items-center">
+                    <Check className="h-3 w-3 text-green-500 mr-2" />
+                    <span>Téléchargement immédiat</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-3 w-3 text-green-500 mr-2" />
+                    <span>Format haute qualité</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Check className="h-3 w-3 text-green-500 mr-2" />
+                    <span>Lecture sur tous supports</span>
+                  </li>
+                </ul>
+              </Card>
+
               {/* Option Format Physique */}
               <Card 
                 className={`p-6 cursor-pointer transition-all hover:shadow-md ${
@@ -239,7 +281,7 @@ const ChoixFormat: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Format</span>
-                  <span className="font-medium">{selectedFormat === 'papier' ? 'Physique' : 'Physique + PDF'}</span>
+                  <span className="font-medium">{selectedFormat === 'papier' ? 'Physique' : selectedFormat === 'pdf' ? 'PDF' : 'Physique + PDF'}</span>
                 </div>
                 
                 <div className="flex justify-between">
