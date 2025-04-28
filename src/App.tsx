@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,7 +13,6 @@ import GenerationHistoire from "./pages/GenerationHistoire";
 import ChoixFormat from "./pages/ChoixFormat";
 import NotreHistoire from "./pages/NotreHistoire";
 import OffresCadeaux from "./pages/OffresCadeaux";
-import RecapitulatifCommande from "./pages/RecapitulatifCommande";
 import Commande from "./pages/Commande";
 import CommandeConfirmee from "./pages/CommandeConfirmee";
 
@@ -34,7 +32,6 @@ const App = () => (
           <Route path="/story-elements" element={<StoryElements />} />
           <Route path="/generation-histoire" element={<GenerationHistoire />} />
           <Route path="/choix-format" element={<ChoixFormat />} />
-          <Route path="/recapitulatif-commande" element={<RecapitulatifCommande />} />
           <Route path="/commande" element={<Commande />} />
           <Route path="/commande-confirmee" element={<CommandeConfirmee />} />
           <Route path="/notre-histoire" element={<NotreHistoire />} />
