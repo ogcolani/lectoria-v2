@@ -25,6 +25,15 @@ if (!fs.existsSync(path.join(__dirname, 'node_modules'))) {
   runCommand('npm install');
 }
 
+// Ensure lucide-react is installed (critical for our app)
+try {
+  require.resolve('lucide-react');
+  console.log('lucide-react is already installed');
+} catch (e) {
+  console.log('Installing lucide-react package...');
+  runCommand('npm install --save lucide-react@latest');
+}
+
 // Check for vite in node_modules
 if (!fs.existsSync(path.join(__dirname, 'node_modules', '.bin', 'vite'))) {
   console.log('Vite not found in node_modules, installing it locally...');
@@ -33,7 +42,8 @@ if (!fs.existsSync(path.join(__dirname, 'node_modules', '.bin', 'vite'))) {
 
 // Try to run vite in different ways
 const methods = [
-  () => runCommand('node_modules/.bin/vite'),
+  () => runCommand('node node_modules/.bin/vite'),
+  () => runCommand('node node_modules/vite/bin/vite.js'),
   () => runCommand('npx vite'),
   () => runCommand('npm exec vite')
 ];
@@ -48,7 +58,9 @@ for (const method of methods) {
 
 if (!success) {
   console.error('Failed to start the development server using any method.');
-  console.log('Try installing Vite globally with: npm install -g vite');
-  console.log('Or try running the start-dev.js script with: node start-dev.js');
+  console.log('Try manually running these commands:');
+  console.log('npm install --save lucide-react');
+  console.log('npm install --no-save vite');
+  console.log('npx vite');
   process.exit(1);
 }
