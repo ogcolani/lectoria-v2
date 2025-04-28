@@ -17,7 +17,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { sendConfirmationEmail } from '@/services/emailService';
 import { generatePDFfromStory } from '@/services/pdfService';
 
-// Schéma de validation du formulaire de commande
+// Order form validation schema
 export const orderFormSchema = z.object({
   firstName: z.string().min(2, { message: "Le prénom doit contenir au moins 2 caractères" }),
   lastName: z.string().min(2, { message: "Le nom doit contenir au moins 2 caractères" }),
@@ -31,7 +31,7 @@ export const orderFormSchema = z.object({
     postalCode: z.string().optional(),
     country: z.string().optional(),
   }).superRefine((data, ctx) => {
-    // Validation conditionnelle: adresse requise si format != pdf
+    // Conditional validation: address required if format != pdf
     const needsAddress = useFormData?.format !== 'pdf';
     if (needsAddress) {
       if (!data.street || data.street.length < 5) {
@@ -66,7 +66,7 @@ export const orderFormSchema = z.object({
   }),
 });
 
-// Variable pour stocker la valeur du format sélectionné pour la validation conditionnelle
+// Variable to store form data value for conditional validation
 let useFormData: z.infer<typeof orderFormSchema> | null = null;
 
 type OrderFormValues = z.infer<typeof orderFormSchema>;
@@ -92,20 +92,20 @@ const Commande = () => {
     },
   });
   
-  // Observer les changements du champ format
+  // Watch format field changes
   const watchFormat = form.watch('format');
   useFormData = form.getValues();
   
   React.useEffect(() => {
-    // Mettre à jour la progression pour cette étape
+    // Update progress for this step
     setProgress(90);
-    // Force une revalidation quand le format change
+    // Force revalidation when format changes
     form.trigger();
   }, [setProgress, watchFormat, form]);
   
   const onSubmit = async (data: OrderFormValues) => {
     try {
-      // Simuler le processus de paiement
+      // Simulate payment process
       const paymentResult = await handlePayment({
         amount: watchFormat === 'pdf' ? 9.99 : (watchFormat === 'premium' ? 29.99 : 19.99),
         currency: 'EUR',
@@ -115,12 +115,12 @@ const Commande = () => {
       });
       
       if (paymentResult.success) {
-        // Générer un PDF si nécessaire
+        // Generate PDF if needed
         const pdfUrl = watchFormat === 'pdf' || watchFormat === 'premium' 
           ? await generatePDFfromStory(fullStory, heroName, illustrations || [illustrationUrl])
           : null;
         
-        // Envoyer l'email de confirmation
+        // Send confirmation email
         await sendConfirmationEmail({
           recipientName: data.firstName,
           recipientEmail: data.email,
@@ -131,9 +131,9 @@ const Commande = () => {
           }
         });
         
-        // Sauvegarder les données de commande dans le store si nécessaire
+        // Save order data in store if needed
         
-        // Rediriger vers la page de confirmation
+        // Redirect to confirmation page
         navigate('/commande-confirmee', { 
           state: { 
             orderData: data, 

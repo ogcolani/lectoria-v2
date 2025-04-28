@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -12,16 +11,16 @@ const CommandeConfirmee = () => {
   const location = useLocation();
   const { resetStoryData } = useLectoriaStore();
   
-  // Récupérer les données de la commande de location.state
+  // Get order data from location.state
   const { orderData, format, pdfUrl } = location.state || {};
   
   React.useEffect(() => {
-    // Réinitialiser les données de génération mais garder les détails du héros
-    // pour permettre à l'utilisateur de créer une autre histoire facilement
+    // Reset generation data but keep hero details
+    // so user can easily create another story
     resetStoryData();
   }, [resetStoryData]);
   
-  // Si on arrive sur cette page sans données, rediriger vers l'accueil
+  // If we arrive on this page without data, redirect to home
   React.useEffect(() => {
     if (!orderData) {
       navigate('/');
@@ -35,7 +34,7 @@ const CommandeConfirmee = () => {
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-12">
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8 text-center">
+        <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg p-8 text-center animate-fade-in">
           <div className="flex justify-center mb-6">
             <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center">
               <CheckCircle className="h-12 w-12 text-green-600" />
