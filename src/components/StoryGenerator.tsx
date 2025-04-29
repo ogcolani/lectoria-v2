@@ -124,8 +124,11 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
       
       {/* Afficher un résumé des informations déjà saisies */}
       {(heroSummary.length > 0 || elementsSummary.length > 0) && (
-        <div className="mb-6 p-4 bg-purple-50 rounded-lg">
-          <h3 className="text-sm font-semibold mb-2 text-purple-800">Informations personnalisées incluses dans ton histoire :</h3>
+        <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
+          <h3 className="text-sm font-semibold mb-2 text-purple-800 flex items-center">
+            <Info className="w-4 h-4 mr-1" />
+            Informations personnalisées incluses dans ton histoire:
+          </h3>
           
           {heroSummary.length > 0 && (
             <div className="mb-2">

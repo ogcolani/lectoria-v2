@@ -10,9 +10,12 @@ import StoryPreviewSection from '@/components/story-generation/StoryPreviewSecti
 import { useStoryGeneration } from '@/hooks/useStoryGeneration';
 import SessionRecovery from '@/components/session/SessionRecovery';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
+import { useToast } from '@/components/ui/use-toast';
 
 const GenerationHistoire = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  
   const {
     isGenerating,
     progress,
@@ -33,8 +36,39 @@ const GenerationHistoire = () => {
   } = useStoryGeneration();
   
   // Récupérer des données supplémentaires du store
-  const heroName = useLectoriaStore(state => state.heroName);
-  const heroAge = useLectoriaStore(state => state.heroAge);
+  const { 
+    heroName, 
+    heroAge, 
+    heroGender, 
+    heroTrait,
+    selectedValues,
+    selectedStoryElements 
+  } = useLectoriaStore(state => state);
+  
+  // Vérifier si des données essentielles sont manquantes
+  useEffect(() => {
+    // Vérification des données du héros
+    if (!heroName) {
+      console.warn('Attention: Aucun nom de héros défini. Ceci peut affecter la qualité de l\'histoire générée.');
+      
+      // Toast d'information si aucun nom n'est défini
+      toast({
+        title: "Information manquante",
+        description: "Aucun nom de héros n'a été défini. Tu peux retourner à l'étape précédente pour le configurer.",
+        variant: "default",
+      });
+    }
+    
+    // Log complet des données disponibles pour la génération
+    console.log('Données disponibles pour la génération:', {
+      heroName,
+      heroAge,
+      heroGender,
+      heroTrait,
+      selectedValues,
+      selectedStoryElements
+    });
+  }, [heroName, heroAge, heroGender, heroTrait, selectedValues, selectedStoryElements, toast]);
   
   const handleContinue = () => {
     navigate('/choix-format');

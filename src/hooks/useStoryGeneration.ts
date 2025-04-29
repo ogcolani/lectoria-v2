@@ -70,9 +70,25 @@ export const useStoryGeneration = () => {
       return;
     }
     
+    // Réinitialiser les données d'illustration avant de commencer
     setIsGenerating(true);
     setIllustrationUrl(null);
     setIllustrations([]);
+    
+    // Log des informations qui seront utilisées pour la génération (pour débogage)
+    console.log('Génération avec les informations suivantes:', {
+      heroName,
+      heroAge,
+      heroGender,
+      heroTrait,
+      heroDescription,
+      hasGlasses,
+      selectedValues,
+      selectedStoryElements,
+      prompt,
+      pageCount,
+      illustrationStyle
+    });
     
     try {
       const childAge = heroAge ? parseInt(heroAge) : 6;
