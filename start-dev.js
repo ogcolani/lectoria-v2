@@ -71,6 +71,7 @@ async function ensureDependencies() {
     console.log('✅ Vite installed successfully');
   } catch (error) {
     console.error('❌ Failed to install Vite:', error.message);
+    throw new Error('Failed to install Vite');
   }
 }
 
@@ -86,8 +87,14 @@ async function findWorkingVite() {
     return localVitePath;
   }
   
+  const viteJsPath = path.join(__dirname, 'node_modules', 'vite', 'bin', 'vite.js');
+  if (fs.existsSync(viteJsPath)) {
+    console.log('✅ Found Vite.js script');
+    return viteJsPath;
+  }
+  
   // Try npx vite
-  const npxResult = runCommandSync('npx vite --version', true);
+  const npxResult = runCommandSync('npx --no-install vite --version', true);
   if (npxResult) {
     console.log('✅ Vite available via npx');
     return 'npx';
@@ -101,8 +108,7 @@ async function findWorkingVite() {
   }
   
   // If we get here, we couldn't find a working vite
-  console.log('❓ Could not find a working Vite executable. Will use node_modules path anyway.');
-  return localVitePath;
+  throw new Error('Could not find a working Vite executable');
 }
 
 // Main function
@@ -114,9 +120,11 @@ async function main() {
     console.log('🚀 Starting Vite development server...');
     
     if (vitePath === 'npx') {
-      await runCommand('npx', ['vite']);
+      await runCommand('npx', ['--no-install', 'vite']);
     } else if (vitePath === 'vite') {
       await runCommand('vite', []);
+    } else if (vitePath.endsWith('vite.js')) {
+      await runCommand('node', [vitePath]);
     } else {
       if (process.platform === 'win32') {
         await runCommand(vitePath, []);
@@ -126,9 +134,11 @@ async function main() {
     }
   } catch (error) {
     console.error('❌ Failed to start development server:', error.message);
-    console.log('\nTRY THIS: You can try running these commands manually:');
-    console.log('  npm install vite @vitejs/plugin-react-swc lucide-react --no-save');
-    console.log('  npx vite\n');
+    console.log('\n🔍 TROUBLESHOOTING SUGGESTIONS:');
+    console.log('1. Try running: npm install --save-dev vite @vitejs/plugin-react-swc');
+    console.log('2. Then run: npx vite');
+    console.log('3. If that fails, check Node.js version: node -v (should be 14.18+ or 16+)');
+    console.log('4. Make sure you have a proper vite.config.ts or vite.config.js file\n');
     process.exit(1);
   }
 }
