@@ -9,7 +9,7 @@ interface MistralGenerationParams {
 
 export const generateWithMistral = async ({ 
   prompt,
-  agentId = "ag:b1efb91e:20250417:untitled-agent:42bf825d",
+  agentId = "ag:b1efb91e:20250429:untitled-agent:91be85e6",
   temperature = 0.7,
   topP = 0.9,
   maxTokens = 4000
