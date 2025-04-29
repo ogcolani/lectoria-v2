@@ -24,17 +24,17 @@ export const formatStoryPrompt = (
                          childAge <= 8 ? 'simple et accessible' : 
                          childAge <= 12 ? 'intermédiaire avec quelques mots plus recherchés' : 'riche et varié';
 
-  // Construire la description du héros
+  // Construire la description du héros de manière plus détaillée
   const heroInfoArray = [];
   if (heroInfo.heroName) heroInfoArray.push(`Le héros/héroïne principal(e) s'appelle ${heroInfo.heroName}.`);
   if (heroInfo.heroGender) heroInfoArray.push(`C'est un(e) ${heroInfo.heroGender}.`);
   if (heroInfo.heroAge) heroInfoArray.push(`Il/Elle a ${heroInfo.heroAge} ans.`);
   if (heroInfo.heroTrait) heroInfoArray.push(`Ses traits de caractère principaux sont: ${heroInfo.heroTrait}.`);
-  if (heroInfo.heroDescription) heroInfoArray.push(`Description du personnage: ${heroInfo.heroDescription}.`);
+  if (heroInfo.heroDescription) heroInfoArray.push(`Description physique du personnage: ${heroInfo.heroDescription}.`);
   if (heroInfo.hasGlasses) heroInfoArray.push(`Le personnage porte des lunettes.`);
   const heroText = heroInfoArray.length > 0 ? heroInfoArray.join(' ') : '';
 
-  // Construire les informations sur les éléments de l'histoire
+  // Construire les informations sur les valeurs et éléments d'histoire
   const valuesText = values.length > 0 ? `Les valeurs importantes à transmettre dans cette histoire sont: ${values.join(', ')}.` : '';
   const elementsText = elements.length > 0 ? `L'histoire doit absolument inclure ces éléments: ${elements.join(', ')}.` : '';
 
@@ -62,6 +62,7 @@ Format requis:
 3. Assure-toi que chaque paragraphe soit bien séparé par une ligne vide
 4. N'écris pas "Chapitre 1" ou des numéros de chapitres
 5. Ne mentionne pas que c'est une histoire générée par IA
-6. Crée une histoire cohérente qui intègre naturellement tous les éléments demandés`;
+6. Crée une histoire cohérente qui intègre naturellement tous les éléments demandés
+7. Assure-toi que le nom du héros (${heroInfo.heroName || 'notre héros'}) apparaît régulièrement dans l'histoire
+8. Limite la longueur totale à ${wordCount} mots maximum`;
 };
-
