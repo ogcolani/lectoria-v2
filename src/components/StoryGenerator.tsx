@@ -34,6 +34,7 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
   onStyleChange = () => {}
 }) => {
   const [currentIdeasIndex, setCurrentIdeasIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState("prompt");
   
   // Récupérer les données du store
   const {
@@ -87,90 +88,103 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
     onPromptChange(formatStoryIdea(ideaText));
   };
 
+  // Prevent default form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
+  // Handle tab change without page reload
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6">
       <h2 className="text-2xl font-bold mb-6">Générateur d'histoire</h2>
       
-      <Tabs defaultValue="prompt" className="w-full">
-        <TabsList className="grid grid-cols-2 mb-6">
-          <TabsTrigger value="prompt">Histoire</TabsTrigger>
-          <TabsTrigger value="style">Style visuel</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="prompt">
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="prompt" className="text-base font-medium mb-2 block">
-                Décris ton histoire
-              </Label>
-              <Textarea
-                id="prompt"
-                placeholder="Par exemple: Une histoire d'aventure dans l'espace avec un robot ami et des planètes fantastiques..."
-                className="min-h-[120px] resize-none"
-                value={prompt}
-                onChange={(e) => onPromptChange(e.target.value)}
-                disabled={isGenerating}
+      <form onSubmit={handleSubmit}>
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+          <TabsList className="grid grid-cols-2 mb-6">
+            <TabsTrigger value="prompt">Histoire</TabsTrigger>
+            <TabsTrigger value="style">Style visuel</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="prompt">
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="prompt" className="text-base font-medium mb-2 block">
+                  Décris ton histoire
+                </Label>
+                <Textarea
+                  id="prompt"
+                  placeholder="Par exemple: Une histoire d'aventure dans l'espace avec un robot ami et des planètes fantastiques..."
+                  className="min-h-[120px] resize-none"
+                  value={prompt}
+                  onChange={(e) => onPromptChange(e.target.value)}
+                  disabled={isGenerating}
+                />
+                <div className="mt-2 text-xs text-gray-500 flex items-start">
+                  <Info className="h-3.5 w-3.5 mr-1 mt-0.5 flex-shrink-0" />
+                  <span>Notre IA va créer une histoire unique basée sur tes instructions, les valeurs et éléments choisis précédemment.</span>
+                </div>
+              </div>
+              
+              <PageCountSelector 
+                pageCount={pageCount}
+                onPageCountChange={onPageCountChange}
+                isGenerating={isGenerating}
               />
-              <div className="mt-2 text-xs text-gray-500 flex items-start">
+              
+              <div className="mt-8">
+                <Button
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  size="lg"
+                  onClick={onGenerate}
+                  disabled={isGenerating || !prompt.trim()}
+                  type="button"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                      Génération en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Générer mon histoire
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <StoryIdeas
+                currentIdeas={getCurrentIdeas()}
+                onIdeaClick={handleIdeaClick}
+                onRefresh={getNextIdeas}
+              />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="style">
+            <div className="space-y-4">
+              <div className="flex items-center mb-4">
+                <ImageIcon className="h-5 w-5 text-purple-600 mr-2" />
+                <h3 className="text-base font-medium">Style des illustrations</h3>
+              </div>
+              
+              <IllustrationStyleSelector
+                selectedStyle={illustrationStyle}
+                onStyleChange={onStyleChange}
+              />
+              
+              <div className="mt-4 text-xs text-gray-500 flex items-start">
                 <Info className="h-3.5 w-3.5 mr-1 mt-0.5 flex-shrink-0" />
-                <span>Notre IA va créer une histoire unique basée sur tes instructions, les valeurs et éléments choisis précédemment.</span>
+                <span>Le style choisi sera appliqué à toutes les illustrations générées pour ton histoire.</span>
               </div>
             </div>
-            
-            <PageCountSelector 
-              pageCount={pageCount}
-              onPageCountChange={onPageCountChange}
-              isGenerating={isGenerating}
-            />
-            
-            <div className="mt-8">
-              <Button
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                size="lg"
-                onClick={onGenerate}
-                disabled={isGenerating || !prompt.trim()}
-              >
-                {isGenerating ? (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4 animate-spin" />
-                    Génération en cours...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Générer mon histoire
-                  </>
-                )}
-              </Button>
-            </div>
-
-            <StoryIdeas
-              currentIdeas={getCurrentIdeas()}
-              onIdeaClick={handleIdeaClick}
-              onRefresh={getNextIdeas}
-            />
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="style">
-          <div className="space-y-4">
-            <div className="flex items-center mb-4">
-              <ImageIcon className="h-5 w-5 text-purple-600 mr-2" />
-              <h3 className="text-base font-medium">Style des illustrations</h3>
-            </div>
-            
-            <IllustrationStyleSelector
-              selectedStyle={illustrationStyle}
-              onStyleChange={onStyleChange}
-            />
-            
-            <div className="mt-4 text-xs text-gray-500 flex items-start">
-              <Info className="h-3.5 w-3.5 mr-1 mt-0.5 flex-shrink-0" />
-              <span>Le style choisi sera appliqué à toutes les illustrations générées pour ton histoire.</span>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </form>
     </div>
   );
 };
