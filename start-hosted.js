@@ -27,13 +27,9 @@ if (!fs.existsSync(path.join(__dirname, 'node_modules'))) {
   runCommand('npm install');
 }
 
-// Ensure vite is installed (critical for our app)
+// Always ensure vite is freshly installed (critical for our app)
 console.log('📥 Ensuring Vite is properly installed...');
-if (!fs.existsSync(path.join(__dirname, 'node_modules', '.bin', 'vite')) && 
-    !fs.existsSync(path.join(__dirname, 'node_modules', 'vite'))) {
-  console.log('Installing vite package...');
-  runCommand('npm install --save-dev vite@latest @vitejs/plugin-react-swc@latest');
-}
+runCommand('npm install --save-dev vite@latest @vitejs/plugin-react-swc@latest');
 
 // Ensure lucide-react is installed (critical for our app)
 try {
@@ -44,12 +40,37 @@ try {
   runCommand('npm install --save lucide-react@latest');
 }
 
-// Try to run vite in different ways
+// Find and run vite - trying multiple methods in order
 const methods = [
+  // Try direct node execution of various possible entry points
+  () => {
+    const vitePath = path.join(__dirname, 'node_modules', 'vite', 'bin', 'vite.js');
+    if (fs.existsSync(vitePath)) {
+      console.log('✅ Found vite.js at:', vitePath);
+      return runCommand(`node "${vitePath}"`);
+    }
+    return false;
+  },
+  () => {
+    const vitePath = path.join(__dirname, 'node_modules', '.bin', 'vite');
+    if (fs.existsSync(vitePath)) {
+      console.log('✅ Found vite binary at:', vitePath);
+      return runCommand(`node "${vitePath}"`);
+    }
+    return false;
+  },
+  () => {
+    const vitePath = path.join(__dirname, 'node_modules', 'vite', 'dist', 'node', 'cli.js');
+    if (fs.existsSync(vitePath)) {
+      console.log('✅ Found vite CLI at:', vitePath);
+      return runCommand(`node "${vitePath}"`);
+    }
+    return false;
+  },
+  // Try regular commands as fallback
   () => runCommand('node node_modules/.bin/vite'),
-  () => runCommand('node node_modules/vite/bin/vite.js'),
   () => runCommand('npx --no-install vite'),
-  () => runCommand('npm exec vite')
+  () => runCommand('npm exec -- vite')
 ];
 
 // Try each method until one succeeds
@@ -64,7 +85,7 @@ if (!success) {
   console.error('❌ Failed to start the development server using any method.');
   console.log('\n🔍 TROUBLESHOOTING SUGGESTIONS:');
   console.log('1. Try running: npm install --save-dev vite @vitejs/plugin-react-swc');
-  console.log('2. Then run: npx vite');
+  console.log('2. Then run: node ./node_modules/vite/bin/vite.js');
   console.log('3. If that fails, check Node.js version: node -v (should be 14.18+ or 16+)');
   console.log('4. Make sure you have a proper vite.config.ts or vite.config.js file\n');
   process.exit(1);

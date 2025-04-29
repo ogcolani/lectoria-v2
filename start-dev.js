@@ -54,20 +54,11 @@ async function ensureDependencies() {
     console.log('📥 Installing dependencies...');
     await runCommand('npm', ['install']);
   }
-
-  // Make sure lucide-react is installed (important for our app)
-  try {
-    require.resolve('lucide-react');
-    console.log('✅ lucide-react is installed');
-  } catch (e) {
-    console.log('📥 Installing lucide-react...');
-    await runCommand('npm', ['install', '--save', 'lucide-react@latest']);
-  }
   
-  // Always ensure vite is installed
+  // Always ensure vite is explicitly installed locally
   console.log('Ensuring Vite is available...');
   try {
-    await runCommand('npm', ['install', '--no-save', 'vite@latest', '@vitejs/plugin-react-swc@latest']);
+    await runCommand('npm', ['install', '--save-dev', 'vite@latest', '@vitejs/plugin-react-swc@latest']);
     console.log('✅ Vite installed successfully');
   } catch (error) {
     console.error('❌ Failed to install Vite:', error.message);
@@ -83,31 +74,23 @@ async function findWorkingVite() {
   const localVitePath = path.join(__dirname, 'node_modules', '.bin', isWindows ? 'vite.cmd' : 'vite');
   
   if (fs.existsSync(localVitePath)) {
-    console.log('✅ Found local Vite executable');
+    console.log('✅ Found local Vite executable at:', localVitePath);
     return localVitePath;
   }
   
   const viteJsPath = path.join(__dirname, 'node_modules', 'vite', 'bin', 'vite.js');
   if (fs.existsSync(viteJsPath)) {
-    console.log('✅ Found Vite.js script');
+    console.log('✅ Found Vite.js script at:', viteJsPath);
     return viteJsPath;
   }
   
-  // Try npx vite
-  const npxResult = runCommandSync('npx --no-install vite --version', true);
-  if (npxResult) {
-    console.log('✅ Vite available via npx');
-    return 'npx';
+  // Try direct node_modules path as a last resort
+  const viteIndexPath = path.join(__dirname, 'node_modules', 'vite', 'dist', 'node', 'cli.js');
+  if (fs.existsSync(viteIndexPath)) {
+    console.log('✅ Found Vite CLI script at:', viteIndexPath);
+    return viteIndexPath;
   }
   
-  // Try global vite
-  const globalResult = runCommandSync('vite --version', true);
-  if (globalResult) {
-    console.log('✅ Vite available globally');
-    return 'vite';
-  }
-  
-  // If we get here, we couldn't find a working vite
   throw new Error('Could not find a working Vite executable');
 }
 
@@ -119,24 +102,13 @@ async function main() {
     
     console.log('🚀 Starting Vite development server...');
     
-    if (vitePath === 'npx') {
-      await runCommand('npx', ['--no-install', 'vite']);
-    } else if (vitePath === 'vite') {
-      await runCommand('vite', []);
-    } else if (vitePath.endsWith('vite.js')) {
-      await runCommand('node', [vitePath]);
-    } else {
-      if (process.platform === 'win32') {
-        await runCommand(vitePath, []);
-      } else {
-        await runCommand('node', [vitePath]);
-      }
-    }
+    // Run vite with node for maximum compatibility
+    await runCommand('node', [vitePath]);
   } catch (error) {
     console.error('❌ Failed to start development server:', error.message);
     console.log('\n🔍 TROUBLESHOOTING SUGGESTIONS:');
     console.log('1. Try running: npm install --save-dev vite @vitejs/plugin-react-swc');
-    console.log('2. Then run: npx vite');
+    console.log('2. Then run: node ./node_modules/vite/bin/vite.js');
     console.log('3. If that fails, check Node.js version: node -v (should be 14.18+ or 16+)');
     console.log('4. Make sure you have a proper vite.config.ts or vite.config.js file\n');
     process.exit(1);
