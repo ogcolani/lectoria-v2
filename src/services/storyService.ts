@@ -69,7 +69,8 @@ export const generateStoryService = async ({
     };
   } catch (error) {
     console.error("Error generating story:", error);
-    return generateFallbackStory(pageCount, childAge, heroName, elements);
+    // Assurez-vous que le fallback utilise également le prompt de l'utilisateur
+    return generateFallbackStory(pageCount, childAge, prompt, heroName, elements);
   }
 };
 
@@ -113,26 +114,47 @@ function extractKeyScenes(story: string, pageCount: number) {
 }
 
 // Enhanced fallback story with more content and personalization
-function generateFallbackStory(pageCount: number, childAge: number, heroName?: string, elements: string[] = []) {
+function generateFallbackStory(
+  pageCount: number, 
+  childAge: number, 
+  userPrompt: string = "",
+  heroName?: string, 
+  elements: string[] = []
+) {
   const characterName = heroName || "le jeune héros";
   const hasForest = elements.includes("Forêt enchantée");
   const hasOcean = elements.includes("Océan mystérieux");
   const hasTalkingAnimal = elements.includes("Animal qui parle");
   
-  // Create a more detailed title based on elements
+  // Create a more detailed title based on elements and user prompt
   let title = "L'Aventure Magique";
-  if (hasForest) title = "Le Secret de la Forêt Enchantée";
-  if (hasOcean) title = "Le Mystère de l'Océan Profond";
-  if (hasForest && hasOcean) title = "Entre Forêt et Océan";
+  
+  // Utiliser le prompt de l'utilisateur pour créer un titre plus pertinent
+  if (userPrompt.toLowerCase().includes("espace") || userPrompt.toLowerCase().includes("fusée")) {
+    title = `${characterName} et la Conquête de l'Espace`;
+  } else if (hasForest) {
+    title = "Le Secret de la Forêt Enchantée";
+  } else if (hasOcean) {
+    title = "Le Mystère de l'Océan Profond";
+  } else if (hasForest && hasOcean) {
+    title = "Entre Forêt et Océan";
+  }
   
   // Create a more engaging intro paragraph
   let intro = `Il était une fois, dans un monde rempli de merveilles, ${characterName} qui rêvait de vivre une grande aventure.`;
   
+  // Adapter l'introduction au prompt de l'utilisateur
+  if (userPrompt && userPrompt.length > 10) {
+    intro = `Il était une fois ${characterName}, qui s'apprêtait à vivre une aventure extraordinaire. ${userPrompt.charAt(0).toUpperCase() + userPrompt.slice(1)}.`;
+  }
+  
   // Add a second paragraph with appropriate details based on elements
   let secondParagraph = `Un jour magique, ${characterName} découvrit un mystérieux livre aux pages dorées. En l'ouvrant, une douce lumière en jaillit, l'invitant à vivre sa propre histoire.`;
   
-  // Customize based on elements
-  if (hasForest) {
+  // Customize based on elements and prompt
+  if (userPrompt.toLowerCase().includes("espace") || userPrompt.toLowerCase().includes("fusée")) {
+    secondParagraph = `Un jour, en regardant les étoiles depuis sa fenêtre, ${characterName} aperçut une lumière étrange dans le ciel nocturne. Cette lumière s'approcha de plus en plus, jusqu'à ce qu'il puisse distinguer les contours d'un petit vaisseau spatial brillant.`;
+  } else if (hasForest) {
     secondParagraph = `Un jour, en se promenant près de chez lui, ${characterName} découvrit un sentier qu'il n'avait jamais remarqué auparavant. Ce sentier s'enfonçait dans une forêt aux arbres majestueux dont les feuilles brillaient de mille couleurs.`;
   } else if (hasOcean) {
     secondParagraph = `Lors d'une journée ensoleillée à la plage, ${characterName} trouva une bouteille échouée contenant une carte mystérieuse. Cette carte indiquait l'emplacement d'un trésor caché au fond de l'océan.`;

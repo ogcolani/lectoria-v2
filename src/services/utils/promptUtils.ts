@@ -48,6 +48,7 @@ export const formatStoryPrompt = (
     : '';
 
   // Construction du prompt final avec une emphase sur l'incorporation des informations du héros
+  // et la prise en compte explicite du prompt de l'utilisateur
   return `Tu es un expert en création d'histoires pour enfants. Je veux que tu génères une histoire captivante et personnalisée.
 
 Instructions détaillées:
@@ -62,7 +63,7 @@ IMPORTANT - Éléments narratifs (À INCLURE OBLIGATOIREMENT):
 ${valuesText}
 ${elementsText}
 
-Instructions spécifiques:
+TRÈS IMPORTANT - Thème principal de l'histoire demandé par l'utilisateur:
 ${basePrompt}
 
 Format requis:
@@ -74,5 +75,5 @@ Format requis:
 6. Crée une histoire cohérente qui intègre naturellement tous les éléments demandés
 7. Assure-toi que le nom du héros (${heroInfo.heroName || 'notre héros'}) apparaît régulièrement dans l'histoire
 8. Limite la longueur totale à ${wordCount} mots maximum
-9. IMPORTANT: L'histoire DOIT être centrée sur ${heroInfo.heroName || 'le héros'} et inclure tous les éléments demandés`;
+9. IMPORTANT: L'histoire DOIT être centrée sur ${heroInfo.heroName || 'le héros'}, inclure tous les éléments demandés ET suivre le thème principal: "${basePrompt}"`;
 };
