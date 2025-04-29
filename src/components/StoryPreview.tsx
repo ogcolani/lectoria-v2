@@ -9,9 +9,10 @@ interface StoryPreviewProps {
   pageCount: number;
   childAge?: number;
   illustrationUrl: string | null;
-  illustrations?: string[]; // Ajout de toutes les illustrations
+  illustrations?: string[]; 
   onShare: () => void;
   onReset: () => void;
+  heroName?: string;
 }
 
 const StoryPreview: React.FC<StoryPreviewProps> = ({
@@ -20,9 +21,10 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
   pageCount,
   childAge = 6,
   illustrationUrl,
-  illustrations = [], // Tableau de toutes les illustrations
+  illustrations = [],
   onShare,
   onReset,
+  heroName
 }) => {
   // État pour suivre l'illustration actuelle à afficher
   const [currentIllustrationIndex, setCurrentIllustrationIndex] = useState(0);
@@ -65,6 +67,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
           illustrations={illustrations}
           onIllustrationChange={setCurrentIllustrationIndex}
           currentIllustrationIndex={currentIllustrationIndex}
+          heroName={heroName}
         />
       </div>
       

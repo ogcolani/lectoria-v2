@@ -62,6 +62,7 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
         illustrations={illustrations}
         onShare={onShare}
         onReset={onReset}
+        heroName={heroName}
       />
       
       {storyPreview && (
