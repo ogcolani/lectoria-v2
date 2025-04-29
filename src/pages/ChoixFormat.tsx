@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -154,19 +155,11 @@ const ChoixFormat: React.FC = () => {
           } 
         });
       } else {
-        toast({
-          title: "Erreur de paiement",
-          description: paymentResult.error || "Une erreur s'est produite lors du paiement",
-          variant: "destructive"
-        });
+        toast.error("Une erreur s'est produite lors du paiement");
       }
     } catch (error) {
       console.error("Erreur lors du processus de commande:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur s'est produite lors du traitement de votre commande",
-        variant: "destructive"
-      });
+      toast.error("Une erreur s'est produite lors du traitement de votre commande");
     }
   };
 
