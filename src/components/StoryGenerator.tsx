@@ -12,16 +12,19 @@ import HeroSummary from './story-generator/HeroSummary';
 import StoryPrompt from './story-generator/StoryPrompt';
 import GenerateButton from './story-generator/GenerateButton';
 import { formatStoryIdea } from './story-generator/formatStoryIdea';
+import PromptOptimizerToggle from './story-generator/PromptOptimizerToggle';
 
 interface StoryGeneratorProps {
   prompt: string;
   pageCount: number;
   isGenerating: boolean;
   illustrationStyle?: IllustrationStyle;
+  useOptimizedPrompts?: boolean;
   onPromptChange: (prompt: string) => void;
   onPageCountChange: (count: number) => void;
   onGenerate: () => void;
   onStyleChange?: (style: IllustrationStyle) => void;
+  onToggleOptimizedPrompts?: () => void;
 }
 
 const StoryGenerator: React.FC<StoryGeneratorProps> = ({
@@ -29,10 +32,12 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
   pageCount,
   isGenerating,
   illustrationStyle = 'storybook-cute',
+  useOptimizedPrompts = true,
   onPromptChange,
   onPageCountChange,
   onGenerate,
-  onStyleChange = () => {}
+  onStyleChange = () => {},
+  onToggleOptimizedPrompts = () => {}
 }) => {
   const [currentIdeasIndex, setCurrentIdeasIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("prompt");
@@ -96,6 +101,23 @@ const StoryGenerator: React.FC<StoryGeneratorProps> = ({
                 onPageCountChange={onPageCountChange}
                 isGenerating={isGenerating}
               />
+              
+              {/* Nouvelle option pour activer/désactiver l'optimisation de prompt */}
+              <div className="border-t pt-4 border-dashed border-gray-200">
+                <PromptOptimizerToggle
+                  enabled={useOptimizedPrompts}
+                  onToggle={onToggleOptimizedPrompts}
+                  disabled={isGenerating}
+                />
+                <div className="text-xs text-gray-500 flex items-start">
+                  <Info className="h-3.5 w-3.5 mr-1 mt-0.5 flex-shrink-0" />
+                  <span>
+                    {useOptimizedPrompts 
+                      ? "Une IA spécialisée optimise votre prompt pour obtenir une histoire plus personnalisée" 
+                      : "Mode standard: génération directe sans optimisation du prompt"}
+                  </span>
+                </div>
+              </div>
               
               <div className="mt-8">
                 <GenerateButton 

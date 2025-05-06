@@ -6,6 +6,7 @@ import { IllustrationStyle } from './illustrationService';
 import { extractKeyScenes } from './utils/extractionService';
 import { generateFallbackStory } from './utils/fallbackService';
 import { generateStoryIllustrations } from './illustrationService';
+import { generateOptimizedPrompt } from './promptGeneratorService';
 
 // Interface for story generation parameters
 interface StoryGenerationParams {
@@ -21,6 +22,7 @@ interface StoryGenerationParams {
   heroTrait?: string;
   heroDescription?: string;
   hasGlasses?: boolean;
+  useOptimizedPrompts?: boolean;
 }
 
 export const generateStoryService = async ({
@@ -35,18 +37,46 @@ export const generateStoryService = async ({
   heroAge,
   heroTrait,
   heroDescription,
-  hasGlasses
+  hasGlasses,
+  useOptimizedPrompts = true // Par défaut, nous utilisons le nouveau processus
 }: StoryGenerationParams) => {
   try {
-    // Format the prompt with all available information
-    const formattedPrompt = formatStoryPrompt(
-      prompt,
-      childAge,
-      pageCount,
-      values,
-      elements,
-      { heroName, heroGender, heroAge, heroTrait, heroDescription, hasGlasses, illustrationStyle }
-    );
+    let formattedPrompt;
+    
+    if (useOptimizedPrompts) {
+      // Nouveau processus: utilise l'IA génératrice de prompts pour optimiser les instructions
+      console.log("Utilisation du processus optimisé avec génération de prompt par IA");
+      
+      // Générer un prompt optimisé via le nouveau service
+      const optimizedPrompt = await generateOptimizedPrompt({
+        heroName,
+        heroAge,
+        heroGender,
+        heroTrait,
+        heroDescription,
+        hasGlasses,
+        userPrompt: prompt,
+        childAge,
+        pageCount,
+        values,
+        elements,
+        illustrationStyle
+      });
+      
+      // Utiliser ce prompt optimisé pour Mistral
+      formattedPrompt = optimizedPrompt;
+      
+    } else {
+      // Ancien processus: utilise la fonction formatStoryPrompt directement
+      formattedPrompt = formatStoryPrompt(
+        prompt,
+        childAge,
+        pageCount,
+        values,
+        elements,
+        { heroName, heroGender, heroAge, heroTrait, heroDescription, hasGlasses, illustrationStyle }
+      );
+    }
     
     console.log("Envoi de la requête à l'API Mistral avec le prompt:", formattedPrompt);
     
@@ -68,7 +98,8 @@ export const generateStoryService = async ({
       storyPreview,
       illustrationUrl: illustrations.length > 0 ? illustrations[0] : null,
       illustrations,
-      storySegments
+      storySegments,
+      usedOptimizedPrompt: useOptimizedPrompts
     };
   } catch (error) {
     console.error("Error generating story:", error);

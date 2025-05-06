@@ -26,13 +26,15 @@ const GenerationHistoire = () => {
     illustrations,
     illustrationStyle,
     showBookPreview,
+    useOptimizedPrompts,
     setPrompt,
     setPageCount,
     setIllustrationStyle,
     generateStory,
     handleShare,
     resetStory,
-    toggleBookPreview
+    toggleBookPreview,
+    toggleOptimizedPrompts
   } = useStoryGeneration();
   
   // Récupérer des données supplémentaires du store
@@ -100,10 +102,12 @@ const GenerationHistoire = () => {
               pageCount={pageCount}
               isGenerating={isGenerating}
               illustrationStyle={illustrationStyle}
+              useOptimizedPrompts={useOptimizedPrompts}
               onPromptChange={setPrompt}
               onPageCountChange={setPageCount}
               onGenerate={generateStory}
               onStyleChange={setIllustrationStyle}
+              onToggleOptimizedPrompts={toggleOptimizedPrompts}
             />
           )}
           

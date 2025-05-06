@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
 import { generateStoryService } from '@/services/storyService';
 import { IllustrationStyle } from '@/services/illustrationService';
@@ -43,6 +43,7 @@ export const useStoryGeneration = () => {
     resetStoryData
   } = useLectoriaStore();
   
+  const [useOptimizedPrompts, setUseOptimizedPrompts] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -87,7 +88,8 @@ export const useStoryGeneration = () => {
       selectedStoryElements,
       prompt,
       pageCount,
-      illustrationStyle
+      illustrationStyle,
+      useOptimizedPrompts
     });
     
     try {
@@ -98,6 +100,14 @@ export const useStoryGeneration = () => {
       
       // S'assurer que le prompt utilisateur est bien passé au service
       console.log("Prompt utilisé pour la génération:", userPrompt);
+      
+      // Notification pour indiquer que le processus de génération a commencé
+      toast({
+        title: "Génération en cours",
+        description: useOptimizedPrompts 
+          ? "Génération d'un prompt optimisé avant la création de l'histoire..."
+          : "Génération de l'histoire en cours...",
+      });
       
       // Utiliser toutes les informations disponibles pour la génération de l'histoire
       const result = await generateStoryService({
@@ -112,7 +122,8 @@ export const useStoryGeneration = () => {
         heroAge,
         heroTrait,
         heroDescription,
-        hasGlasses
+        hasGlasses,
+        useOptimizedPrompts
       });
       
       setFullStory(result.fullStory);
@@ -141,6 +152,7 @@ export const useStoryGeneration = () => {
     }
   };
 
+  // Reste des fonctions existantes
   const handleContinue = () => {
     navigate('/offres-cadeaux');
   };
@@ -165,6 +177,17 @@ export const useStoryGeneration = () => {
     setPrompt(currentPrompt);
   };
 
+  // Nouvelle fonction pour contrôler l'utilisation des prompts optimisés
+  const toggleOptimizedPrompts = () => {
+    setUseOptimizedPrompts(!useOptimizedPrompts);
+    toast({
+      title: useOptimizedPrompts ? "Mode standard activé" : "Mode optimisé activé",
+      description: useOptimizedPrompts 
+        ? "Les histoires seront générées sans optimisation de prompt" 
+        : "Les histoires bénéficieront de prompts optimisés par IA",
+    });
+  };
+
   return {
     isGenerating,
     progress,
@@ -176,6 +199,7 @@ export const useStoryGeneration = () => {
     illustrations,
     illustrationStyle,
     showBookPreview,
+    useOptimizedPrompts,
     setPrompt,
     setPageCount,
     setIllustrationStyle,
@@ -183,6 +207,7 @@ export const useStoryGeneration = () => {
     handleShare,
     resetStory,
     toggleBookPreview,
-    handleContinue
+    handleContinue,
+    toggleOptimizedPrompts
   };
 };
