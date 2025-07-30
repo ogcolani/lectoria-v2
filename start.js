@@ -4,6 +4,7 @@
 const { execSync, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 console.log('🚀 Starting development server...');
 
@@ -30,63 +31,82 @@ if (!fs.existsSync('node_modules')) {
 console.log('📦 Ensuring Vite is properly installed...');
 runCommand('npm install --no-save vite@latest @vitejs/plugin-react-swc@latest');
 
-// Directly run vite from node_modules
-console.log('🚀 Starting Vite server...');
-
-const npxExists = runCommand('which npx', false);
-if (npxExists) {
-  console.log('✅ Using npx to run Vite');
-  const child = spawn('npx', ['--no-install', 'vite'], { stdio: 'inherit' });
+// Function to start Vite directly
+function startViteDirectly() {
+  console.log('🚀 Starting Vite server directly...');
   
-  child.on('error', (error) => {
-    console.error('❌ Failed to start Vite:', error.message);
-    tryAlternativeMethods();
-  });
-} else {
-  tryAlternativeMethods();
-}
-
-function tryAlternativeMethods() {
-  console.log('⚠️ Trying alternative methods to run Vite...');
-  
-  // Try various paths to find and run vite
-  const vitePaths = [
-    path.join(process.cwd(), 'node_modules', '.bin', 'vite'),
+  // Try multiple paths to find vite
+  const isWindows = os.platform() === 'win32';
+  const viteExecutables = [
+    path.join(process.cwd(), 'node_modules', '.bin', isWindows ? 'vite.cmd' : 'vite'),
     path.join(process.cwd(), 'node_modules', 'vite', 'bin', 'vite.js'),
     path.join(process.cwd(), 'node_modules', 'vite', 'dist', 'node', 'cli.js')
   ];
   
-  for (const vitePath of vitePaths) {
+  for (const vitePath of viteExecutables) {
     if (fs.existsSync(vitePath)) {
       console.log(`✅ Found Vite at: ${vitePath}`);
-      const isJsFile = vitePath.endsWith('.js');
       
-      if (isJsFile) {
-        console.log(`Running: node ${vitePath}`);
-        const child = spawn('node', [vitePath], { stdio: 'inherit' });
-        
-        child.on('close', (code) => {
-          if (code !== 0) {
-            console.error(`❌ Process exited with code ${code}`);
-          }
+      let child;
+      if (vitePath.endsWith('.js')) {
+        console.log(`Running: node "${vitePath}"`);
+        child = spawn('node', [vitePath], { 
+          stdio: 'inherit',
+          cwd: process.cwd(),
+          env: { ...process.env, NODE_ENV: 'development' }
         });
-        
-        return;
       } else {
-        console.log(`Running: ${vitePath}`);
-        const child = spawn(vitePath, [], { stdio: 'inherit' });
-        
-        child.on('close', (code) => {
-          if (code !== 0) {
-            console.error(`❌ Process exited with code ${code}`);
-          }
+        console.log(`Running: "${vitePath}"`);
+        child = spawn(vitePath, [], { 
+          stdio: 'inherit',
+          cwd: process.cwd(),
+          env: { ...process.env, NODE_ENV: 'development' }
         });
-        
-        return;
       }
+      
+      child.on('error', (error) => {
+        console.error(`❌ Failed to start Vite with ${vitePath}:`, error.message);
+        if (viteExecutables.indexOf(vitePath) < viteExecutables.length - 1) {
+          console.log('⚠️ Trying next method...');
+        }
+      });
+      
+      child.on('close', (code) => {
+        if (code !== 0) {
+          console.error(`❌ Process exited with code ${code}`);
+        }
+      });
+      
+      return true;
     }
   }
   
+  return false;
+}
+
+// Try to start with the most reliable method first
+if (startViteDirectly()) {
+  // Vite started successfully
+} else {
+  // Try npx as fallback
+  console.log('⚠️ Trying npx as fallback...');
+  try {
+    const child = spawn('npx', ['vite'], { 
+      stdio: 'inherit',
+      cwd: process.cwd(),
+      env: { ...process.env, NODE_ENV: 'development' }
+    });
+    
+    child.on('error', (error) => {
+      console.error('❌ Failed to start Vite with npx:', error.message);
+      tryFinalFallback();
+    });
+  } catch (error) {
+    tryFinalFallback();
+  }
+}
+
+function tryFinalFallback() {
   console.error('❌ Could not find or run Vite using any method');
   console.log('\n🔧 TROUBLESHOOTING:');
   console.log('1. Try running: npm install vite @vitejs/plugin-react-swc --save-dev');
