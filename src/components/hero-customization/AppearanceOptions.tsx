@@ -2,9 +2,10 @@
 import React from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormDescription } from '@/components/ui/form';
 import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
 import { Control, UseFormSetValue } from 'react-hook-form';
 import { z } from 'zod';
-import { Glasses, Backpack, ImageIcon } from 'lucide-react';
+import { Glasses, Backpack, ImageIcon, FileText } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import PhotoUpload from './PhotoUpload';
 
@@ -46,6 +47,29 @@ const AppearanceOptions: React.FC<AppearanceOptionsProps> = ({ control, setValue
       </Card>
 
       <PhotoUpload control={control} setValue={setValue} />
+      
+      <FormField
+        control={control}
+        name="heroDescription"
+        render={({ field }) => (
+          <FormItem className="rounded-lg border p-4 bg-white shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <FileText className="w-5 h-5 text-purple-600" />
+              <FormLabel className="text-base">Personnalisation du personnage</FormLabel>
+            </div>
+            <FormDescription className="mb-3">
+              Décris les caractéristiques spéciales de ton héros (cheveux, vêtements, accessoires, traits de caractère...)
+            </FormDescription>
+            <FormControl>
+              <Textarea
+                placeholder="Ex: cheveux bouclés blonds, porte un t-shirt rouge, très curieux et courageux..."
+                className="min-h-[100px] resize-none"
+                {...field}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
       
       <FormField
         control={control}
