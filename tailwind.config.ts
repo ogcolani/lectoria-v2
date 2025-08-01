@@ -90,6 +90,10 @@ export default {
 					from: {
 						height: 'var(--radix-accordion-content-height)',
 						opacity: '1'
+					},
+					to: {
+						height: '0',
+						opacity: '0'
 					}
 				},
 				'fade-in': {
@@ -108,10 +112,10 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out forwards'
 			},
-      fontSize: {
-        'h1-mobile': ['2rem', { lineHeight: '1.2', fontWeight: '700' }],
-        'h1-desktop': ['3.5rem', { lineHeight: '1.1', fontWeight: '700' }],
-      },
+			fontSize: {
+				'h1-mobile': ['2rem', { lineHeight: '1.2', fontWeight: '700' }],
+				'h1-desktop': ['3.5rem', { lineHeight: '1.1', fontWeight: '700' }],
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
