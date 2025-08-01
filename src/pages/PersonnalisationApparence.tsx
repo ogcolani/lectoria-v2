@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,9 +8,7 @@ import { Form } from '@/components/ui/form';
 import ProgressSection from '@/components/story-elements/ProgressSection';
 import NavigationButtons from '@/components/story-elements/NavigationButtons';
 import HeroPreview from '@/components/hero-customization/HeroPreview';
-import BasicInfoFields from '@/components/hero-customization/BasicInfoFields';
-import HelpGuide from '@/components/hero-customization/HelpGuide';
-import IllustrationStyleSelector from '@/components/hero-customization/IllustrationStyleSelector';
+import AppearanceOptions from '@/components/hero-customization/AppearanceOptions';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
 import { useToast } from '@/components/ui/use-toast';
 import { IllustrationStyle } from '@/services/illustrationService';
@@ -29,7 +26,8 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-const PersonnalisationHero = () => {
+
+const PersonnalisationApparence = () => {
   const { toast } = useToast();
   
   // Récupérer les données du store
@@ -53,7 +51,7 @@ const PersonnalisationHero = () => {
   
   useEffect(() => {
     // Initialiser la progression pour cette étape
-    setProgress(40);
+    setProgress(60);
   }, [setProgress]);
   
   const form = useForm<FormValues>({
@@ -110,8 +108,8 @@ const PersonnalisationHero = () => {
   
   const onSubmit = (data: FormValues) => {
     toast({
-      title: "Personnage sauvegardé",
-      description: "Les informations de ton héros ont été sauvegardées.",
+      title: "Apparence sauvegardée",
+      description: "L'apparence de ton héros a été sauvegardée.",
     });
   };
 
@@ -137,7 +135,6 @@ const PersonnalisationHero = () => {
 
   // Get the traits array using memoization to prevent unnecessary recalculations
   const traits = React.useMemo(() => getTraits(), [form.watch('heroTrait')]);
-  
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-purple-50 to-white">
@@ -146,7 +143,7 @@ const PersonnalisationHero = () => {
       <main className="flex-1 container mx-auto px-4 py-12">
         <h1 className="text-4xl font-bold text-center mb-6">
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
-            Personnalise ton héros
+            Personnalise l'apparence
           </span>
         </h1>
         
@@ -165,24 +162,21 @@ const PersonnalisationHero = () => {
           
           <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 order-1 lg:order-2">
             <h2 className="text-2xl font-bold mb-6">
-              Décris ton héros
+              Choisis l'apparence de ton héros
             </h2>
             
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <BasicInfoFields control={form.control} />
-                
-                <IllustrationStyleSelector control={form.control} />
+                <AppearanceOptions control={form.control} setValue={form.setValue} />
                   
                 <NavigationButtons 
-                  nextHref="/personnalisation-apparence" 
+                  nextHref="/story-elements" 
+                  backHref="/personnalisation-hero"
                 />
               </form>
             </Form>
           </div>
         </div>
-        
-        <HelpGuide />
       </main>
       
       <Footer />
@@ -190,4 +184,4 @@ const PersonnalisationHero = () => {
   );
 };
 
-export default PersonnalisationHero;
+export default PersonnalisationApparence;

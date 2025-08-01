@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import CreerMonLivre from "./pages/CreerMonLivre";
 import CreationLivre from "./pages/CreationLivre";
 import PersonnalisationHero from "./pages/PersonnalisationHero";
+import PersonnalisationApparence from "./pages/PersonnalisationApparence";
 import StoryElements from "./pages/StoryElements";
 import GenerationHistoire from "./pages/GenerationHistoire";
 import ChoixFormat from "./pages/ChoixFormat";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/creer-mon-livre" element={<CreerMonLivre />} />
           <Route path="/creation-livre" element={<CreationLivre />} />
           <Route path="/personnalisation-hero" element={<PersonnalisationHero />} />
+          <Route path="/personnalisation-apparence" element={<PersonnalisationApparence />} />
           <Route path="/story-elements" element={<StoryElements />} />
           <Route path="/generation-histoire" element={<GenerationHistoire />} />
           <Route path="/choix-format" element={<ChoixFormat />} />
