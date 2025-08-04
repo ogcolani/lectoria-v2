@@ -7,6 +7,7 @@ import { extractKeyScenes } from './utils/extractionService';
 import { generateFallbackStory } from './utils/fallbackService';
 import { generateStoryIllustrations } from './illustrationService';
 import { generateOptimizedPrompt } from './promptGeneratorService';
+import { conditionalApiCall, generateTestStory } from './testModeService';
 
 // Interface for story generation parameters
 interface StoryGenerationParams {
@@ -78,29 +79,53 @@ export const generateStoryService = async ({
       );
     }
     
-    console.log("Envoi de la requête à l'API Mistral avec le prompt:", formattedPrompt);
+    // Utiliser le mode TEST ou les vraies APIs selon l'environnement
+    const result = await conditionalApiCall(
+      // Mode TEST: utiliser les données mock
+      async () => {
+        const mockResult = await generateTestStory({
+          heroName: heroName || '',
+          heroAge: heroAge || '',
+          heroTrait: heroTrait || '',
+          prompt,
+          pageCount
+        });
+        
+        const storyPreview = generateStoryPreview(mockResult.story, pageCount, childAge);
+        const storySegments = extractKeyScenes(mockResult.story, pageCount);
+        
+        return {
+          fullStory: mockResult.story,
+          storyPreview,
+          illustrationUrl: mockResult.illustrationUrl,
+          illustrations: [mockResult.illustrationUrl],
+          storySegments,
+          usedOptimizedPrompt: useOptimizedPrompts
+        };
+      },
+      // Mode PRODUCTION: utiliser les vraies APIs
+      async () => {
+        console.log("Envoi de la requête à l'API Mistral avec le prompt:", formattedPrompt);
+        
+        const generatedFullStory = await generateWithMistral({ prompt: formattedPrompt });
+        const storyPreview = generateStoryPreview(generatedFullStory, pageCount, childAge);
+        const storySegments = extractKeyScenes(generatedFullStory, pageCount);
+        console.log(`Generating ${storySegments.length} illustrations for ${pageCount} story pages`);
+        
+        const illustrations = await generateStoryIllustrations(storySegments, illustrationStyle);
+        
+        return {
+          fullStory: generatedFullStory,
+          storyPreview,
+          illustrationUrl: illustrations.length > 0 ? illustrations[0] : null,
+          illustrations,
+          storySegments,
+          usedOptimizedPrompt: useOptimizedPrompts
+        };
+      }
+    );
     
-    // Generate the story using Mistral
-    const generatedFullStory = await generateWithMistral({ prompt: formattedPrompt });
-    
-    // Create the preview version of the story
-    const storyPreview = generateStoryPreview(generatedFullStory, pageCount, childAge);
-    
-    // Extract key scenes from the story for illustrations
-    const storySegments = extractKeyScenes(generatedFullStory, pageCount);
-    console.log(`Generating ${storySegments.length} illustrations for ${pageCount} story pages`);
-    
-    // Generate all illustrations with the chosen style
-    const illustrations = await generateStoryIllustrations(storySegments, illustrationStyle);
-    
-    return {
-      fullStory: generatedFullStory,
-      storyPreview,
-      illustrationUrl: illustrations.length > 0 ? illustrations[0] : null,
-      illustrations,
-      storySegments,
-      usedOptimizedPrompt: useOptimizedPrompts
-    };
+    return result;
   } catch (error) {
     console.error("Error generating story:", error);
     // Assurez-vous que le fallback utilise également le prompt de l'utilisateur

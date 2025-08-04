@@ -28,6 +28,9 @@ interface LectoriaState {
   illustrations: string[];
   showBookPreview: boolean;
   
+  // Mode TEST
+  isDemoMode: boolean;
+  
   // Méthodes pour mettre à jour les données du héros
   setHeroName: (name: string) => void;
   setHeroAge: (age: string) => void;
@@ -51,6 +54,10 @@ interface LectoriaState {
   setIllustrationUrl: (url: string | null) => void;
   setIllustrations: (urls: string[]) => void;
   setShowBookPreview: (show: boolean) => void;
+  
+  // Méthodes pour le mode DEMO
+  setIsDemoMode: (isDemoMode: boolean) => void;
+  fillDemoData: () => void;
   
   // Réinitialisation des données
   resetStoryData: () => void;
@@ -89,6 +96,9 @@ export const useLectoriaStore = create<LectoriaState>()(
       illustrations: [],
       showBookPreview: false,
       
+      // Valeurs initiales du mode DEMO
+      isDemoMode: false,
+      
       // Méthodes de mise à jour du héros
       setHeroName: (name: string) => set({ heroName: name }),
       setHeroAge: (age: string) => set({ heroAge: age }),
@@ -112,6 +122,21 @@ export const useLectoriaStore = create<LectoriaState>()(
       setIllustrationUrl: (url: string | null) => set({ illustrationUrl: url }),
       setIllustrations: (urls: string[]) => set({ illustrations: urls }),
       setShowBookPreview: (show: boolean) => set({ showBookPreview: show }),
+      
+      // Méthodes pour le mode DEMO
+      setIsDemoMode: (isDemoMode: boolean) => set({ isDemoMode }),
+      fillDemoData: () => {
+        const isStaging = import.meta.env.VITE_ENV === 'staging';
+        const { isDemoMode } = get();
+        
+        if (isStaging && isDemoMode) {
+          set({ 
+            heroName: 'NicoTest',
+            heroAge: '7',
+            heroTrait: 'dragons'
+          });
+        }
+      },
       
       // Réinitialisation des données d'histoire
       resetStoryData: () => set({

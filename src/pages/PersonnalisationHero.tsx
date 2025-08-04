@@ -12,6 +12,7 @@ import HeroPreview from '@/components/hero-customization/HeroPreview';
 import BasicInfoFields from '@/components/hero-customization/BasicInfoFields';
 import HelpGuide from '@/components/hero-customization/HelpGuide';
 import IllustrationStyleSelector from '@/components/hero-customization/IllustrationStyleSelector';
+import DemoModeToggle from '@/components/DemoModeToggle';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
 import { useToast } from '@/components/ui/use-toast';
 import { IllustrationStyle } from '@/services/illustrationService';
@@ -41,6 +42,7 @@ const PersonnalisationHero = () => {
     heroGender, 
     hasGlasses, 
     illustrationStyle,
+    isDemoMode,
     setHeroName,
     setHeroAge,
     setHeroDescription,
@@ -108,6 +110,13 @@ const PersonnalisationHero = () => {
     handleFormValuesChange(formValues);
   }, [formValues, handleFormValuesChange]);
   
+  // Synchroniser le formulaire avec le store quand les données DEMO changent
+  useEffect(() => {
+    form.setValue('heroName', heroName);
+    form.setValue('heroAge', heroAge);
+    form.setValue('heroTrait', heroTrait);
+  }, [heroName, heroAge, heroTrait, form]);
+  
   const onSubmit = (data: FormValues) => {
     toast({
       title: "Personnage sauvegardé",
@@ -151,6 +160,10 @@ const PersonnalisationHero = () => {
         </h1>
         
         <ProgressSection progress={useLectoriaStore(state => state.progress)} />
+        
+        <div className="mb-8">
+          <DemoModeToggle />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <HeroPreview 
