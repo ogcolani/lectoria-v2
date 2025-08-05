@@ -127,9 +127,10 @@ export const useLectoriaStore = create<LectoriaState>()(
       setIsDemoMode: (isDemoMode: boolean) => set({ isDemoMode }),
       fillDemoData: () => {
         const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging';
-        const { isDemoMode } = get();
+        const { isDemoMode, heroName, heroAge, heroTrait } = get();
         
-        if (isDevelopment && isDemoMode) {
+        // Only fill if demo mode is active AND data is not already filled
+        if (isDevelopment && isDemoMode && (!heroName || heroName === '')) {
           set({ 
             heroName: 'NicoTest',
             heroAge: '7',

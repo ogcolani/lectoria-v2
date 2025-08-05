@@ -112,10 +112,12 @@ const PersonnalisationHero = () => {
   
   // Synchroniser le formulaire avec le store quand les données DEMO changent
   useEffect(() => {
-    form.setValue('heroName', heroName);
-    form.setValue('heroAge', heroAge);
-    form.setValue('heroTrait', heroTrait);
-  }, [heroName, heroAge, heroTrait, form]);
+    if (isDemoMode) {
+      form.setValue('heroName', heroName);
+      form.setValue('heroAge', heroAge);
+      form.setValue('heroTrait', heroTrait);
+    }
+  }, [heroName, heroAge, heroTrait, form, isDemoMode]);
   
   const onSubmit = (data: FormValues) => {
     toast({

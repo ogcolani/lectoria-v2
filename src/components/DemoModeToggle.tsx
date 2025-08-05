@@ -14,7 +14,11 @@ const DemoModeToggle: React.FC = () => {
   
   useEffect(() => {
     if (isDemoMode && isDevelopment) {
-      fillDemoData();
+      // Small delay to prevent immediate re-render conflicts
+      const timer = setTimeout(() => {
+        fillDemoData();
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [isDemoMode, isDevelopment, fillDemoData]);
 
