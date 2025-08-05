@@ -28,6 +28,9 @@ interface LectoriaState {
   illustrations: string[];
   showBookPreview: boolean;
   
+  // A/B Testing
+  simpleExcerpt: boolean;
+  
   // Mode TEST
   isDemoMode: boolean;
   
@@ -95,6 +98,9 @@ export const useLectoriaStore = create<LectoriaState>()(
       illustrationUrl: null,
       illustrations: [],
       showBookPreview: false,
+      
+      // A/B Testing
+      simpleExcerpt: import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging',
       
       // Valeurs initiales du mode DEMO
       isDemoMode: false,

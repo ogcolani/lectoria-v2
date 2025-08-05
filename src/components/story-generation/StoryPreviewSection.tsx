@@ -2,6 +2,8 @@
 import React from 'react';
 import StoryPreview from '@/components/StoryPreview';
 import BookPreview from '@/components/BookPreview';
+import EnhancedStoryPreview from '@/components/story/EnhancedStoryPreview';
+import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 interface StoryPreviewSectionProps {
   storyPreview: string;
@@ -32,6 +34,7 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
   onContinue,
   heroName
 }) => {
+  const { simpleExcerpt } = useLectoriaStore();
   if (showBookPreview && storyPreview) {
     return (
       <div className="max-w-6xl mx-auto">
@@ -53,19 +56,29 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
 
   return (
     <div className="lg:col-span-2 order-1 lg:order-2">
-      <StoryPreview
-        storyPreview={storyPreview}
-        isGenerating={isGenerating}
-        pageCount={pageCount}
-        childAge={childAge}
-        illustrationUrl={illustrationUrl}
-        illustrations={illustrations}
-        onShare={onShare}
-        onReset={onReset}
-        heroName={heroName}
-      />
+      {simpleExcerpt ? (
+        <EnhancedStoryPreview
+          storyPreview={storyPreview}
+          isGenerating={isGenerating}
+          illustrations={illustrations}
+          heroName={heroName}
+          pageCount={pageCount}
+        />
+      ) : (
+        <StoryPreview
+          storyPreview={storyPreview}
+          isGenerating={isGenerating}
+          pageCount={pageCount}
+          childAge={childAge}
+          illustrationUrl={illustrationUrl}
+          illustrations={illustrations}
+          onShare={onShare}
+          onReset={onReset}
+          heroName={heroName}
+        />
+      )}
       
-      {storyPreview && (
+      {storyPreview && !simpleExcerpt && (
         <div className="mt-8 text-center">
           <button 
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-2 rounded-lg shadow-md"
