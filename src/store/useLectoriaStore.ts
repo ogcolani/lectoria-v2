@@ -126,10 +126,10 @@ export const useLectoriaStore = create<LectoriaState>()(
       // Méthodes pour le mode DEMO
       setIsDemoMode: (isDemoMode: boolean) => set({ isDemoMode }),
       fillDemoData: () => {
-        const isStaging = import.meta.env.VITE_ENV === 'staging';
+        const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging';
         const { isDemoMode } = get();
         
-        if (isStaging && isDemoMode) {
+        if (isDevelopment && isDemoMode) {
           set({ 
             heroName: 'NicoTest',
             heroAge: '7',

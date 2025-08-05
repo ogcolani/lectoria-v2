@@ -8,15 +8,15 @@ import { useLectoriaStore } from '@/store/useLectoriaStore';
 const DemoModeToggle: React.FC = () => {
   const { isDemoMode, setIsDemoMode, fillDemoData } = useLectoriaStore();
   
-  // Masquer le toggle en production
+  // Masquer le toggle en production seulement
   const isProduction = import.meta.env.VITE_ENV === 'production';
-  const isStaging = import.meta.env.VITE_ENV === 'staging';
+  const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging';
   
   useEffect(() => {
-    if (isDemoMode && isStaging) {
+    if (isDemoMode && isDevelopment) {
       fillDemoData();
     }
-  }, [isDemoMode, isStaging, fillDemoData]);
+  }, [isDemoMode, isDevelopment, fillDemoData]);
 
   if (isProduction) {
     return null;
@@ -24,7 +24,7 @@ const DemoModeToggle: React.FC = () => {
 
   const handleToggle = (checked: boolean) => {
     setIsDemoMode(checked);
-    if (checked && isStaging) {
+    if (checked && isDevelopment) {
       fillDemoData();
     }
   };
@@ -39,7 +39,7 @@ const DemoModeToggle: React.FC = () => {
               Mode DEMO
             </Label>
             <p className="text-xs text-orange-600">
-              {isStaging ? 'Auto-remplissage des champs de test' : 'Disponible en staging uniquement'}
+              {isDevelopment ? 'Auto-remplissage des champs de test' : 'Disponible en développement uniquement'}
             </p>
           </div>
         </div>
@@ -47,7 +47,7 @@ const DemoModeToggle: React.FC = () => {
           id="demo-mode"
           checked={isDemoMode}
           onCheckedChange={handleToggle}
-          disabled={!isStaging}
+          disabled={!isDevelopment}
         />
       </div>
       

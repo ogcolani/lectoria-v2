@@ -32,9 +32,9 @@ interface StoryParams {
 
 // Vérifier si on est en mode TEST
 export const isTestMode = (): boolean => {
-  const isStaging = import.meta.env.VITE_ENV === 'staging';
+  const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging';
   const { isDemoMode } = useLectoriaStore.getState();
-  return isStaging && isDemoMode;
+  return isDevelopment && isDemoMode;
 };
 
 // Hash email et IP pour la sécurité en staging
@@ -80,12 +80,12 @@ export const conditionalApiCall = async <T>(
 
 // Logs sécurisés pour le staging
 export const secureLog = async (message: string, data?: any) => {
-  const isStaging = import.meta.env.VITE_ENV === 'staging';
+  const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging';
   
-  if (isStaging) {
+  if (isDevelopment) {
     const timestamp = new Date().toISOString();
     const logData = data ? await hashSensitiveData(JSON.stringify(data)) : '';
-    console.log(`[STAGING-${timestamp}] ${message}`, logData ? `(hash: ${logData.substring(0, 8)}...)` : '');
+    console.log(`[DEV-${timestamp}] ${message}`, logData ? `(hash: ${logData.substring(0, 8)}...)` : '');
   } else {
     console.log(message, data);
   }
