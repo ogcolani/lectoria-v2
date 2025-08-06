@@ -32,9 +32,7 @@ interface StoryParams {
 
 // Vérifier si on est en mode TEST
 export const isTestMode = (): boolean => {
-  const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging';
-  const { isDemoMode } = useLectoriaStore.getState();
-  return isDevelopment && isDemoMode;
+  return false; // Mode demo supprimé
 };
 
 // Hash email et IP pour la sécurité en staging
