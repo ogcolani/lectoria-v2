@@ -134,7 +134,7 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
 
         {/* Overlay gradient and CTA */}
         {remainingParagraphs.length > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-white via-white/95 to-transparent flex flex-col justify-end p-6">
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/95 to-transparent flex flex-col justify-end p-6">
             <div className="text-center space-y-4 bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-100">
               <p className="text-xl font-semibold text-gray-800">
                 The story continues…
