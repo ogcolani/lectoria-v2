@@ -23,7 +23,7 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
   heroName
 }) => {
   const navigate = useNavigate();
-  const [expandedParagraphs, setExpandedParagraphs] = useState(2);
+  const [expandedParagraphs, setExpandedParagraphs] = useState(4);
   const [isExpanding, setIsExpanding] = useState(false);
 
   // Parse story content
@@ -50,8 +50,8 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
 
   const { title, paragraphs } = parseStoryContent(storyPreview);
   
-  // Calculate 15% of content (around 3-4 pages for a 28-page book)
-  const excerptLength = Math.max(Math.ceil(paragraphs.length * 0.15), 4);
+  // Calculate 20% of content (more substantial preview)
+  const excerptLength = Math.max(Math.ceil(paragraphs.length * 0.20), 5);
   const excerptParagraphs = paragraphs.slice(0, excerptLength);
   const remainingParagraphs = paragraphs.slice(excerptLength);
   
@@ -63,14 +63,14 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
     if (hasMoreToShow) {
       setIsExpanding(true);
       setTimeout(() => {
-        setExpandedParagraphs(prev => Math.min(prev + 2, excerptParagraphs.length));
+        setExpandedParagraphs(prev => Math.min(prev + 3, excerptParagraphs.length));
         setIsExpanding(false);
       }, 150);
     }
   };
 
   const handleCollapseAll = () => {
-    setExpandedParagraphs(2);
+    setExpandedParagraphs(4);
   };
 
   const handleBuyBook = () => {
