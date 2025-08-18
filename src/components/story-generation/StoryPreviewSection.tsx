@@ -3,6 +3,7 @@ import React from 'react';
 import StoryPreview from '@/components/StoryPreview';
 import BookPreview from '@/components/BookPreview';
 import EnhancedStoryPreview from '@/components/story/EnhancedStoryPreview';
+import LimitedStoryPreview from '@/components/story/LimitedStoryPreview';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 interface StoryPreviewSectionProps {
@@ -57,12 +58,14 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
   return (
     <div className="lg:col-span-2 order-1 lg:order-2">
       {simpleExcerpt ? (
-        <EnhancedStoryPreview
+        <LimitedStoryPreview
           storyPreview={storyPreview}
           isGenerating={isGenerating}
+          pageCount={pageCount}
+          childAge={childAge}
+          illustrationUrl={illustrationUrl}
           illustrations={illustrations}
           heroName={heroName}
-          pageCount={pageCount}
         />
       ) : (
         <StoryPreview

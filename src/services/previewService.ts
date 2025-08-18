@@ -1,6 +1,6 @@
 
 export const generateStoryPreview = (generatedFullStory: string, pageCount: number, childAge: number) => {
-  const lines = generatedFullStory.split('\n');
+  const lines = generatedFullStory.split('\n').filter(line => line.trim() !== '');
   let title = "Histoire Générée";
   let contentStart = 0;
   
@@ -13,16 +13,9 @@ export const generateStoryPreview = (generatedFullStory: string, pageCount: numb
     }
   }
   
-  // Ne montrer que 15% du contenu (extrait limité comme demandé)
-  const previewParagraphs = Math.max(Math.ceil(lines.length * 0.15), 3);
-  
-  // Créer l'extrait avec le début de l'histoire seulement
-  const previewContent = [
-    `# ${title}`,
-    ...lines.slice(contentStart, contentStart + previewParagraphs)
-  ].join('\n');
-  
-  return previewContent;
+  // Retourner l'histoire complète pour permettre l'affichage avec overlay
+  // L'effet de limitation sera géré côté composant
+  return generatedFullStory;
 };
 
 // Cette fonction divise le contenu en plusieurs pages pour la prévisualisation (extrait limité)
