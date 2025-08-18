@@ -1,5 +1,5 @@
-import React from 'react';
-import { ShoppingCart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,6 +23,8 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
   heroName
 }) => {
   const navigate = useNavigate();
+  const [expandedParagraphs, setExpandedParagraphs] = useState(2);
+  const [isExpanding, setIsExpanding] = useState(false);
 
   // Parse story content
   const parseStoryContent = (text: string) => {
@@ -52,6 +54,24 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
   const excerptLength = Math.max(Math.ceil(paragraphs.length * 0.15), 4);
   const excerptParagraphs = paragraphs.slice(0, excerptLength);
   const remainingParagraphs = paragraphs.slice(excerptLength);
+  
+  // Paragraphs currently visible
+  const visibleParagraphs = excerptParagraphs.slice(0, expandedParagraphs);
+  const hasMoreToShow = expandedParagraphs < excerptParagraphs.length;
+
+  const handleExpandMore = () => {
+    if (hasMoreToShow) {
+      setIsExpanding(true);
+      setTimeout(() => {
+        setExpandedParagraphs(prev => Math.min(prev + 2, excerptParagraphs.length));
+        setIsExpanding(false);
+      }, 150);
+    }
+  };
+
+  const handleCollapseAll = () => {
+    setExpandedParagraphs(2);
+  };
 
   const handleBuyBook = () => {
     navigate('/offres-cadeaux');
@@ -95,12 +115,12 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
         </p>
       </div>
 
-      {/* Story content with overlay */}
+      {/* Story content with progressive reveal */}
       <div className="relative">
-        <div className="p-6 space-y-4 max-h-[60vh] overflow-hidden">
+        <div className="p-6 space-y-4">
           {/* Main illustration */}
           {(illustrationUrl || illustrations[0]) && (
-            <div className="mb-6">
+            <div className="mb-6 animate-fade-in">
               <img 
                 src={illustrationUrl || illustrations[0]} 
                 alt="Illustration de l'histoire"
@@ -109,20 +129,56 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
             </div>
           )}
 
-          {/* Excerpt paragraphs */}
-          <div className="prose prose-lg max-w-none">
-            {excerptParagraphs.map((paragraph, index) => (
-              <p key={index} className="text-gray-800 leading-relaxed mb-4">
-                {paragraph.replace(/[#*]/g, '').trim()}
-              </p>
+          {/* Progressive story reveal */}
+          <div className="prose prose-lg max-w-none space-y-4">
+            {visibleParagraphs.map((paragraph, index) => (
+              <div 
+                key={index} 
+                className="animate-fade-in"
+                style={{ 
+                  animationDelay: `${index * 0.1}s`,
+                  animationFillMode: 'both'
+                }}
+              >
+                <p className="text-gray-800 leading-relaxed mb-4">
+                  {paragraph.replace(/[#*]/g, '').trim()}
+                </p>
+              </div>
             ))}
           </div>
 
-          {/* Hidden content with blur effect */}
+          {/* Expand/Continue buttons */}
+          <div className="flex justify-center space-x-4 py-4">
+            {hasMoreToShow ? (
+              <Button
+                onClick={handleExpandMore}
+                variant="outline"
+                className="flex items-center gap-2 hover-scale"
+                disabled={isExpanding}
+              >
+                <ChevronDown className={`h-4 w-4 ${isExpanding ? 'animate-pulse' : ''}`} />
+                {isExpanding ? 'Chargement...' : 'Lire la suite'}
+              </Button>
+            ) : (
+              <div className="text-center space-y-3">
+                <Button
+                  onClick={handleCollapseAll}
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2 text-gray-500 hover:text-gray-700"
+                >
+                  <ChevronUp className="h-4 w-4" />
+                  Réduire l'aperçu
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Blurred preview of remaining content */}
           {remainingParagraphs.length > 0 && (
-            <div className="space-y-4 relative">
-              <div className="prose prose-lg max-w-none filter blur-sm opacity-60">
-                {remainingParagraphs.slice(0, 3).map((paragraph, index) => (
+            <div className="space-y-4 relative mt-6">
+              <div className="prose prose-lg max-w-none filter blur-sm opacity-40">
+                {remainingParagraphs.slice(0, 2).map((paragraph, index) => (
                   <p key={`hidden-${index}`} className="text-gray-800 leading-relaxed mb-4">
                     {paragraph.replace(/[#*]/g, '').trim()}
                   </p>
@@ -132,10 +188,10 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
           )}
         </div>
 
-        {/* Overlay gradient and CTA */}
-        {remainingParagraphs.length > 0 && (
+        {/* Final overlay gradient and CTA - only show when all excerpt is revealed */}
+        {!hasMoreToShow && remainingParagraphs.length > 0 && (
           <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/95 to-transparent flex flex-col justify-end p-6">
-            <div className="text-center space-y-4 bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-100">
+            <div className="text-center space-y-4 bg-white/95 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-100 animate-scale-in">
               <p className="text-xl font-semibold text-gray-800">
                 The story continues…
               </p>
@@ -145,7 +201,7 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
               <Button 
                 onClick={handleBuyBook}
                 size="lg"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl transition-all duration-200"
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl transition-all duration-200 hover-scale"
               >
                 <ShoppingCart className="h-5 w-5" />
                 Buy the full book
