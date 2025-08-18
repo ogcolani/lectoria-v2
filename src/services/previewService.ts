@@ -13,26 +13,19 @@ export const generateStoryPreview = (generatedFullStory: string, pageCount: numb
     }
   }
   
-  // Include most of the story in the preview (about 80%)
-  // This ensures we have enough content to show multiple pages
-  const previewParagraphs = Math.max(Math.ceil(lines.length * 0.8), 5);
+  // Ne montrer que 15% du contenu (extrait limité comme demandé)
+  const previewParagraphs = Math.max(Math.ceil(lines.length * 0.15), 3);
   
-  // Include more content for the preview
+  // Créer l'extrait avec le début de l'histoire seulement
   const previewContent = [
     `# ${title}`,
-    ...lines.slice(contentStart, contentStart + previewParagraphs),
-    '',
-    '⭐ Voici un aperçu de ton histoire personnalisée !',
-    '',
-    'Pour découvrir la suite et avoir ton livre complet...',
-    '',
-    `Histoire complète en ${pageCount} pages, adaptée aux ${childAge} ans`
+    ...lines.slice(contentStart, contentStart + previewParagraphs)
   ].join('\n');
   
   return previewContent;
 };
 
-// Cette fonction divise le contenu en plusieurs pages pour la prévisualisation
+// Cette fonction divise le contenu en plusieurs pages pour la prévisualisation (extrait limité)
 export const splitContentIntoPages = (content: string, imagesCount: number): string[] => {
   if (!content) return [];
 
@@ -54,22 +47,19 @@ export const splitContentIntoPages = (content: string, imagesCount: number): str
   
   // On récupère les paragraphes réels du contenu (en ignorant les lignes vides)
   const paragraphs = lines.slice(contentStart)
-    .filter(line => line.trim() !== '')
-    .filter(line => !line.includes('Voici un aperçu') && !line.includes('Pour découvrir') && !line.includes('Histoire complète en'));
+    .filter(line => line.trim() !== '');
   
-  // Nombre de paragraphes par page (généralement 1-2)
-  const paragraphsPerPage = Math.max(1, Math.ceil(paragraphs.length / (imagesCount > 1 ? imagesCount - 1 : 4)));
+  // Pour l'extrait : ne prendre que 3-4 pages maximum (début de l'histoire)
+  const maxExcerptPages = Math.min(4, Math.ceil(paragraphs.length * 0.15));
+  const paragraphsPerPage = Math.max(1, Math.ceil(paragraphs.length / maxExcerptPages));
   
-  // Diviser les paragraphes en pages
-  for (let i = 0; i < paragraphs.length; i += paragraphsPerPage) {
+  // Diviser les paragraphes en pages (seulement le début)
+  for (let i = 0; i < Math.min(paragraphs.length, maxExcerptPages * paragraphsPerPage); i += paragraphsPerPage) {
     const pageContent = paragraphs.slice(i, i + paragraphsPerPage).join('\n\n');
     if (pageContent.trim()) {
       pages.push(pageContent);
     }
   }
-  
-  // Ajouter une page finale invitant à continuer
-  pages.push('Pour découvrir la suite de cette merveilleuse aventure, commande le livre complet !');
   
   return pages;
 };

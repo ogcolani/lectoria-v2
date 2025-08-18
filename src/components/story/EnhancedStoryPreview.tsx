@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { ChevronLeft, ChevronRight, BookOpen, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
+import { useNavigate } from 'react-router-dom';
 
 interface EnhancedStoryPreviewProps {
   storyPreview: string;
@@ -21,6 +22,7 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const { simpleExcerpt } = useLectoriaStore();
+  const navigate = useNavigate();
 
   // Keyboard navigation
   useEffect(() => {
@@ -83,7 +85,7 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
       }
     }
 
-    return excerpts.slice(0, Math.min(8, pageCount - 1)); // Limit excerpts
+    return excerpts.slice(0, Math.min(4, Math.ceil(pageCount * 0.15))); // Extrait limité (15%)
   };
 
   const excerpts = parseStoryExcerpts(storyPreview);
@@ -193,7 +195,7 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 md:p-6 p-4">
+        <div className="p-6 md:p-6 p-4 relative">
           {/* Story text */}
           <div className="mb-6">
             <p 
@@ -208,12 +210,26 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
             </p>
           </div>
 
-          {/* Educational context */}
-          <div className="text-sm text-gray-600 border-t pt-4">
-            <p>
-              📚 Valeur travaillée : Persévérance · Illustration générée par IA (SDXL)
-            </p>
-          </div>
+          {/* Overlay pour les dernières pages de l'extrait */}
+          {currentPage >= Math.max(0, excerpts.length - 2) && (
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-100/95 via-gray-50/80 to-transparent flex flex-col justify-end p-6">
+              <div className="text-center space-y-4 bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+                <p className="text-lg font-medium text-gray-800">
+                  L'histoire continue…
+                </p>
+                <p className="text-sm text-gray-600 mb-4">
+                  Découvrez la suite dans votre livre personnalisé
+                </p>
+                <Button 
+                  onClick={() => navigate('/offres-cadeaux')}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 mx-auto"
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  Acheter le livre complet
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -230,15 +246,25 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
           Page précédente
         </Button>
 
-        <Button
-          size="lg"
-          onClick={goToNextPage}
-          disabled={currentPage === excerpts.length - 1}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 flex items-center gap-2 px-6 md:w-auto w-full justify-center"
-        >
-          Page suivante
-          <ChevronRight className="h-5 w-5" />
-        </Button>
+        {currentPage < excerpts.length - 1 ? (
+          <Button
+            size="lg"
+            onClick={goToNextPage}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 flex items-center gap-2 px-6 md:w-auto w-full justify-center"
+          >
+            Page suivante
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        ) : (
+          <Button
+            size="lg"
+            onClick={() => navigate('/offres-cadeaux')}
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 flex items-center gap-2 px-6 md:w-auto w-full justify-center"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            Acheter le livre complet
+          </Button>
+        )}
       </div>
 
       {/* Mobile responsive classes via Tailwind */}
