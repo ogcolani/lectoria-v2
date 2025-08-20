@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingCart, ChevronDown, ChevronUp, CheckCircle, User, Heart, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { useLectoriaStore } from '@/store/useLectoriaStore';
 
 interface LimitedStoryPreviewProps {
   storyPreview: string;
@@ -25,6 +26,64 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
   const navigate = useNavigate();
   const [expandedParagraphs, setExpandedParagraphs] = useState(4);
   const [isExpanding, setIsExpanding] = useState(false);
+  
+  // Get personalization data from store
+  const {
+    heroGender,
+    heroAge: storeHeroAge,
+    heroTrait,
+    selectedValues,
+    selectedStoryElements
+  } = useLectoriaStore();
+
+  // Create personalization indicators
+  const getPersonalizationElements = () => {
+    const elements = [];
+    
+    if (heroName) {
+      elements.push({ 
+        icon: User, 
+        label: `Héros: ${heroName}`, 
+        color: 'text-blue-600' 
+      });
+    }
+    
+    if (storeHeroAge || childAge) {
+      elements.push({ 
+        icon: Sparkles, 
+        label: `${storeHeroAge || childAge} ans`, 
+        color: 'text-green-600' 
+      });
+    }
+    
+    if (heroTrait) {
+      elements.push({ 
+        icon: Heart, 
+        label: `Traits: ${heroTrait}`, 
+        color: 'text-purple-600' 
+      });
+    }
+    
+    if (selectedValues && selectedValues.length > 0) {
+      elements.push({ 
+        icon: CheckCircle, 
+        label: `${selectedValues.length} valeur${selectedValues.length > 1 ? 's' : ''}`, 
+        color: 'text-orange-600' 
+      });
+    }
+    
+    if (selectedStoryElements && selectedStoryElements.length > 0) {
+      elements.push({ 
+        icon: CheckCircle, 
+        label: `${selectedStoryElements.length} élément${selectedStoryElements.length > 1 ? 's' : ''}`, 
+        color: 'text-pink-600' 
+      });
+    }
+    
+    return elements;
+  };
+
+  const personalizationElements = getPersonalizationElements();
 
   // Parse story content
   const parseStoryContent = (text: string) => {
@@ -114,6 +173,32 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
           {illustrations.length > 0 && ` • ${illustrations.length} illustrations`}
         </p>
       </div>
+
+      {/* Personalization Banner */}
+      {personalizationElements.length > 0 && (
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 border-b border-green-100 p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            <span className="text-green-800 font-semibold text-sm">
+              ✨ Histoire personnalisée selon vos choix
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {personalizationElements.map((element, index) => {
+              const IconComponent = element.icon;
+              return (
+                <div 
+                  key={index}
+                  className="flex items-center gap-1 bg-white/70 backdrop-blur-sm px-3 py-1 rounded-full text-xs border border-white/50 shadow-sm"
+                >
+                  <IconComponent className={`h-3 w-3 ${element.color}`} />
+                  <span className="text-gray-700 font-medium">{element.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Story content with progressive reveal */}
       <div className="relative">
