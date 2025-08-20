@@ -99,6 +99,7 @@ export function generateFallbackStory(
 
   return {
     fullStory: generatedFullStory,
+    structuredStory: null, // Fallback doesn't have structured format
     storyPreview: preview,
     illustrationUrl: placeholderIllustrations[0],
     illustrations: placeholderIllustrations,

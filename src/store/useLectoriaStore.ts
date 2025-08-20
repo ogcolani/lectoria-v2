@@ -24,6 +24,7 @@ interface LectoriaState {
   progress: number;
   storyPreview: string;
   fullStory: string;
+  structuredStory: any; // For the new JSON format from Mistral
   illustrationUrl: string | null;
   illustrations: string[];
   showBookPreview: boolean;
@@ -51,6 +52,7 @@ interface LectoriaState {
   setProgress: (progress: number) => void;
   setStoryPreview: (preview: string) => void;
   setFullStory: (story: string) => void;
+  setStructuredStory: (story: any) => void;
   setIllustrationUrl: (url: string | null) => void;
   setIllustrations: (urls: string[]) => void;
   setShowBookPreview: (show: boolean) => void;
@@ -88,6 +90,7 @@ export const useLectoriaStore = create<LectoriaState>()(
       progress: 0,
       storyPreview: '',
       fullStory: '',
+      structuredStory: null,
       illustrationUrl: null,
       illustrations: [],
       showBookPreview: false,
@@ -115,6 +118,7 @@ export const useLectoriaStore = create<LectoriaState>()(
       setProgress: (progress: number) => set({ progress: progress }),
       setStoryPreview: (preview: string) => set({ storyPreview: preview }),
       setFullStory: (story: string) => set({ fullStory: story }),
+      setStructuredStory: (story: any) => set({ structuredStory: story }),
       setIllustrationUrl: (url: string | null) => set({ illustrationUrl: url }),
       setIllustrations: (urls: string[]) => set({ illustrations: urls }),
       setShowBookPreview: (show: boolean) => set({ showBookPreview: show }),
@@ -123,6 +127,7 @@ export const useLectoriaStore = create<LectoriaState>()(
       resetStoryData: () => set({
         storyPreview: '',
         fullStory: '',
+        structuredStory: null,
         illustrationUrl: null,
         illustrations: [],
         progress: 80,
@@ -146,6 +151,7 @@ export const useLectoriaStore = create<LectoriaState>()(
         progress: 0,
         storyPreview: '',
         fullStory: '',
+        structuredStory: null,
         illustrationUrl: null,
         illustrations: [],
         showBookPreview: false
@@ -168,6 +174,7 @@ export const useLectoriaStore = create<LectoriaState>()(
         progress: 0,
         storyPreview: '',
         fullStory: '',
+        structuredStory: null,
         illustrationUrl: null,
         illustrations: [],
         showBookPreview: false

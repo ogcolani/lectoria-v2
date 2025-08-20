@@ -23,6 +23,7 @@ export const useStoryGeneration = () => {
     progress,
     storyPreview,
     fullStory,
+    structuredStory,
     prompt,
     pageCount,
     illustrationUrl,
@@ -34,13 +35,16 @@ export const useStoryGeneration = () => {
     setProgress,
     setStoryPreview,
     setFullStory,
+    setStructuredStory,
     setPrompt,
     setPageCount,
     setIllustrationUrl,
     setIllustrations,
     setIllustrationStyle,
     setShowBookPreview,
-    resetStoryData
+    resetStoryData,
+    // Accès au store complet
+    simpleExcerpt
   } = useLectoriaStore();
   
   const [useOptimizedPrompts, setUseOptimizedPrompts] = useState(true);
@@ -114,20 +118,25 @@ export const useStoryGeneration = () => {
         prompt: userPrompt,
         pageCount,
         childAge,
-        values: selectedValues,
-        elements: selectedStoryElements,
+        values: selectedValues || [],
+        elements: selectedStoryElements || [],
         illustrationStyle,
-        heroName,
-        heroGender,
-        heroAge,
-        heroTrait,
-        heroDescription,
-        hasGlasses,
+        heroName: heroName || undefined,
+        heroGender: heroGender || undefined,
+        heroAge: heroAge || undefined,
+        heroTrait: heroTrait || undefined,
+        heroDescription: heroDescription || undefined,
+        hasGlasses: hasGlasses || false,
         useOptimizedPrompts
       });
+
+      // Vérifiez les résultats avant de les utiliser
+      console.log("Histoire générée avec succès:", result);
       
-      setFullStory(result.fullStory);
-      setStoryPreview(result.storyPreview);
+      // Store all the generated data including structured story
+      setFullStory(result.fullStory || '');
+      setStructuredStory(result.structuredStory || null);
+      setStoryPreview(result.storyPreview || '');
       setIllustrationUrl(result.illustrationUrl);
       
       if (result.illustrations && result.illustrations.length > 0) {
@@ -136,9 +145,18 @@ export const useStoryGeneration = () => {
       
       setProgress(100);
       
+      // Calculate success metrics
+      const hasStory = !!(result.fullStory || result.storyPreview);
+      const hasStructured = !!result.structuredStory;
+      const hasIllustrations = result.illustrations && result.illustrations.length > 0;
+      const storyLength = (result.fullStory || '').length;
+      
+      console.log(`Génération terminée - Histoire: ${hasStory ? 'OK' : 'Manquante'}, Format structuré: ${hasStructured ? 'OK' : 'Non'}, Illustrations: ${hasIllustrations ? result.illustrations.length : 0}, Longueur: ${storyLength} caractères`);
+      
       toast({
-        title: "Histoire générée !",
-        description: `Ton histoire personnalisée est prête avec ${result.illustrations?.length || 0} illustrations. Découvre un aperçu et commande le livre complet !`,
+        title: hasStory ? "Histoire générée avec succès !" : "Histoire générée partiellement",
+        description: `Votre histoire personnalisée${hasStructured ? ' (format amélioré)' : ''} de ${storyLength} caractères est prête avec ${result.illustrations?.length || 0} illustration(s). Découvrez un aperçu et commandez le livre complet !`,
+        duration: 5000,
       });
     } catch (error) {
       toast({
@@ -189,10 +207,12 @@ export const useStoryGeneration = () => {
   };
 
   return {
+    heroName,
     isGenerating,
     progress,
     storyPreview,
     fullStory,
+    structuredStory,
     prompt,
     pageCount,
     illustrationUrl,

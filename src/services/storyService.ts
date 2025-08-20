@@ -1,5 +1,5 @@
 
-import { generateWithMistral } from './mistralService';
+import { generateWithMistral, generateStructuredStory } from './mistralService';
 import { formatStoryPrompt } from './utils/promptUtils';
 import { generateStoryPreview } from './previewService';
 import { IllustrationStyle } from './illustrationService';
@@ -8,6 +8,8 @@ import { generateFallbackStory } from './utils/fallbackService';
 import { generateStoryIllustrations } from './illustrationService';
 import { generateOptimizedPrompt } from './promptGeneratorService';
 import { conditionalApiCall, generateTestStory } from './testModeService';
+import { LECTORIA_SYSTEM_PROMPT, buildUserPrompt } from '@/lib/prompts/system';
+import { storyResponseSchema, type StoryResponse } from '@/lib/validators/story';
 
 // Interface for story generation parameters
 interface StoryGenerationParams {
@@ -96,6 +98,7 @@ export const generateStoryService = async ({
         
         return {
           fullStory: mockResult.story,
+          structuredStory: null, // Mock mode doesn't have structured format yet
           storyPreview,
           illustrationUrl: mockResult.illustrationUrl,
           illustrations: [mockResult.illustrationUrl],
@@ -107,7 +110,44 @@ export const generateStoryService = async ({
       async () => {
         console.log("Envoi de la requête à l'API Mistral avec le prompt:", formattedPrompt);
         
-        const generatedFullStory = await generateWithMistral({ prompt: formattedPrompt });
+        // Try structured generation first (with JSON format)
+        let generatedStory: StoryResponse | null = null;
+        let generatedFullStory = '';
+        
+        try {
+          // Create structured prompt for JSON output
+          const structuredPrompt = buildUserPrompt({
+            prenom: heroName || 'Héros',
+            age: parseInt(heroAge || '7'),
+            genre: heroGender === 'male' ? 'garçon' : heroGender === 'female' ? 'fille' : 'autre',
+            passions: elements.join(', ') || 'aventure',
+            valeurs: values.join(', ') || 'courage',
+            style: illustrationStyle || 'drôle et aventure',
+            univers: elements.join(', ') || 'magie',
+            nbPages: pageCount,
+            trancheAge: childAge <= 5 ? '3-5' : childAge <= 7 ? '5-7' : childAge <= 10 ? '7-10' : '9-12'
+          });
+          
+          console.log("Tentative de génération structurée avec Mistral...");
+          const structuredResult = await generateStructuredStory(structuredPrompt, LECTORIA_SYSTEM_PROMPT);
+          
+          // Parse and validate the JSON response
+          const parsedStory = JSON.parse(structuredResult);
+          const validatedStory = storyResponseSchema.parse(parsedStory);
+          generatedStory = validatedStory;
+          
+          // Convert structured story back to full text for compatibility
+          generatedFullStory = `# ${validatedStory.title}\n\n${validatedStory.pages.map(page => page.text).join('\n\n')}\n\n**Morale:** ${validatedStory.moral}`;
+          
+          console.log("Génération structurée réussie!");
+          
+        } catch (error) {
+          console.warn("Génération structurée échouée, fallback vers l'ancien système:", error);
+          
+          // Fallback to the old system
+          generatedFullStory = await generateWithMistral({ prompt: formattedPrompt });
+        }
+        
         const storyPreview = generateStoryPreview(generatedFullStory, pageCount, childAge);
         const storySegments = extractKeyScenes(generatedFullStory, pageCount);
         console.log(`Generating ${storySegments.length} illustrations for ${pageCount} story pages`);
@@ -116,6 +156,7 @@ export const generateStoryService = async ({
         
         return {
           fullStory: generatedFullStory,
+          structuredStory: generatedStory, // New: add structured story data
           storyPreview,
           illustrationUrl: illustrations.length > 0 ? illustrations[0] : null,
           illustrations,
