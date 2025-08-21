@@ -19,6 +19,7 @@ import NotreHistoire from "./pages/NotreHistoire";
 import OffresCadeaux from "./pages/OffresCadeaux";
 import Commande from "./pages/Commande";
 import CommandeConfirmee from "./pages/CommandeConfirmee";
+import TestSupabase from "./pages/TestSupabase";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,11 @@ const App = () => (
             <Route path="/offres-cadeaux" element={
               <ProtectedRoute>
                 <OffresCadeaux />
+              </ProtectedRoute>
+            } />
+            <Route path="/test-supabase" element={
+              <ProtectedRoute>
+                <TestSupabase />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
