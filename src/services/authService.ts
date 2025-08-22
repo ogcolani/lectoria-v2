@@ -25,6 +25,31 @@ export const authService = {
     return { data, error };
   },
 
+  async signInWithMagicLink(email: string) {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
+    });
+    return { data, error };
+  },
+
+  async resendConfirmation(email: string) {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { data, error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: {
+        emailRedirectTo: redirectUrl
+      }
+    });
+    return { data, error };
+  },
+
   async signOut() {
     const { error } = await supabase.auth.signOut();
     return { error };

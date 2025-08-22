@@ -46,9 +46,22 @@ export default function TestSupabase() {
           .upload(`${user.id}/orders/test/test.txt`, file, { upsert: true })
         log("Upload file:", upload ?? uploadError)
 
-        // 6) Vérifier accès au fichier
-        const { data: urlData } = supabase.storage.from("books").getPublicUrl(`${user.id}/orders/test/test.txt`)
-        log("Public URL:", urlData)
+        // 6) Vérifier accès au fichier (bucket privé = URL signée)
+        const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+          .from("books")
+          .createSignedUrl(`${user.id}/orders/test/test.txt`, 60) // 60 secondes
+        log("Signed URL (private bucket):", signedUrlData ?? signedUrlError)
+
+        // 7) Test d'accès réel au fichier
+        if (signedUrlData?.signedUrl) {
+          try {
+            const response = await fetch(signedUrlData.signedUrl)
+            const content = await response.text()
+            log("File content fetched:", content)
+          } catch (fetchError) {
+            log("Error fetching file:", fetchError)
+          }
+        }
       } catch (e) {
         log("Erreur inattendue:", e)
       }

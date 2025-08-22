@@ -19,6 +19,8 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('signin');
+  const [showMagicLink, setShowMagicLink] = useState(false);
+  const [showResendConfirmation, setShowResendConfirmation] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -41,6 +43,7 @@ const Auth = () => {
     if (error) {
       if (error.message.includes('User already registered')) {
         setError('Un compte existe déjà avec cette adresse email');
+        setShowResendConfirmation(true);
       } else {
         setError(error.message);
       }
@@ -50,6 +53,7 @@ const Auth = () => {
         description: "Vérifiez votre email pour confirmer votre compte."
       });
       setActiveTab('signin');
+      setShowResendConfirmation(true);
     }
     setLoading(false);
   };
@@ -64,11 +68,58 @@ const Auth = () => {
     if (error) {
       if (error.message.includes('Invalid login credentials')) {
         setError('Email ou mot de passe incorrect');
+      } else if (error.message.includes('Email not confirmed')) {
+        setError('Veuillez confirmer votre email avant de vous connecter');
+        setShowResendConfirmation(true);
+      } else if (error.message.includes('Email link is invalid or has expired')) {
+        setError('Le lien de confirmation a expiré. Demandez un nouveau lien.');
+        setShowResendConfirmation(true);
       } else {
         setError(error.message);
       }
     } else {
       navigate('/');
+    }
+    setLoading(false);
+  };
+
+  const handleMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    const { error } = await authService.signInWithMagicLink(email);
+    
+    if (error) {
+      setError(error.message);
+    } else {
+      toast({
+        title: "Lien magique envoyé !",
+        description: "Vérifiez votre email et cliquez sur le lien pour vous connecter."
+      });
+    }
+    setLoading(false);
+  };
+
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      setError('Veuillez saisir votre email');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    const { error } = await authService.resendConfirmation(email);
+    
+    if (error) {
+      setError(error.message);
+    } else {
+      toast({
+        title: "Email de confirmation renvoyé !",
+        description: "Vérifiez votre boîte email."
+      });
+      setShowResendConfirmation(false);
     }
     setLoading(false);
   };
@@ -98,37 +149,91 @@ const Auth = () => {
             </TabsList>
             
             <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="password">Mot de passe</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Se connecter
-                </Button>
-              </form>
+              {!showMagicLink ? (
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="password">Mot de passe</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  {showResendConfirmation && (
+                    <div className="space-y-2">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="w-full" 
+                        onClick={handleResendConfirmation}
+                        disabled={loading}
+                      >
+                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Renvoyer l'email de confirmation
+                      </Button>
+                    </div>
+                  )}
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Se connecter
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    className="w-full" 
+                    onClick={() => setShowMagicLink(true)}
+                  >
+                    Connexion par lien magique
+                  </Button>
+                </form>
+              ) : (
+                <form onSubmit={handleMagicLink} className="space-y-4">
+                  <div>
+                    <Label htmlFor="magicEmail">Email</Label>
+                    <Input
+                      id="magicEmail"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Envoyer le lien magique
+                  </Button>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    className="w-full" 
+                    onClick={() => setShowMagicLink(false)}
+                  >
+                    Retour à la connexion classique
+                  </Button>
+                </form>
+              )}
             </TabsContent>
             
             <TabsContent value="signup">
