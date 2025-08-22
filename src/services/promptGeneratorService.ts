@@ -1,4 +1,6 @@
 
+import { generateWithMistral } from './mistralService';
+
 interface PromptGeneratorServiceParams {
   heroName?: string;
   heroAge?: string;
@@ -29,88 +31,52 @@ export const generateOptimizedPrompt = async ({
   illustrationStyle
 }: PromptGeneratorServiceParams) => {
   try {
-    console.log("Préparation de la requête vers l'API de génération de prompts");
+    console.log("Génération d'un prompt optimisé avec Mistral...");
     
-    // Construction du contexte pour l'IA génératrice de prompts
-    const promptContext = {
-      task: "Générer un prompt détaillé pour créer une histoire pour enfant",
-      hero: {
-        name: heroName || "personnage principal",
-        age: heroAge || "âge non spécifié",
-        gender: heroGender || "non spécifié",
-        trait: heroTrait || "traits non spécifiés",
-        description: heroDescription || "",
-        hasGlasses: hasGlasses || false
-      },
-      story: {
-        userIdea: userPrompt || "Thème non spécifié",
-        targetAge: childAge,
-        pageCount: pageCount,
-        values: values.length > 0 ? values : ["Aucune valeur spécifiée"],
-        elements: elements.length > 0 ? elements : ["Aucun élément spécifié"]
-      },
-      visual: {
-        illustrationStyle: illustrationStyle || "storybook-cute"
-      }
-    };
+    // Construction du prompt pour optimiser le prompt utilisateur
+    const optimizationPrompt = `
+Tu es un expert en écriture d'histoires pour enfants. Ta mission est d'optimiser le prompt suivant pour créer une histoire captivante et personnalisée.
 
-    // Configuration du prompt à envoyer à l'API
-    const apiPrompt = JSON.stringify(promptContext);
-    
-    // Email pour l'API (à remplacer par votre email pour l'obtention d'une clé API)
-    const apiKey = "lectoria-app@example.com"; // Remplacer par votre email
-    
-    // Modèle à utiliser
-    const model = "gpt-3.5-turbo"; // Vous pouvez changer pour gpt-4 si nécessaire
-    
-    // Construction de l'URL pour l'appel API
-    const apiUrl = `http://195.179.229.119/gpt/api.php?prompt=${encodeURIComponent(apiPrompt)}&api_key=${encodeURIComponent(apiKey)}&model=${encodeURIComponent(model)}`;
-    
-    console.log("Envoi de la requête à l'API...");
-    
-    // Effectuer l'appel API
-    const response = await fetch(apiUrl);
-    
-    if (!response.ok) {
-      throw new Error(`Erreur API: ${response.status} ${response.statusText}`);
-    }
-    
-    // Analyser la réponse
-    const data = await response.json();
-    console.log("Réponse de l'API reçue:", data);
-    
-    // Extraire le prompt optimisé
-    let optimizedPrompt = "";
-    
-    if (data && data.content) {
-      optimizedPrompt = data.content;
-    } else if (data && typeof data === 'object') {
-      // Essayer de trouver le contenu dans un autre format possible
-      optimizedPrompt = JSON.stringify(data);
-    } else {
-      throw new Error("Format de réponse inattendu");
-    }
-    
-    // Fallback en cas d'échec
-    if (!optimizedPrompt) {
-      console.warn("Réponse API vide ou invalide, utilisation du fallback");
-      return generateFallbackPrompt({
-        heroName,
-        heroAge,
-        heroGender,
-        heroTrait,
-        userPrompt,
-        childAge,
-        pageCount,
-        values,
-        elements
-      });
-    }
-    
+INFORMATIONS DU PERSONNAGE PRINCIPAL:
+- Nom: ${heroName || "Personnage principal"}
+- Âge: ${heroAge || "Non spécifié"}
+- Genre: ${heroGender || "Non spécifié"}
+- Traits de caractère: ${heroTrait || "Traits variés"}
+- Description: ${heroDescription || "À développer"}
+- Porte des lunettes: ${hasGlasses ? "Oui" : "Non"}
+
+PARAMÈTRES DE L'HISTOIRE:
+- Idée de base de l'utilisateur: "${userPrompt}"
+- Âge cible: ${childAge} ans
+- Nombre de pages: ${pageCount}
+- Valeurs à transmettre: ${values.join(", ") || "Valeurs universelles"}
+- Éléments à inclure: ${elements.join(", ") || "Éléments créatifs"}
+- Style d'illustration: ${illustrationStyle}
+
+TÂCHE:
+Créé un prompt détaillé et optimisé qui permettra de générer une histoire personnalisée parfaite pour un enfant de ${childAge} ans. Le prompt doit être précis, créatif et inclure tous les éléments personnalisés.
+
+Le prompt optimisé doit:
+1. Intégrer naturellement le personnage principal avec toutes ses caractéristiques
+2. Développer l'idée de base de manière créative et adaptée à l'âge
+3. Inclure les valeurs et éléments de manière organique dans l'histoire
+4. Spécifier le ton et le style appropriés pour l'âge cible
+5. Être suffisamment détaillé pour guider la création d'une histoire de ${pageCount} pages
+
+Réponds uniquement avec le prompt optimisé, sans explications supplémentaires.
+`;
+
+    const optimizedPrompt = await generateWithMistral({
+      prompt: optimizationPrompt,
+      temperature: 0.8,
+      maxTokens: 2000
+    });
+
+    console.log("Prompt optimisé généré avec succès");
     return optimizedPrompt;
     
   } catch (error) {
-    console.error("Erreur lors de la génération du prompt optimisé:", error);
+    console.error("Erreur lors de l'optimisation du prompt avec Mistral:", error);
     console.log("Utilisation du prompt de secours...");
     
     // En cas d'erreur, utiliser la fonction de fallback

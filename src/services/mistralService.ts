@@ -1,4 +1,6 @@
 
+import { supabase } from '@/integrations/supabase/client';
+
 interface MistralGenerationParams {
   prompt: string;
   agentId?: string;
@@ -14,32 +16,29 @@ export const generateWithMistral = async ({
   topP = 0.9,
   maxTokens = 4000
 }: MistralGenerationParams) => {
-  const response = await fetch(`https://api.mistral.ai/v1/agents/${agentId}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.MISTRAL_API_KEY}`
-    },
-    body: JSON.stringify({
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
+  console.log('Calling Mistral via Supabase edge function...');
+  
+  const { data, error } = await supabase.functions.invoke('mistral-generation', {
+    body: {
+      prompt,
+      agentId,
       temperature,
-      top_p: topP,
-      max_tokens: maxTokens
-    })
+      topP,
+      maxTokens,
+      useStructuredOutput: false
+    }
   });
 
-  if (!response.ok) {
-    console.error("Mistral API error:", await response.text());
-    throw new Error(`Mistral API error: ${response.status}`);
+  if (error) {
+    console.error("Mistral generation error:", error);
+    throw new Error(`Mistral generation failed: ${error.message}`);
   }
 
-  const data = await response.json();
-  return data.choices[0].message.content;
+  if (!data?.success) {
+    throw new Error(`Mistral API error: ${data?.error || 'Unknown error'}`);
+  }
+
+  return data.content;
 };
 
 // New function for structured story generation with JSON format
@@ -49,29 +48,26 @@ export const generateStructuredStory = async (
   temperature = 0.7,
   maxTokens = 4000
 ) => {
-  const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.MISTRAL_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "pixtral-large-2411",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
+  console.log('Calling structured Mistral generation via Supabase edge function...');
+  
+  const { data, error } = await supabase.functions.invoke('mistral-generation', {
+    body: {
+      prompt: userPrompt,
+      systemPrompt,
       temperature,
-      max_tokens: maxTokens,
-      response_format: { type: "json_object" }
-    })
+      maxTokens,
+      useStructuredOutput: true
+    }
   });
 
-  if (!response.ok) {
-    console.error("Mistral API error:", await response.text());
-    throw new Error(`Mistral API error: ${response.status}`);
+  if (error) {
+    console.error("Structured Mistral generation error:", error);
+    throw new Error(`Structured Mistral generation failed: ${error.message}`);
   }
 
-  const data = await response.json();
-  return data.choices[0].message.content;
+  if (!data?.success) {
+    throw new Error(`Mistral API error: ${data?.error || 'Unknown error'}`);
+  }
+
+  return data.content;
 };
