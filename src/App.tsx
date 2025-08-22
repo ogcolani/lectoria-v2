@@ -34,36 +34,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/notre-histoire" element={<NotreHistoire />} />
-            <Route path="/creer-mon-livre" element={
-              <ProtectedRoute>
-                <CreerMonLivre />
-              </ProtectedRoute>
-            } />
-            <Route path="/creation-livre" element={
-              <ProtectedRoute>
-                <CreationLivre />
-              </ProtectedRoute>
-            } />
-            <Route path="/personnalisation-hero" element={
-              <ProtectedRoute>
-                <PersonnalisationHero />
-              </ProtectedRoute>
-            } />
-            <Route path="/personnalisation-apparence" element={
-              <ProtectedRoute>
-                <PersonnalisationApparence />
-              </ProtectedRoute>
-            } />
-            <Route path="/story-elements" element={
-              <ProtectedRoute>
-                <StoryElements />
-              </ProtectedRoute>
-            } />
-            <Route path="/generation-histoire" element={
-              <ProtectedRoute>
-                <GenerationHistoire />
-              </ProtectedRoute>
-            } />
+            <Route path="/creer-mon-livre" element={<CreerMonLivre />} />
+            <Route path="/creation-livre" element={<CreationLivre />} />
+            <Route path="/personnalisation-hero" element={<PersonnalisationHero />} />
+            <Route path="/personnalisation-apparence" element={<PersonnalisationApparence />} />
+            <Route path="/story-elements" element={<StoryElements />} />
+            <Route path="/generation-histoire" element={<GenerationHistoire />} />
             <Route path="/choix-format" element={
               <ProtectedRoute>
                 <ChoixFormat />
