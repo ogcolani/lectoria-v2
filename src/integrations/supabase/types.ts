@@ -21,9 +21,14 @@ export type Database = {
           created_at: string | null
           id: string
           interests: string[] | null
+          preview_ratio: number | null
+          print_status: string | null
+          shipping_address: string | null
+          shipping_name: string | null
           status: string | null
           updated_at: string | null
           user_id: string
+          variant: string | null
         }
         Insert: {
           child_age: number
@@ -31,9 +36,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           interests?: string[] | null
+          preview_ratio?: number | null
+          print_status?: string | null
+          shipping_address?: string | null
+          shipping_name?: string | null
           status?: string | null
           updated_at?: string | null
           user_id: string
+          variant?: string | null
         }
         Update: {
           child_age?: number
@@ -41,9 +51,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           interests?: string[] | null
+          preview_ratio?: number | null
+          print_status?: string | null
+          shipping_address?: string | null
+          shipping_name?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
+          variant?: string | null
         }
         Relationships: []
       }

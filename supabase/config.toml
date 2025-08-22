@@ -54,3 +54,15 @@ enabled = false
 
 [functions.mistral-generation]
 verify_jwt = false
+
+[functions.generate-story-public]
+verify_jwt = false
+
+[functions.get-story]
+verify_jwt = false
+
+[functions.admin-get-full-story]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
