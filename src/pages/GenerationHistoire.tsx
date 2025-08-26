@@ -5,13 +5,13 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Progress } from '@/components/ui/progress';
 import InfoSection from '@/components/InfoSection';
-import StoryGenerationForm from '@/components/story-generation/StoryGenerationForm';
+
 import StoryPreviewSection from '@/components/story-generation/StoryPreviewSection';
 import { useStoryGeneration } from '@/hooks/useStoryGeneration';
 import SessionRecovery from '@/components/session/SessionRecovery';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
 import { useToast } from '@/components/ui/use-toast';
-import { MistralConnectionTest } from '@/components/MistralConnectionTest';
+
 
 const GenerationHistoire = () => {
   const navigate = useNavigate();
@@ -100,20 +100,6 @@ const GenerationHistoire = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {!showBookPreview && (
-            <StoryGenerationForm
-              prompt={prompt}
-              pageCount={pageCount}
-              isGenerating={isGenerating}
-              illustrationStyle={illustrationStyle}
-              useOptimizedPrompts={useOptimizedPrompts}
-              onPromptChange={setPrompt}
-              onPageCountChange={setPageCount}
-              onGenerate={generateStory}
-              onStyleChange={setIllustrationStyle}
-              onToggleOptimizedPrompts={toggleOptimizedPrompts}
-            />
-          )}
           
           <StoryPreviewSection
             storyPreview={storyPreview}
@@ -135,11 +121,6 @@ const GenerationHistoire = () => {
         </div>
         
         <InfoSection />
-        
-        {/* Test de connexion Mistral en bas de page */}
-        <div className="mt-16 pt-8 border-t border-border">
-          <MistralConnectionTest />
-        </div>
       </main>
       
       <Footer />

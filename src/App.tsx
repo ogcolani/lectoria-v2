@@ -19,7 +19,7 @@ import NotreHistoire from "./pages/NotreHistoire";
 import OffresCadeaux from "./pages/OffresCadeaux";
 import Commande from "./pages/Commande";
 import CommandeConfirmee from "./pages/CommandeConfirmee";
-import TestSupabase from "./pages/TestSupabase";
+
 import GenerateStoryPublic from "./pages/GenerateStoryPublic";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import Checkout from "./pages/Checkout";
@@ -61,11 +61,6 @@ const App = () => (
             <Route path="/offres-cadeaux" element={
               <ProtectedRoute>
                 <OffresCadeaux />
-              </ProtectedRoute>
-            } />
-            <Route path="/test-supabase" element={
-              <ProtectedRoute>
-                <TestSupabase />
               </ProtectedRoute>
             } />
             <Route path="/generate-story-public" element={<GenerateStoryPublic />} />

@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
-import TestModeBanner from './TestModeBanner';
+
 
 const menuItems = [
   { to: "/", icon: Home, label: "Accueil" },
@@ -55,7 +55,6 @@ const Header = () => {
 
   return (
     <>
-      <TestModeBanner />
       <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur border-b py-3">
         <div className="container mx-auto flex justify-between items-center px-4">
         <Link to="/" className="flex items-center gap-2">
