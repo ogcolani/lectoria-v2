@@ -139,13 +139,16 @@ export const useStoryGeneration = () => {
         prompt.trim()
       ].filter(Boolean);
       
-      console.log('Génération via Edge Function avec:', {
+      const payload = {
         childName,
         age: childAge,
-        interests: interests.join(', '),
+        interests: interests.join(', ') || `Histoire avec ${childName}`,
         pages: pageCount,
         locale: 'fr'
-      });
+      };
+      
+      // Log du payload AVANT l'appel comme demandé
+      console.log("[GEN:REQUEST]", payload);
       
       // Notification pour indiquer que le processus de génération a commencé
       toast({
@@ -153,19 +156,19 @@ export const useStoryGeneration = () => {
         description: "Création de votre histoire personnalisée...",
       });
       
-      // Appel de l'Edge Function generate-story-public
-      const { data, error } = await supabase.functions.invoke('generate-story-public', {
-        body: {
-          childName,
-          age: childAge,
-          interests: interests.join(', ') || `Histoire avec ${childName}`,
-          pages: pageCount,
-          locale: 'fr'
-        }
+      // Appel direct de l'Edge Function generate-story-public
+      const response = await fetch("https://tigbprdphighswckymqr.supabase.co/functions/v1/generate-story-public", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpZ2JwcmRwaGlnaHN3Y2t5bXFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTU4MjYsImV4cCI6MjA3MTI5MTgyNn0.zZPQ4HMzD5vTAM6IgzN9qqJlGbYMZ527-pCa64dM9MY`
+        },
+        body: JSON.stringify(payload)
       });
       
-      if (error) {
-        console.error('Error calling generate-story-public:', error);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('HTTP Error:', response.status, errorText);
         toast({
           title: "Erreur",
           description: "Impossible de générer l'histoire. Veuillez réessayer.",
@@ -173,6 +176,8 @@ export const useStoryGeneration = () => {
         });
         return;
       }
+      
+      const data = await response.json();
       
       if (!data?.success) {
         console.error('Story generation failed:', data?.error);
