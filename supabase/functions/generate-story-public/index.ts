@@ -82,16 +82,16 @@ L'histoire doit être adaptée à l'âge de ${age} ans, avec un vocabulaire appr
       auth: { persistSession: false }
     });
 
-    // Get Mistral configuration
-    const mistralApiKey = Deno.env.get("MISTRAL_API_KEY");
+    // Get L2000 agent configuration
+    const l2000ApiKey = Deno.env.get("L2000");
     const mistralModel = Deno.env.get("MISTRAL_MODEL") || "mistral-large-latest";
     const previewRatio = parseFloat(Deno.env.get("PREVIEW_RATIO") || "0.15");
 
-    if (!mistralApiKey) {
-      throw new Error('MISTRAL_API_KEY not configured');
+    if (!l2000ApiKey) {
+      throw new Error('L2000 agent API key not configured');
     }
 
-    logStep('Configuration loaded', { mistralModel, previewRatio });
+    logStep('Configuration loaded with L2000 agent', { mistralModel, previewRatio });
 
     // Create order first
     const { data: orderData, error: orderError } = await supabase
@@ -130,12 +130,12 @@ Retourne une réponse JSON strictement dans ce format:
 
 L'histoire doit être adaptée à l'âge de ${age} ans, avec un vocabulaire approprié et des valeurs positives.`;
 
-    logStep('Calling Mistral API');
+    logStep('Calling L2000 agent');
 
     const mistralResponse = await fetch('https://api.mistral.ai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${mistralApiKey}`,
+        'Authorization': `Bearer ${l2000ApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -152,16 +152,16 @@ L'histoire doit être adaptée à l'âge de ${age} ans, avec un vocabulaire appr
       }),
     });
 
-    console.log("[GEN:MISTRAL:STATUS]", mistralResponse.status);
+    console.log("[GEN:L2000:STATUS]", mistralResponse.status);
 
     if (!mistralResponse.ok) {
       const errorText = await mistralResponse.text();
-      logStep('Mistral API error', { status: mistralResponse.status, error: errorText });
-      throw new Error(`Mistral API error: ${mistralResponse.status} - ${errorText}`);
+      logStep('L2000 agent API error', { status: mistralResponse.status, error: errorText });
+      throw new Error(`L2000 agent API error: ${mistralResponse.status} - ${errorText}`);
     }
 
     const mistralData = await mistralResponse.json().catch(() => ({}));
-    console.log("[GEN:MISTRAL:RAW]", JSON.stringify(mistralData).slice(0, 400));
+    console.log("[GEN:L2000:RAW]", JSON.stringify(mistralData).slice(0, 400));
     const storyContent = mistralData.choices[0].message.content;
     
     let storyJson;
@@ -169,7 +169,7 @@ L'histoire doit être adaptée à l'âge de ${age} ans, avec un vocabulaire appr
       storyJson = JSON.parse(storyContent);
     } catch (e) {
       logStep('JSON parsing failed', { content: storyContent });
-      throw new Error('Invalid JSON response from Mistral');
+      throw new Error('Invalid JSON response from L2000 agent');
     }
 
     logStep('Story generated', { title: storyJson.title, pageCount: storyJson.pages?.length });
