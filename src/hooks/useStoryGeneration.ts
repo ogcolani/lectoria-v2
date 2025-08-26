@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { generateStoryService } from '@/services/storyService';
+import { supabase } from '@/integrations/supabase/client';
 import { IllustrationStyle } from '@/services/illustrationService';
 import { useNavigate } from 'react-router-dom';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
@@ -30,6 +30,10 @@ export const useStoryGeneration = () => {
     illustrations,
     illustrationStyle,
     showBookPreview,
+    // Order data
+    orderId,
+    orderStatus,
+    preview,
     // Méthodes
     setIsGenerating,
     setProgress,
@@ -42,6 +46,9 @@ export const useStoryGeneration = () => {
     setIllustrations,
     setIllustrationStyle,
     setShowBookPreview,
+    setOrderId,
+    setOrderStatus,
+    setPreview,
     resetStoryData,
     // Accès au store complet
     simpleExcerpt
@@ -54,7 +61,12 @@ export const useStoryGeneration = () => {
   useEffect(() => {
     // Mettre à jour la progression pour cette étape
     setProgress(80);
-  }, [setProgress]);
+    
+    // Load existing story if orderId is present
+    if (orderId && !preview) {
+      loadStoryFromOrder();
+    }
+  }, [setProgress, orderId, preview]);
 
   // Fonction utilitaire pour vérifier si un champ a une valeur
   const hasValue = (field: any): boolean => {
@@ -62,6 +74,37 @@ export const useStoryGeneration = () => {
     if (typeof field === 'string') return field.trim() !== '';
     if (Array.isArray(field)) return field.length > 0;
     return true;
+  };
+
+  // Load story from order using Edge Function
+  const loadStoryFromOrder = async () => {
+    if (!orderId) return;
+    
+    try {
+      console.log('Loading story from order:', orderId);
+      
+      const { data, error } = await supabase.functions.invoke('get-story', {
+        body: { orderId }
+      });
+      
+      if (error) {
+        console.error('Error loading story:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger l'histoire. Essayez de la regénérer.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      if (data?.success && data?.storyPreview) {
+        setPreview(data.storyPreview);
+        setOrderStatus(data.orderDetails?.status || 'draft');
+        console.log('Story loaded successfully');
+      }
+    } catch (error) {
+      console.error('Error loading story from order:', error);
+    }
   };
 
   const generateStory = async () => {
@@ -79,92 +122,98 @@ export const useStoryGeneration = () => {
     setIsGenerating(true);
     setIllustrationUrl(null);
     setIllustrations([]);
-    
-    // Log des informations qui seront utilisées pour la génération (pour débogage)
-    console.log('Génération avec les informations suivantes:', {
-      heroName,
-      heroAge,
-      heroGender,
-      heroTrait,
-      heroDescription,
-      hasGlasses,
-      selectedValues,
-      selectedStoryElements,
-      prompt,
-      pageCount,
-      illustrationStyle,
-      useOptimizedPrompts
-    });
+    setOrderId(null);
+    setOrderStatus('pending');
+    setPreview(null);
     
     try {
       const childAge = heroAge ? parseInt(heroAge) : 6;
-
-      // Auto-generate a prompt if none is provided, or enhance the existing one
-      const userPrompt = prompt.trim() || `Une histoire personnalisée avec ${heroName || 'notre héros'} comme personnage principal`;
+      const childName = heroName || 'notre héros';
       
-      // S'assurer que le prompt utilisateur est bien passé au service
-      console.log("Prompt utilisé pour la génération:", userPrompt);
+      // Construire les intérêts de l'histoire
+      const interests = [
+        ...selectedValues,
+        ...selectedStoryElements,
+        heroTrait,
+        heroDescription,
+        prompt.trim()
+      ].filter(Boolean);
+      
+      console.log('Génération via Edge Function avec:', {
+        childName,
+        age: childAge,
+        interests: interests.join(', '),
+        pages: pageCount,
+        locale: 'fr'
+      });
       
       // Notification pour indiquer que le processus de génération a commencé
       toast({
         title: "Génération en cours",
-        description: useOptimizedPrompts 
-          ? "Génération d'un prompt optimisé avant la création de l'histoire..."
-          : "Génération de l'histoire en cours...",
+        description: "Création de votre histoire personnalisée...",
       });
       
-      // Utiliser toutes les informations disponibles pour la génération de l'histoire
-      const result = await generateStoryService({
-        prompt: userPrompt,
-        pageCount,
-        childAge,
-        values: selectedValues || [],
-        elements: selectedStoryElements || [],
-        illustrationStyle,
-        heroName: heroName || undefined,
-        heroGender: heroGender || undefined,
-        heroAge: heroAge || undefined,
-        heroTrait: heroTrait || undefined,
-        heroDescription: heroDescription || undefined,
-        hasGlasses: hasGlasses || false,
-        useOptimizedPrompts
+      // Appel de l'Edge Function generate-story-public
+      const { data, error } = await supabase.functions.invoke('generate-story-public', {
+        body: {
+          childName,
+          age: childAge,
+          interests: interests.join(', ') || `Histoire avec ${childName}`,
+          pages: pageCount,
+          locale: 'fr'
+        }
       });
-
-      // Vérifiez les résultats avant de les utiliser
-      console.log("Histoire générée avec succès:", result);
       
-      // Store all the generated data including structured story
-      setFullStory(result.fullStory || '');
-      setStructuredStory(result.structuredStory || null);
-      setStoryPreview(result.storyPreview || '');
-      setIllustrationUrl(result.illustrationUrl);
+      if (error) {
+        console.error('Error calling generate-story-public:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de générer l'histoire. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return;
+      }
       
-      if (result.illustrations && result.illustrations.length > 0) {
-        setIllustrations(result.illustrations);
+      if (!data?.success) {
+        console.error('Story generation failed:', data?.error);
+        toast({
+          title: "Erreur",
+          description: data?.error || "La génération a échoué.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Stocker les données de l'ordre et de l'aperçu
+      setOrderId(data.orderId);
+      setOrderStatus('draft');
+      setPreview(data.storyPreview);
+      
+      // Pour la compatibilité avec l'UI existante, mettre aussi le preview dans storyPreview
+      if (data.storyPreview?.pages) {
+        const previewText = data.storyPreview.pages.map(p => p.content).join('\n\n');
+        setStoryPreview(previewText);
       }
       
       setProgress(100);
       
-      // Calculate success metrics
-      const hasStory = !!(result.fullStory || result.storyPreview);
-      const hasStructured = !!result.structuredStory;
-      const hasIllustrations = result.illustrations && result.illustrations.length > 0;
-      const storyLength = (result.fullStory || '').length;
-      
-      console.log(`Génération terminée - Histoire: ${hasStory ? 'OK' : 'Manquante'}, Format structuré: ${hasStructured ? 'OK' : 'Non'}, Illustrations: ${hasIllustrations ? result.illustrations.length : 0}, Longueur: ${storyLength} caractères`);
+      console.log('Histoire générée avec succès via Edge Function:', {
+        orderId: data.orderId,
+        preview: data.storyPreview
+      });
       
       toast({
-        title: hasStory ? "Histoire générée avec succès !" : "Histoire générée partiellement",
-        description: `Votre histoire personnalisée${hasStructured ? ' (format amélioré)' : ''} de ${storyLength} caractères est prête avec ${result.illustrations?.length || 0} illustration(s). Découvrez un aperçu et commandez le livre complet !`,
+        title: "Histoire générée avec succès !",
+        description: `Votre aperçu (≈15%) est prêt ! Commandez le livre pour découvrir l'histoire complète.`,
         duration: 5000,
       });
     } catch (error) {
+      console.error('Erreur de génération:', error);
       toast({
         title: "Erreur",
         description: "Il y a eu un problème lors de la génération de l'histoire.",
         variant: "destructive",
       });
-      console.error("Erreur de génération:", error);
     } finally {
       setIsGenerating(false);
     }
@@ -220,6 +269,9 @@ export const useStoryGeneration = () => {
     illustrationStyle,
     showBookPreview,
     useOptimizedPrompts,
+    orderId,
+    orderStatus,
+    preview,
     setPrompt,
     setPageCount,
     setIllustrationStyle,
@@ -228,6 +280,7 @@ export const useStoryGeneration = () => {
     resetStory,
     toggleBookPreview,
     handleContinue,
-    toggleOptimizedPrompts
+    toggleOptimizedPrompts,
+    loadStoryFromOrder
   };
 };

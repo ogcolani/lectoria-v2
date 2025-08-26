@@ -22,6 +22,13 @@ interface StoryPreviewSectionProps {
   onToggleBookPreview: () => void;
   onContinue: () => void;
   heroName?: string;
+  orderId?: string | null;
+  orderStatus?: string | null;
+  preview?: {
+    title: string;
+    pages: Array<{ pageNumber: number; content: string }>;
+    totalPages: number;
+  } | null;
 }
 
 const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
@@ -36,7 +43,10 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
   showBookPreview,
   onToggleBookPreview,
   onContinue,
-  heroName
+  heroName,
+  orderId,
+  orderStatus,
+  preview
 }) => {
   const { simpleExcerpt } = useLectoriaStore();
   const [showFullStory, setShowFullStory] = useState(false);
@@ -59,8 +69,8 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
     );
   }
 
-  // Show full story preview
-  if (showFullStory && storyPreview) {
+  // Show full story preview (actually just secure preview)
+  if (showFullStory && (storyPreview || preview)) {
     return (
       <div className="lg:col-span-2 order-1 lg:order-2">
         <FullStoryPreview
@@ -69,6 +79,8 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
           illustrations={illustrations}
           heroName={heroName}
           pageCount={pageCount}
+          preview={preview}
+          orderStatus={orderStatus}
         />
         <div className="text-center mt-6 space-x-4">
           <Button 
@@ -77,9 +89,17 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
           >
             Retour à l'aperçu
           </Button>
+          {orderId && orderStatus !== 'paid' && (
+            <Button 
+              onClick={() => window.open(`/checkout?orderId=${orderId}`, '_blank')}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            >
+              Commander le livre
+            </Button>
+          )}
           <Button 
             onClick={onToggleBookPreview}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+            variant="outline"
           >
             <BookOpen className="h-4 w-4 mr-2" />
             Prévisualiser le livre
@@ -115,7 +135,7 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
         />
       )}
       
-      {storyPreview && (
+      {(storyPreview || preview) && (
         <div className="mt-8 text-center space-x-4">
           <Button 
             onClick={() => setShowFullStory(true)}
@@ -123,24 +143,39 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
             className="flex items-center gap-2 mx-auto mb-4"
           >
             <Eye className="h-4 w-4" />
-            Voir l'histoire complète
+            Voir l'aperçu paginé
           </Button>
           
-          {!simpleExcerpt && (
-            <div className="flex justify-center space-x-4">
+          <div className="flex justify-center space-x-4 mb-4">
+            {orderId && orderStatus !== 'paid' && (
+              <Button 
+                onClick={() => window.open(`/checkout?orderId=${orderId}`, '_blank')}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                Commander le livre
+              </Button>
+            )}
+            
+            {!simpleExcerpt && (
               <Button 
                 onClick={onToggleBookPreview}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                variant="outline"
               >
                 <BookOpen className="h-4 w-4 mr-2" />
                 Prévisualiser le livre
               </Button>
+            )}
+          </div>
+          
+          {orderStatus === 'paid' && (
+            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-700 font-medium">✅ Commande payée ! Votre livre est en cours d'impression.</p>
             </div>
           )}
           
           {!simpleExcerpt && (
             <p className="text-sm text-gray-500 mt-2">
-              Visualise ton histoire en format livre avec {illustrations.length} illustrations
+              Ceci est un aperçu (≈15%). Le livre complet contient {preview?.totalPages || pageCount} pages.
             </p>
           )}
         </div>

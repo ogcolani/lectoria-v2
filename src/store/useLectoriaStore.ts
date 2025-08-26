@@ -29,6 +29,15 @@ interface LectoriaState {
   illustrations: string[];
   showBookPreview: boolean;
   
+  // Order data (for secure preview system)
+  orderId: string | null;
+  orderStatus: 'draft' | 'pending' | 'paid' | 'processing' | 'completed' | null;
+  preview: {
+    title: string;
+    pages: Array<{ pageNumber: number; content: string }>;
+    totalPages: number;
+  } | null;
+  
   // A/B Testing
   simpleExcerpt: boolean;
   
@@ -56,6 +65,11 @@ interface LectoriaState {
   setIllustrationUrl: (url: string | null) => void;
   setIllustrations: (urls: string[]) => void;
   setShowBookPreview: (show: boolean) => void;
+  
+  // Order management
+  setOrderId: (orderId: string | null) => void;
+  setOrderStatus: (status: 'draft' | 'pending' | 'paid' | 'processing' | 'completed' | null) => void;
+  setPreview: (preview: { title: string; pages: Array<{ pageNumber: number; content: string }>; totalPages: number } | null) => void;
   
   // Réinitialisation des données
   resetStoryData: () => void;
@@ -95,6 +109,11 @@ export const useLectoriaStore = create<LectoriaState>()(
       illustrations: [],
       showBookPreview: false,
       
+      // Order data
+      orderId: null,
+      orderStatus: null,
+      preview: null,
+      
       // A/B Testing
       simpleExcerpt: import.meta.env.DEV || import.meta.env.VITE_ENV === 'staging',
       
@@ -123,6 +142,11 @@ export const useLectoriaStore = create<LectoriaState>()(
       setIllustrations: (urls: string[]) => set({ illustrations: urls }),
       setShowBookPreview: (show: boolean) => set({ showBookPreview: show }),
       
+      // Order management
+      setOrderId: (orderId: string | null) => set({ orderId }),
+      setOrderStatus: (status: 'draft' | 'pending' | 'paid' | 'processing' | 'completed' | null) => set({ orderStatus: status }),
+      setPreview: (preview: { title: string; pages: Array<{ pageNumber: number; content: string }>; totalPages: number } | null) => set({ preview }),
+      
       // Réinitialisation des données d'histoire
       resetStoryData: () => set({
         storyPreview: '',
@@ -131,7 +155,10 @@ export const useLectoriaStore = create<LectoriaState>()(
         illustrationUrl: null,
         illustrations: [],
         progress: 80,
-        showBookPreview: false
+        showBookPreview: false,
+        orderId: null,
+        orderStatus: null,
+        preview: null
       }),
       
       // Réinitialisation complète
@@ -154,7 +181,10 @@ export const useLectoriaStore = create<LectoriaState>()(
         structuredStory: null,
         illustrationUrl: null,
         illustrations: [],
-        showBookPreview: false
+        showBookPreview: false,
+        orderId: null,
+        orderStatus: null,
+        preview: null
       }),
       
       // Méthode complète pour vider tous les champs
@@ -177,7 +207,10 @@ export const useLectoriaStore = create<LectoriaState>()(
         structuredStory: null,
         illustrationUrl: null,
         illustrations: [],
-        showBookPreview: false
+        showBookPreview: false,
+        orderId: null,
+        orderStatus: null,
+        preview: null
       }),
       
       // Vérifier si une session existe déjà

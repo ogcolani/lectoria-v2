@@ -9,6 +9,12 @@ interface FullStoryPreviewProps {
   illustrations: string[];
   heroName?: string;
   pageCount: number;
+  preview?: {
+    title: string;
+    pages: Array<{ pageNumber: number; content: string }>;
+    totalPages: number;
+  } | null;
+  orderStatus?: string | null;
 }
 
 const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
@@ -16,7 +22,9 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
   isGenerating,
   illustrations,
   heroName = '',
-  pageCount
+  pageCount,
+  preview,
+  orderStatus
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [showFullText, setShowFullText] = useState(false);
@@ -42,17 +50,27 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
     }
   }, [storyPreview]);
 
-  // Parse story into all available content (no limitations)
-  const parseFullStory = (text: string) => {
-    if (!text) return { title: '', pages: [] };
+  // Parse story using structured preview or fallback to text parsing (SECURE - only preview)
+  const parseStoryPreview = () => {
+    // Use structured preview if available
+    if (preview && preview.pages && preview.pages.length > 0) {
+      return {
+        title: preview.title || "Mon Histoire", 
+        pages: preview.pages,
+        isStructured: true
+      };
+    }
+    
+    // Fallback to text parsing (legacy)
+    if (!storyPreview) return { title: '', pages: [], isStructured: false };
 
-    const lines = text.split('\n').filter(line => line.trim() !== '');
+    const lines = storyPreview.split('\n').filter(line => line.trim() !== '');
     
     // Find title
     const titleIndex = lines.findIndex(line => line.startsWith('# '));
     const title = titleIndex !== -1 ? lines[titleIndex].substring(2).trim() : "Mon Histoire";
     
-    // Get all content paragraphs (exclude title, metadata)
+    // Get content paragraphs (exclude title, metadata)
     const contentLines = lines.filter(line => 
       !line.startsWith('# ') && 
       !line.startsWith('⭐') && 
@@ -61,17 +79,16 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
       line.trim() !== ''
     );
 
-    // Create pages with ALL content (no limitations)
+    // Create pages from preview only (SECURE - no full story access)
     const pages = [];
     if (showFullText) {
-      // Show all content in one view
+      // Show all preview content in one view
       pages.push({
-        title,
         content: contentLines.join(' ').replace(/[#*]/g, '').trim(),
         pageNumber: 1
       });
     } else {
-      // Create reasonable page chunks (3-4 paragraphs per page)
+      // Create reasonable page chunks from preview
       for (let i = 0; i < contentLines.length; i += 3) {
         const pageContent = [];
         for (let j = i; j < Math.min(i + 3, contentLines.length); j++) {
@@ -80,7 +97,6 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
         
         if (pageContent.length > 0) {
           pages.push({
-            title,
             content: pageContent.join(' ').replace(/[#*]/g, '').trim(),
             pageNumber: pages.length + 1
           });
@@ -88,11 +104,12 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
       }
     }
 
-    return { title, pages };
+    return { title, pages, isStructured: false };
   };
 
-  const { title, pages } = parseFullStory(storyPreview);
+  const { title, pages, isStructured } = parseStoryPreview();
   const totalPages = showFullText ? 1 : pages.length;
+  const actualTotalPages = preview?.totalPages || pageCount;
 
   const goToNextPage = () => {
     if (!showFullText && currentPage < pages.length - 1) {
@@ -151,7 +168,19 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
       {/* Header with progress and view toggle */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-2xl font-bold text-gray-900">Histoire Complète</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Aperçu Paginé</h2>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full font-medium">
+                Aperçu ≈15%
+              </span>
+              {orderStatus === 'paid' && (
+                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
+                  Payé
+                </span>
+              )}
+            </div>
+          </div>
           <div className="flex items-center gap-4">
             <Button
               onClick={toggleFullText}
@@ -163,9 +192,16 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
               {showFullText ? 'Vue paginée' : 'Vue complète'}
             </Button>
             <span className="text-sm text-gray-600 font-medium">
-              {showFullText ? 'Texte complet' : `${currentPage + 1} / ${totalPages} pages`}
+              {showFullText ? 'Aperçu complet' : `${currentPage + 1} / ${totalPages} pages`}
             </span>
           </div>
+        </div>
+        
+        {/* Security notice */}
+        <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+          <p className="text-sm text-purple-700">
+            <strong>Ceci est un aperçu (≈15%).</strong> Commandez le livre pour découvrir l'histoire complète de {actualTotalPages} pages !
+          </p>
         </div>
         
         {/* Progress bar */}
@@ -262,7 +298,7 @@ const FullStoryPreview: React.FC<FullStoryPreviewProps> = ({
           </Button>
 
           <span className="text-sm text-gray-500">
-            {heroName && `Histoire de ${heroName}`} • {pageCount} pages au total
+            {heroName && `Histoire de ${heroName}`} • {actualTotalPages} pages au total • Aperçu ≈15%
           </span>
 
           <Button

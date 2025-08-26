@@ -22,6 +22,7 @@ import CommandeConfirmee from "./pages/CommandeConfirmee";
 import TestSupabase from "./pages/TestSupabase";
 import GenerateStoryPublic from "./pages/GenerateStoryPublic";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
               </ProtectedRoute>
             } />
             <Route path="/generate-story-public" element={<GenerateStoryPublic />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/checkout-success" element={<CheckoutSuccess />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

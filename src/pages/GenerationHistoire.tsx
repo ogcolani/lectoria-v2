@@ -27,6 +27,9 @@ const GenerationHistoire = () => {
     illustrationStyle,
     showBookPreview,
     useOptimizedPrompts,
+    orderId,
+    orderStatus,
+    preview,
     setPrompt,
     setPageCount,
     setIllustrationStyle,
@@ -124,6 +127,9 @@ const GenerationHistoire = () => {
             onToggleBookPreview={toggleBookPreview}
             onContinue={handleContinue}
             heroName={heroName}
+            orderId={orderId}
+            orderStatus={orderStatus}
+            preview={preview}
           />
         </div>
         
