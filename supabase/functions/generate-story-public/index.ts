@@ -172,9 +172,12 @@ L'histoire doit être adaptée à l'âge de ${age} ans, avec un vocabulaire appr
     logStep('Preview generated', { previewPageCount, totalPages });
 
     return new Response(JSON.stringify({
-      success: true,
-      orderId: orderData.id,
-      preview: preview
+      ok: true,
+      story: {
+        orderId: orderData.id,
+        preview: preview,
+        status: 'generated'
+      }
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,

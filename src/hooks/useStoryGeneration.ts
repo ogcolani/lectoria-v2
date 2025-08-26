@@ -166,6 +166,8 @@ export const useStoryGeneration = () => {
         body: JSON.stringify(payload)
       });
       
+      console.log("[GEN:HTTP]", response.status);
+      
       if (!response.ok) {
         const errorText = await response.text();
         console.error('HTTP Error:', response.status, errorText);
@@ -177,9 +179,10 @@ export const useStoryGeneration = () => {
         return;
       }
       
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
+      console.log("[GEN:RESPONSE]", data);
       
-      if (!data?.success) {
+      if (!data?.ok) {
         console.error('Story generation failed:', data?.error);
         toast({
           title: "Erreur",
@@ -189,22 +192,23 @@ export const useStoryGeneration = () => {
         return;
       }
       
-      // Stocker les données de l'ordre et de l'aperçu
-      setOrderId(data.orderId);
-      setOrderStatus('draft');
-      setPreview(data.storyPreview);
+      // Adapter au nouveau format de réponse
+      const storyData = data.story;
+      setOrderId(storyData.orderId);
+      setOrderStatus(storyData.status || 'draft');
+      setPreview(storyData.preview);
       
       // Pour la compatibilité avec l'UI existante, mettre aussi le preview dans storyPreview
-      if (data.storyPreview?.pages) {
-        const previewText = data.storyPreview.pages.map(p => p.content).join('\n\n');
+      if (storyData.preview?.pages) {
+        const previewText = storyData.preview.pages.map(p => p.text).join('\n\n');
         setStoryPreview(previewText);
       }
       
       setProgress(100);
       
       console.log('Histoire générée avec succès via Edge Function:', {
-        orderId: data.orderId,
-        preview: data.storyPreview
+        orderId: storyData.orderId,
+        preview: storyData.preview
       });
       
       toast({
