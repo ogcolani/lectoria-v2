@@ -19,7 +19,10 @@ serve(async (req) => {
   try {
     logStep('Function started');
 
-    const { childName, age, interests = [], pages = 24, locale = 'fr' } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    console.log("[GEN:RECEIVED]", body);
+    
+    const { childName, age, interests = [], pages = 24, locale = 'fr' } = body;
     
     if (!childName || !age) {
       throw new Error('childName and age are required');
