@@ -112,13 +112,16 @@ L'histoire doit être adaptée à l'âge de ${age} ans, avec un vocabulaire appr
       }),
     });
 
+    console.log("[GEN:MISTRAL:STATUS]", mistralResponse.status);
+
     if (!mistralResponse.ok) {
       const errorText = await mistralResponse.text();
       logStep('Mistral API error', { status: mistralResponse.status, error: errorText });
       throw new Error(`Mistral API error: ${mistralResponse.status} - ${errorText}`);
     }
 
-    const mistralData = await mistralResponse.json();
+    const mistralData = await mistralResponse.json().catch(() => ({}));
+    console.log("[GEN:MISTRAL:RAW]", JSON.stringify(mistralData).slice(0, 400));
     const storyContent = mistralData.choices[0].message.content;
     
     let storyJson;
