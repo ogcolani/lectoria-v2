@@ -11,6 +11,7 @@ import { useStoryGeneration } from '@/hooks/useStoryGeneration';
 import SessionRecovery from '@/components/session/SessionRecovery';
 import { useLectoriaStore } from '@/store/useLectoriaStore';
 import { useToast } from '@/components/ui/use-toast';
+import { MistralConnectionTest } from '@/components/MistralConnectionTest';
 
 const GenerationHistoire = () => {
   const navigate = useNavigate();
@@ -134,6 +135,11 @@ const GenerationHistoire = () => {
         </div>
         
         <InfoSection />
+        
+        {/* Test de connexion Mistral en bas de page */}
+        <div className="mt-16 pt-8 border-t border-border">
+          <MistralConnectionTest />
+        </div>
       </main>
       
       <Footer />
