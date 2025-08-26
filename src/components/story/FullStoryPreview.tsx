@@ -11,8 +11,10 @@ interface FullStoryPreviewProps {
   pageCount: number;
   preview?: {
     title: string;
-    pages: Array<{ pageNumber: number; content: string }>;
+    pages: Array<{ page_number: number; text: string }>;
     totalPages: number;
+    previewPageCount: number;
+    isPreview: boolean;
   } | null;
   orderStatus?: string | null;
 }

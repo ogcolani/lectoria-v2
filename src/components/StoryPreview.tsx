@@ -12,7 +12,14 @@ interface StoryPreviewProps {
   illustrations?: string[]; 
   onShare: () => void;
   onReset: () => void;
-  heroName?: string;
+  heroName?: string; 
+  preview?: {
+    title: string;
+    pages: Array<{ page_number: number; text: string }>;
+    totalPages: number;
+    previewPageCount: number;
+    isPreview: boolean;
+  } | null;
 }
 
 const StoryPreview: React.FC<StoryPreviewProps> = ({
@@ -24,7 +31,8 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
   illustrations = [],
   onShare,
   onReset,
-  heroName
+  heroName,
+  preview
 }) => {
   // État pour suivre l'illustration actuelle à afficher
   const [currentIllustrationIndex, setCurrentIllustrationIndex] = useState(0);
@@ -68,6 +76,7 @@ const StoryPreview: React.FC<StoryPreviewProps> = ({
           onIllustrationChange={setCurrentIllustrationIndex}
           currentIllustrationIndex={currentIllustrationIndex}
           heroName={heroName}
+          preview={preview}
         />
       </div>
       

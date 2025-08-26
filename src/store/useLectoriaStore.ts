@@ -34,8 +34,10 @@ interface LectoriaState {
   orderStatus: 'draft' | 'pending' | 'paid' | 'processing' | 'completed' | null;
   preview: {
     title: string;
-    pages: Array<{ pageNumber: number; content: string }>;
+    pages: Array<{ page_number: number; text: string }>;
     totalPages: number;
+    previewPageCount: number;
+    isPreview: boolean;
   } | null;
   
   // A/B Testing
@@ -69,7 +71,7 @@ interface LectoriaState {
   // Order management
   setOrderId: (orderId: string | null) => void;
   setOrderStatus: (status: 'draft' | 'pending' | 'paid' | 'processing' | 'completed' | null) => void;
-  setPreview: (preview: { title: string; pages: Array<{ pageNumber: number; content: string }>; totalPages: number } | null) => void;
+  setPreview: (preview: { title: string; pages: Array<{ page_number: number; text: string }>; totalPages: number; previewPageCount: number; isPreview: boolean } | null) => void;
   
   // Réinitialisation des données
   resetStoryData: () => void;
@@ -145,7 +147,7 @@ export const useLectoriaStore = create<LectoriaState>()(
       // Order management
       setOrderId: (orderId: string | null) => set({ orderId }),
       setOrderStatus: (status: 'draft' | 'pending' | 'paid' | 'processing' | 'completed' | null) => set({ orderStatus: status }),
-      setPreview: (preview: { title: string; pages: Array<{ pageNumber: number; content: string }>; totalPages: number } | null) => set({ preview }),
+      setPreview: (preview: { title: string; pages: Array<{ page_number: number; text: string }>; totalPages: number; previewPageCount: number; isPreview: boolean } | null) => set({ preview }),
       
       // Réinitialisation des données d'histoire
       resetStoryData: () => set({

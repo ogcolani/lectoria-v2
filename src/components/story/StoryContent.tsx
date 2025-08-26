@@ -14,6 +14,13 @@ interface StoryContentProps {
   currentIllustrationIndex?: number;
   onIllustrationChange?: (index: number) => void;
   heroName?: string;
+  preview?: {
+    title: string;
+    pages: Array<{ page_number: number; text: string }>;
+    totalPages: number;
+    previewPageCount: number;
+    isPreview: boolean;
+  } | null;
 }
 
 const StoryContent: React.FC<StoryContentProps> = ({
@@ -23,7 +30,8 @@ const StoryContent: React.FC<StoryContentProps> = ({
   illustrations = [],
   currentIllustrationIndex = 0,
   onIllustrationChange = () => {},
-  heroName = ''
+  heroName = '',
+  preview
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
 

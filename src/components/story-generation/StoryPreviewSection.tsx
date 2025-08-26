@@ -26,8 +26,10 @@ interface StoryPreviewSectionProps {
   orderStatus?: string | null;
   preview?: {
     title: string;
-    pages: Array<{ pageNumber: number; content: string }>;
+    pages: Array<{ page_number: number; text: string }>;
     totalPages: number;
+    previewPageCount: number;
+    isPreview: boolean;
   } | null;
 }
 
@@ -120,6 +122,7 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
           illustrationUrl={illustrationUrl}
           illustrations={illustrations}
           heroName={heroName}
+          preview={preview}
         />
       ) : (
         <StoryPreview
@@ -132,6 +135,7 @@ const StoryPreviewSection: React.FC<StoryPreviewSectionProps> = ({
           onShare={onShare}
           onReset={onReset}
           heroName={heroName}
+          preview={preview}
         />
       )}
       

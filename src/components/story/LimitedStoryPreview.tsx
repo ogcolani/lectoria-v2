@@ -12,6 +12,13 @@ interface LimitedStoryPreviewProps {
   illustrationUrl: string | null;
   illustrations?: string[];
   heroName?: string;
+  preview?: {
+    title: string;
+    pages: Array<{ page_number: number; text: string }>;
+    totalPages: number;
+    previewPageCount: number;
+    isPreview: boolean;
+  } | null;
 }
 
 const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
@@ -21,7 +28,8 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
   childAge = 6,
   illustrationUrl,
   illustrations = [],
-  heroName
+  heroName,
+  preview
 }) => {
   const navigate = useNavigate();
   const [expandedParagraphs, setExpandedParagraphs] = useState(4);
@@ -85,8 +93,17 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
 
   const personalizationElements = getPersonalizationElements();
 
-  // Parse story content
+  // Parse story content - use preview data if available, otherwise fallback to storyPreview
   const parseStoryContent = (text: string) => {
+    // Si on a les vraies données de L2000, les utiliser
+    if (preview && preview.pages && preview.pages.length > 0) {
+      const title = preview.title || "Mon Histoire";
+      const paragraphs = preview.pages.map(page => page.text).filter(text => text && text.trim() !== '');
+      
+      return { title, paragraphs };
+    }
+    
+    // Fallback vers l'ancien système si pas de preview
     if (!text) return { title: '', paragraphs: [] };
 
     const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -109,10 +126,16 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
 
   const { title, paragraphs } = parseStoryContent(storyPreview);
   
-  // Calculate 20% of content (more substantial preview)
-  const excerptLength = Math.max(Math.ceil(paragraphs.length * 0.20), 5);
+  // Pour les vraies données de L2000, montrer toutes les pages preview disponibles
+  // Sinon utiliser l'ancien système de 20%
+  const excerptLength = preview && preview.pages 
+    ? preview.pages.length  // Toutes les pages preview de L2000
+    : Math.max(Math.ceil(paragraphs.length * 0.20), 5); // Ancien système 20%
+    
   const excerptParagraphs = paragraphs.slice(0, excerptLength);
-  const remainingParagraphs = paragraphs.slice(excerptLength);
+  const remainingParagraphs = preview && preview.pages 
+    ? [] // Pas de contenu masqué pour les vraies données preview
+    : paragraphs.slice(excerptLength); // Ancien système avec contenu masqué
   
   // Paragraphs currently visible
   const visibleParagraphs = excerptParagraphs.slice(0, expandedParagraphs);
@@ -154,7 +177,7 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
     );
   }
 
-  if (!storyPreview) {
+  if (!storyPreview && !preview) {
     return (
       <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
         <h2 className="text-2xl font-bold mb-4">Ton aperçu apparaîtra ici</h2>
@@ -169,7 +192,10 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
       <div className="p-6 border-b border-gray-100">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
         <p className="text-gray-500 text-sm">
-          Aperçu • Histoire complète: {pageCount} pages, adaptée aux {childAge} ans
+          {preview ? 
+            `Aperçu (${preview.previewPageCount}/${preview.totalPages} pages) • Généré par L2000` :
+            `Aperçu • Histoire complète: ${pageCount} pages, adaptée aux ${childAge} ans`
+          }
           {illustrations.length > 0 && ` • ${illustrations.length} illustrations`}
         </p>
       </div>
@@ -180,7 +206,7 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <CheckCircle className="h-5 w-5 text-green-600" />
             <span className="text-green-800 font-semibold text-sm">
-              ✨ Histoire personnalisée selon vos choix
+              {preview ? "✨ Histoire générée par votre agent L2000" : "✨ Histoire personnalisée selon vos choix"}
             </span>
           </div>
           <div className="flex flex-wrap gap-2">
