@@ -29,13 +29,46 @@ serve(async (req) => {
       });
     }
     
+    // Debug mode pour voir le prompt envoyé à Mistral
+    if (body?.__debug === "show-prompt") {
+      const { childName, age, interests = [], pages = 24 } = body;
+      const normalizedInterests = Array.isArray(interests) ? interests : [interests].filter(Boolean);
+      const debugPrompt = `Crée une histoire personnalisée pour ${childName}, ${age} ans.
+Centres d'intérêt: ${normalizedInterests.join(', ')}.
+L'histoire doit faire exactement ${pages} pages.
+
+Retourne une réponse JSON strictement dans ce format:
+{
+  "title": "Titre de l'histoire",
+  "pages": [
+    {"page_number": 1, "text": "Texte de la première page..."},
+    {"page_number": 2, "text": "Texte de la deuxième page..."}
+  ],
+  "moral": "Morale de l'histoire"
+}
+
+L'histoire doit être adaptée à l'âge de ${age} ans, avec un vocabulaire approprié et des valeurs positives.`;
+      
+      return new Response(JSON.stringify({ 
+        ok: true, 
+        debug: "show-prompt",
+        prompt: debugPrompt,
+        normalizedInterests
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+    
     const { childName, age, interests = [], pages = 24, locale = 'fr' } = body;
+    
+    // Normaliser interests : peut être string ou array
+    const normalizedInterests = Array.isArray(interests) ? interests : [interests].filter(Boolean);
     
     if (!childName || !age) {
       throw new Error('childName and age are required');
     }
 
-    logStep('Input validated', { childName, age, interests, pages, locale });
+    logStep('Input validated', { childName, age, interests: normalizedInterests, pages, locale });
 
     // Initialize Supabase with service role for database writes
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
@@ -66,7 +99,7 @@ serve(async (req) => {
       .insert({
         child_name: childName,
         child_age: age,
-        interests: interests,
+        interests: normalizedInterests,
         status: 'generated',
         preview_ratio: previewRatio
       })
@@ -82,7 +115,7 @@ serve(async (req) => {
 
     // Generate story with Mistral
     const storyPrompt = `Crée une histoire personnalisée pour ${childName}, ${age} ans.
-Centres d'intérêt: ${interests.join(', ')}.
+Centres d'intérêt: ${normalizedInterests.join(', ')}.
 L'histoire doit faire exactement ${pages} pages.
 
 Retourne une réponse JSON strictement dans ce format:

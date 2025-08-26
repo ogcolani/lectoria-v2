@@ -142,7 +142,7 @@ export const useStoryGeneration = () => {
       const payload = {
         childName,
         age: childAge,
-        interests: interests.join(', ') || `Histoire avec ${childName}`,
+        interests: interests.length > 0 ? interests : [`Histoire avec ${childName}`],
         pages: pageCount,
         locale: 'fr'
       };
@@ -156,15 +156,18 @@ export const useStoryGeneration = () => {
         description: "Création de votre histoire personnalisée...",
       });
       
-      // Appel direct de l'Edge Function generate-story-public
-      const response = await fetch("https://tigbprdphighswckymqr.supabase.co/functions/v1/generate-story-public", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRpZ2JwcmRwaGlnaHN3Y2t5bXFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU3MTU4MjYsImV4cCI6MjA3MTI5MTgyNn0.zZPQ4HMzD5vTAM6IgzN9qqJlGbYMZ527-pCa64dM9MY`
-        },
-        body: JSON.stringify(payload)
+      // Appel via supabase.functions.invoke pour simplifier CORS et auth
+      const { data: responseData, error } = await supabase.functions.invoke('generate-story-public', {
+        body: payload
       });
+      
+      // Simuler response pour compatibilité avec le code existant
+      const response = {
+        ok: !error,
+        status: error ? 500 : 200,
+        json: () => Promise.resolve(responseData),
+        text: () => Promise.resolve(error?.message || '')
+      };
       
       console.log("[GEN:HTTP]", response.status);
       
