@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      mistral_test: {
+        Row: {
+          created_at: string | null
+          id: number
+          test_prompt: string | null
+          test_result: string | null
+          test_status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          test_prompt?: string | null
+          test_result?: string | null
+          test_status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          test_prompt?: string | null
+          test_result?: string | null
+          test_status?: string | null
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           child_age: number
