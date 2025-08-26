@@ -22,6 +22,13 @@ serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     console.log("[GEN:RECEIVED]", body);
     
+    // Echo debug temporaire pour test
+    if (body?.__debug === "echo") {
+      return new Response(JSON.stringify({ ok: true, received: body }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+    
     const { childName, age, interests = [], pages = 24, locale = 'fr' } = body;
     
     if (!childName || !age) {
