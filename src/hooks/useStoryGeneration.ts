@@ -198,6 +198,15 @@ export const useStoryGeneration = () => {
       setOrderStatus(storyData.status || 'draft');
       setPreview(storyData.preview);
       
+      // Log pour vérifier l'affichage UI
+      console.log("[GEN:UI:SET]", storyData.preview?.pages?.length);
+      
+      // Vérification de cohérence - le prénom doit apparaître dans la première page
+      const first = storyData.preview?.pages?.[0]?.text?.toLowerCase() || "";
+      if (!first.includes(childName.toLowerCase())) {
+        console.warn("⚠️ Le prénom n'apparaît pas sur la page 1");
+      }
+
       // Pour la compatibilité avec l'UI existante, mettre aussi le preview dans storyPreview
       if (storyData.preview?.pages) {
         const previewText = storyData.preview.pages.map(p => p.text).join('\n\n');
