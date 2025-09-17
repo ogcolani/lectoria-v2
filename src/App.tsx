@@ -16,7 +16,7 @@ import StoryElements from "./pages/StoryElements";
 import GenerationHistoire from "./pages/GenerationHistoire";
 import ChoixFormat from "./pages/ChoixFormat";
 import NotreHistoire from "./pages/NotreHistoire";
-import OffresCadeaux from "./pages/OffresCadeaux";
+
 import Commande from "./pages/Commande";
 import CommandeConfirmee from "./pages/CommandeConfirmee";
 
@@ -56,11 +56,6 @@ const App = () => (
             <Route path="/commande-confirmee" element={
               <ProtectedRoute>
                 <CommandeConfirmee />
-              </ProtectedRoute>
-            } />
-            <Route path="/offres-cadeaux" element={
-              <ProtectedRoute>
-                <OffresCadeaux />
               </ProtectedRoute>
             } />
             <Route path="/generate-story-public" element={<GenerateStoryPublic />} />
