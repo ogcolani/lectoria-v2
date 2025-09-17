@@ -155,9 +155,6 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
     setExpandedParagraphs(4);
   };
 
-  const handleBuyBook = () => {
-    navigate('/offres-cadeaux');
-  };
 
   if (isGenerating) {
     return (
@@ -309,14 +306,6 @@ const LimitedStoryPreview: React.FC<LimitedStoryPreviewProps> = ({
               <p className="text-gray-600">
                 Discover the rest in your personalized book.
               </p>
-              <Button 
-                onClick={handleBuyBook}
-                size="lg"
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl transition-all duration-200 hover-scale"
-              >
-                <ShoppingCart className="h-5 w-5" />
-                Buy the full book
-              </Button>
             </div>
           </div>
         )}

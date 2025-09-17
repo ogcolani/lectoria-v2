@@ -29,7 +29,6 @@ const menuItems = [
   { to: "/", icon: Home, label: "Accueil" },
   { to: "/creation-livre", icon: BookOpen, label: "Créer mon livre" },
   { to: "/notre-histoire", icon: BookText, label: "Notre histoire" },
-  { to: "/offres-cadeaux", icon: Gift, label: "Offres cadeaux" },
 ];
 
 const Header = () => {

@@ -220,13 +220,6 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
                 <p className="text-sm text-gray-600 mb-4">
                   Découvrez la suite dans votre livre personnalisé
                 </p>
-                <Button 
-                  onClick={() => navigate('/offres-cadeaux')}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium flex items-center gap-2 mx-auto"
-                >
-                  <ShoppingCart className="h-4 w-4" />
-                  Acheter le livre complet
-                </Button>
               </div>
             </div>
           )}
@@ -246,7 +239,7 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
           Page précédente
         </Button>
 
-        {currentPage < excerpts.length - 1 ? (
+        {currentPage < excerpts.length - 1 && (
           <Button
             size="lg"
             onClick={goToNextPage}
@@ -254,15 +247,6 @@ const EnhancedStoryPreview: React.FC<EnhancedStoryPreviewProps> = ({
           >
             Page suivante
             <ChevronRight className="h-5 w-5" />
-          </Button>
-        ) : (
-          <Button
-            size="lg"
-            onClick={() => navigate('/offres-cadeaux')}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 flex items-center gap-2 px-6 md:w-auto w-full justify-center"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Acheter le livre complet
           </Button>
         )}
       </div>

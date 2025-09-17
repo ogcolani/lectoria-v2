@@ -54,9 +54,6 @@ const StoryActions: React.FC<StoryActionsProps> = ({
               Recommencer
             </Button>
             
-            <Link to="/offres-cadeaux">
-              
-            </Link>
           </div>}
       </div>;
   }

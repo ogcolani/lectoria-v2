@@ -242,7 +242,7 @@ export const useStoryGeneration = () => {
 
   // Reste des fonctions existantes
   const handleContinue = () => {
-    navigate('/offres-cadeaux');
+    // Fonction supprimée - plus de redirection vers offres cadeaux
   };
 
   const handleShare = () => {
