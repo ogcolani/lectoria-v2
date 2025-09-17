@@ -1,44 +1,43 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, BookOpen, Gift, Home, BookText, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/authService';
 import { useToast } from '@/hooks/use-toast';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from '@/hooks/use-mobile';
-
-
-const menuItems = [
-  { to: "/", icon: Home, label: "Accueil" },
-  { to: "/creation-livre", icon: BookOpen, label: "Créer mon livre" },
-  { to: "/notre-histoire", icon: BookText, label: "Notre histoire" },
-  { to: "/offres-cadeaux", icon: Gift, label: "Offres cadeaux" },
-];
-
+const menuItems = [{
+  to: "/",
+  icon: Home,
+  label: "Accueil"
+}, {
+  to: "/creation-livre",
+  icon: BookOpen,
+  label: "Créer mon livre"
+}, {
+  to: "/notre-histoire",
+  icon: BookText,
+  label: "Notre histoire"
+}, {
+  to: "/offres-cadeaux",
+  icon: Gift,
+  label: "Offres cadeaux"
+}];
 const Header = () => {
   const isMobile = useIsMobile();
-  const { user, loading } = useAuth();
-  const { toast } = useToast();
-
+  const {
+    user,
+    loading
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const handleSignOut = async () => {
-    const { error } = await authService.signOut();
+    const {
+      error
+    } = await authService.signOut();
     if (error) {
       toast({
         title: "Erreur",
@@ -52,9 +51,7 @@ const Header = () => {
       });
     }
   };
-
-  return (
-    <>
+  return <>
       <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur border-b py-3">
         <div className="container mx-auto flex justify-between items-center px-4">
         <Link to="/" className="flex items-center gap-2">
@@ -64,8 +61,7 @@ const Header = () => {
         </Link>
 
         <div className="flex items-center gap-4">
-          {isMobile ? (
-            <Sheet>
+          {isMobile ? <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-6 w-6" />
@@ -76,82 +72,47 @@ const Header = () => {
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-4 mt-6">
-                  {menuItems.map((item) => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent text-foreground"
-                    >
+                  {menuItems.map(item => <Link key={item.to} to={item.to} className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent text-foreground">
                       <item.icon className="w-5 h-5" />
                       <span>{item.label}</span>
-                    </Link>
-                  ))}
-                  {!loading && (
-                    <>
-                      {user ? (
-                        <Button 
-                          onClick={handleSignOut}
-                          variant="ghost" 
-                          className="flex items-center gap-2 p-2 rounded-lg justify-start"
-                        >
+                    </Link>)}
+                  {!loading && <>
+                      {user ? <Button onClick={handleSignOut} variant="ghost" className="flex items-center gap-2 p-2 rounded-lg justify-start">
                           <LogOut className="w-5 h-5" />
                           Se déconnecter
-                        </Button>
-                      ) : (
-                        <Link
-                          to="/auth"
-                          className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent text-foreground"
-                        >
+                        </Button> : <Link to="/auth" className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent text-foreground">
                           <User className="w-5 h-5" />
                           Se connecter
-                        </Link>
-                      )}
-                    </>
-                  )}
+                        </Link>}
+                    </>}
                 </nav>
               </SheetContent>
-            </Sheet>
-          ) : (
-            <>
+            </Sheet> : <>
               <NavigationMenu>
                 <NavigationMenuList>
-                  {menuItems.map((item) => (
-                    <NavigationMenuItem key={item.to}>
+                  {menuItems.map(item => <NavigationMenuItem key={item.to}>
                       <Link to={item.to}>
-                        <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                          <item.icon className="w-4 h-4 mr-2" />
-                          {item.label}
-                        </NavigationMenuLink>
+                        
                       </Link>
-                    </NavigationMenuItem>
-                  ))}
+                    </NavigationMenuItem>)}
                 </NavigationMenuList>
               </NavigationMenu>
               
-              {!loading && (
-                <>
-                  {user ? (
-                    <Button onClick={handleSignOut} variant="ghost" size="sm">
+              {!loading && <>
+                  {user ? <Button onClick={handleSignOut} variant="ghost" size="sm">
                       <LogOut className="w-4 h-4 mr-2" />
                       Se déconnecter
-                    </Button>
-                  ) : (
-                    <Link to="/auth">
+                    </Button> : <Link to="/auth">
                       <Button variant="default" size="sm">
                         <User className="w-4 h-4 mr-2" />
                         Se connecter
                       </Button>
-                    </Link>
-                  )}
-                </>
-              )}
-            </>
-          )}
+                    </Link>}
+                </>}
+            </>}
         </div>
         </div>
       </header>
-    </>
-  );
+    </>;
 };
-
 export default Header;
